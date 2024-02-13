@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" oncontextmenu="return false">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPA</title>
+    <link rel="stylesheet" href="/static/CSS/index.css" />
+    <link rel="stylesheet" href="/static/CSS/login.css" />
+    <link rel="stylesheet" href="/static/CSS/friends.css" />
+    <link rel="stylesheet" href="/static/CSS/game.css" />
+    <link rel="stylesheet" href="/static/CSS/myPage.css" />
+    <link rel="stylesheet" href="/static/CSS/chat.css" />
+  </head>
+  <body>
+    <text id="main_title">PONG WORLD<br />ㅍㅣㅇㅍㅇ</text>
+    <div class="main_body">
+      <nav class="nav">
+        <a class="nav__link" data-spa href="/game">Game</a>
+        <a class="nav__link" data-spa href="/chat">Chat</a>
+        <a class="nav__link" data-spa href="/friends">Friends</a>
+        <a class="nav__link" data-spa href="/mypage">Mypage</a>
+      </nav>
+      <div id="app">
+        <div class="contentsContainer"></div>
+        <img id="headphoneImg" src="static/public/headphones.png" />
+      </div>
+    </div>
+    <script type="module" src="/static/js/route.js"></script>
+    <script type="text/javascript" src="/static/js/loginEvent.js"></script>
+  </body>
+</html>
