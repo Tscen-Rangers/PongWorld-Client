@@ -1,25 +1,71 @@
-.gameBody {
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 1)
-  );
-  height: 72%;
-  width: 75%;
-  margin-top: 2%;
-  margin-left: 6%;
-  border-radius: 10px;
-  padding: 1.5%;
-  border: solid;
-  border-width: 5px;
-  border-color: white;
-  filter: blur(2px);
+#gamepageTitle {
+  text-align: center;
+  text-shadow: 1px 2.3px 2px grey;
+  font-size: 2.6rem;
+  /* background-color: blue; */
 }
 
-#headphoneImg {
-  width: 2.5%;
+.usersRankBody {
+  display: flex;
+  flex: 1.1;
+  flex-direction: row;
+  /* background-color: blueviolet; */
+}
+
+.usersRank {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.38);
+  border-radius: 20px;
+  flex: 1;
+  margin: 2%;
+  position: relative;
+}
+
+.usersHistoryBody {
+  display: flex;
+  flex: 1.5;
+  flex-direction: column;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.38);
+  padding: 10px;
+}
+
+.playgameDiv {
+  display: flex;
+  flex: 0.5;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 2%;
+}
+
+.playgameButton {
+  font-size: 2rem;
+  padding: 10px;
+  border-radius: 25px;
+}
+
+.playgameButton:hover {
+  /* background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: inset grey 0px 1px 3px 1px; */
+  color: grey;
+}
+
+#moreImg {
+  display: flex;
+  align-self: center;
+  width: 6%;
+  opacity: 0.5;
+}
+
+.starImg {
   position: absolute;
-  /* background-color: red; */
-  bottom: 3%;
-  right: 2%;
+  top: -16px;
+  left: -15px;
+}
+
+.usersHistory {
+  display: flex;
+  flex: 1;
+  padding: 10px;
+  align-items: center;
 }

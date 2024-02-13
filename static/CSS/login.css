@@ -2,48 +2,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); /* translate와 rotateX 결합 */
   transition: 0.3s;
   width: calc(40dvh + 30dvw);
-}
-
-#loginHeaderContainer {
-  position: absolute;
-  top: 10dvh;
-  left: 10dvw;
-  z-index: 1;
-}
-
-#loginHeaderContainer header {
-  font-size: 120px;
-}
-
-#loginHeaderContainer p {
-}
-
-#loginBtn {
-  display: flex;
-  border-radius: 10px;
-  position: absolute;
-  bottom: 40px;
-  right: 40px;
-  width: 240px;
-  height: 62px;
-  justify-content: center;
-  align-items: center;
-  background-image: linear-gradient(
-    rgba(255, 255, 255, 0.535),
-    rgb(83, 83, 83),
-    rgba(255, 255, 255, 0.535)
-  );
-  color: #aaaaaa;
-  font-size: 30px;
-  font-weight: bold;
-  transition: 0.5s;
-  backdrop-filter: blur(3px);
-}
-
-#loginBtn:hover {
-  color: white;
-  box-shadow: 0 0 20px 3px white;
 }

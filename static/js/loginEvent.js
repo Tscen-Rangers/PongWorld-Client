@@ -1,4 +1,3 @@
-// ----------------------- 로그인 페이지 마우스에 따라 탁구채 움직임 ---------------------------------
 const mouseMove = e => {
   // 마우스 좌표값 가져오기
   let mousePageX = e.pageX;
@@ -29,7 +28,12 @@ const mouseMove = e => {
     'deg) rotateY(' +
     -softPageX +
     'deg)';
+
+  gsap.to('.mouse__cursor', {
+    duration: 0.3,
+    left: mousePageX - 50,
+    top: mousePageY - 50,
+  });
 };
 
 window.addEventListener('mousemove', mouseMove);
-// ----------------------- 로그인 페이지 마우스에 따라 탁구채 움직임 ---------------------------------
