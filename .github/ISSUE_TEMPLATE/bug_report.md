@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: "\U0001F47B Feature Request, ✏️ Todo"
+labels: "\U0001F608 bug"
 assignees: heeeete
 
 ---
