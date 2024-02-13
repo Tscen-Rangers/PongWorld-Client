@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: "✏️ Todo"
+labels: "\U0001F47B Feature Request, ✏️ Todo"
 assignees: heeeete
 
 ---
