@@ -14,9 +14,9 @@ export default class extends AbstractView {
 				<p>|  Welcome to the Pong World !</p>
 			</div>
 			<img id="stickImg" src="/static/public/stick.png" />
-			<div id="loginBtn" onclick="location.href='/game'"
-				<p>42 Login</p>
-			</div>
+			<a id="loginBtn" href="/game" data-spa >
+				42 Login
+			</a>
 		`;
   }
 }

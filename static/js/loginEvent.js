@@ -1,5 +1,6 @@
 // ----------------------- 로그인 페이지 마우스에 따라 탁구채 움직임 ---------------------------------
 const mouseMove = e => {
+  if (!document.querySelector('#stickImg')) return;
   // 마우스 좌표값 가져오기
   let mousePageX = e.pageX;
   let mousePageY = e.pageY;

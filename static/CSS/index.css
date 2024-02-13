@@ -42,6 +42,7 @@ body {
   font-size: 1.2rem;
   padding-left: 1.2%;
   padding-top: 1%;
+  display: none;
 }
 .main_body {
   display: flex;
@@ -49,7 +50,7 @@ body {
   flex-direction: row;
 }
 .nav {
-  display: flex;
+  display: none;
   flex-direction: column;
   padding: 3% 2%;
 }
