@@ -86,8 +86,11 @@ const router = async () => {
   // 일치하는 route에서 인스턴스 생성
 
   const view = new match.route.view(getParams(match));
-
-  document.querySelector('.contentsContainer').innerHTML = await view.getHtml();
+  if (location.pathname === '/')
+    document.querySelector('#app').innerHTML = await view.getHtml();
+  else
+    document.querySelector('.contentsContainer').innerHTML =
+      await view.getHtml();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
