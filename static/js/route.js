@@ -78,8 +78,10 @@ const navigateTo = url => {
 const router = async () => {
   const navBar = document.querySelector('.nav');
   const mainTitle = document.querySelector('#main_title');
+  const headphone = document.querySelector('#headphoneImg');
   navBar.style.display = location.pathname === '/' ? 'none' : 'block';
   mainTitle.style.display = location.pathname === '/' ? 'none' : 'block';
+  headphone.style.display = location.pathname === '/' ? 'none' : 'block';
 
   const potentialMatches = routes.map(route => {
     return {
@@ -102,26 +104,7 @@ const router = async () => {
   // 일치하는 route에서 인스턴스 생성
 
   const view = new match.route.view(getParams(match));
-  if (location.pathname === '/')
-    document.querySelector('#app').innerHTML = await view.getHtml();
-  else {
-    document.querySelector(
-      '#app',
-    ).innerHTML = `<div class="contentsContainer"></div>
-    <a href="/" data-spa>
-      <img id="headphoneImg" src="static/public/headphones.png" />
-    </a>
-    `;
-    document.querySelector('.contentsContainer').innerHTML =
-      await view.getHtml();
-  }
-  if (
-    location.pathname === '/friends/search' ||
-    location.pathname === '/friends/blocked' ||
-    location.pathname === '/friends/request'
-  )
-    document.querySelector('.friendsContainer').innerHTML =
-      await view.getHtml();
+  document.querySelector('#app').innerHTML = await view.getHtml();
 };
 
 document.addEventListener('DOMContentLoaded', () => {

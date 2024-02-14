@@ -111,6 +111,7 @@ img {
   position: absolute;
   bottom: 3%;
   right: 2%;
+  display: none;
 }
 
 .modalContainer {
