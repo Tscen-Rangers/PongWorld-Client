@@ -22,13 +22,31 @@
       </nav>
       <div id="app"></div>
     </div>
-    <!-- <div class="modalContainer">
-      <div class="modal"></div>
-    </div> -->
+    <div class="modalContainer">
+      <div class="modal">
+        <div style="padding: 20px 0"><p>Background music sound</p></div>
+        <div id="backgroundMusicVolumeContainer">
+          <input id="backgroundMusicVolume" min="0" max="100" type="range" />
+        </div>
+        <p id="musicName">커닝시티</p>
+        <div class="musicControls">
+          <img id="musicPrev" src="/public/left.svg" alt="" />
+          <img id="musicPlay" src="/public/play.svg" alt="" />
+          <img id="musicStop" src="/public/stop.svg" alt="" />
+          <img
+            id="musicNext"
+            src="/public/left.svg"
+            style="transform: rotate(180deg)"
+            alt="" />
+        </div>
+        <audio id="musicPlayer" src="/public/커닝시티.mp3" volume="50"></audio>
+      </div>
+    </div>
     <img id="headphoneImg" src="/public/headphones.png" />
     <script type="module" src="/js/route.js"></script>
     <script
       type="text/javascript"
       src="/js/pages/loginPage/loginEvent.js"></script>
+    <script type="module" src="/js/musicSetting.js"></script>
   </body>
 </html>
