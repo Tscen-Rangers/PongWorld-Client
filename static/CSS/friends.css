@@ -1,0 +1,26 @@
+#friendspageTitle {
+  padding-left: 2%;
+  text-shadow: 1px 2.3px 2px grey;
+  font-size: 2.6rem;
+}
+
+.friends_nav {
+  padding: 2%;
+  margin: 1%;
+  margin-left: 0;
+}
+
+.friends_nav__link {
+  text-decoration: none;
+  padding: 0.5% 1.5%;
+  border-radius: 20px;
+  color: white;
+  margin-right: 1%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px grey;
+}
+
+.friends_nav__link:hover {
+  background-color: rgba(111, 111, 111, 0.38);
+}

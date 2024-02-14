@@ -6,6 +6,9 @@ import Game from './views/Game.js';
 import Friends from './views/Friends.js';
 import Mypage from './views/Mypage.js';
 import Chat from './views/Chat.js';
+import SearchFriends from './views/SearchFriends.js';
+import Blocked from './views/Blocked.js';
+import FriendRequest from './views/FriendRequest.js';
 
 const routes = [
   {
@@ -19,6 +22,18 @@ const routes = [
   {
     path: '/friends',
     view: Friends,
+  },
+  {
+    path: '/friends/search',
+    view: SearchFriends,
+  },
+  {
+    path: '/friends/blocked',
+    view: Blocked,
+  },
+  {
+    path: '/friends/request',
+    view: FriendRequest,
   },
   {
     path: '/chat',
@@ -93,15 +108,22 @@ const router = async () => {
     document.querySelector(
       '#app',
     ).innerHTML = `<div class="contentsContainer"></div>
-    <img id="headphoneImg" src="static/public/headphones.png" />`;
+      <img id="headphoneImg" src="static/public/headphones.png" />`;
     document.querySelector('.contentsContainer').innerHTML =
       await view.getHtml();
   }
+  if (
+    location.pathname === '/friends/search' ||
+    location.pathname === '/friends/blocked' ||
+    location.pathname === '/friends/request'
+  )
+    document.querySelector('.friendsContainer').innerHTML =
+      await view.getHtml();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', e => {
-    if (e.target.matches('[data-spa]')) {
+    if (e.target.closest('[data-spa]')) {
       e.preventDefault();
       navigateTo(e.target.href);
     }
