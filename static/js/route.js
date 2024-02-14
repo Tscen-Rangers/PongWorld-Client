@@ -108,7 +108,10 @@ const router = async () => {
     document.querySelector(
       '#app',
     ).innerHTML = `<div class="contentsContainer"></div>
-      <img id="headphoneImg" src="static/public/headphones.png" />`;
+    <a href="/" data-spa>
+      <img id="headphoneImg" src="static/public/headphones.png" />
+    </a>
+    `;
     document.querySelector('.contentsContainer').innerHTML =
       await view.getHtml();
   }
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', e => {
     if (e.target.closest('[data-spa]')) {
       e.preventDefault();
-      navigateTo(e.target.href);
+      navigateTo(e.target.closest('[data-spa]').href);
     }
   });
   router();
