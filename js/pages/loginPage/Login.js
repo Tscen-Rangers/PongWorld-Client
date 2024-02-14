@@ -1,4 +1,4 @@
-import AbstractView from './AbstractView.js';
+import AbstractView from '../../AbstractView.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -13,7 +13,7 @@ export default class extends AbstractView {
 				<header id="loginHeader">PONG</br>WORLD</header>
 				<p>|  Welcome to the Pong World !</p>
 			</div>
-			<img id="stickImg" src="/static/public/stick.png" />
+			<img id="stickImg" src="/public/stick.png" />
 			<a id="loginBtn" href="/game" data-spa >
 				42 Login
 			</a>

@@ -1,14 +1,12 @@
-import Login from './views/Login.js';
-import Post from './views/Post.js';
-import Setting from './views/Setting.js';
-import PostView from './views/PostView.js';
-import Game from './views/Game.js';
-import Friends from './views/Friends.js';
-import Mypage from './views/Mypage.js';
-import Chat from './views/Chat.js';
-import SearchFriends from './views/SearchFriends.js';
-import Blocked from './views/Blocked.js';
-import FriendRequest from './views/FriendRequest.js';
+import Login from './pages/loginPage/Login.js';
+import Setting from './pages/settingPage/Setting.js';
+import Game from './pages/gamePage/Game.js';
+import Friends from './pages/friendPage/Friends.js';
+import Mypage from './pages/myPage/Mypage.js';
+import Chat from './pages/chatPage/Chat.js';
+import SearchFriends from './pages/friendPage/SearchFriends.js';
+import Blocked from './pages/friendPage/Blocked.js';
+import FriendRequest from './pages/friendPage/FriendRequest.js';
 
 const routes = [
   {
@@ -43,14 +41,14 @@ const routes = [
     path: '/mypage',
     view: Mypage,
   },
-  {
-    path: '/post',
-    view: Post,
-  },
-  {
-    path: '/post/:id',
-    view: PostView,
-  },
+  // {
+  //   path: '/post',
+  //   view: Post,
+  // },
+  // {
+  //   path: '/post/:id',
+  //   view: PostView,
+  // },
   {
     path: '/setting',
     view: Setting,
