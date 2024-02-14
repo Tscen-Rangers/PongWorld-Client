@@ -38,6 +38,10 @@ body {
   user-select: none;
 }
 
+a {
+  cursor: url(/static/public/mouseCursor.png) 8 8, auto;
+}
+
 #main_title {
   font-size: 1.2rem;
   padding-left: 1.2%;
@@ -57,11 +61,18 @@ body {
 .nav__link {
   display: flex;
   text-decoration: none;
+  align-items: center;
   color: white;
   font-size: 2.1rem;
   font-weight: 600;
-  margin: 10px;
+  margin-block: 10px;
   padding: 7px;
+  padding-right: 50px;
+  border-radius: 7px;
+
+  &:hover {
+    box-shadow: 0 0 10px 2px;
+  }
 }
 
 #app {
@@ -98,7 +109,25 @@ img {
 #headphoneImg {
   width: 2.5%;
   position: absolute;
-  /* background-color: red; */
   bottom: 3%;
   right: 2%;
+}
+
+.modalContainer {
+  position: absolute;
+  display: flex;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.592);
+  width: 100dvw;
+  height: 100dvh;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: white;
+  width: 30dvw;
+  height: 30dvw;
 }
