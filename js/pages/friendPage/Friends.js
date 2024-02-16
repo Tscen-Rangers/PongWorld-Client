@@ -8,6 +8,26 @@ export default class extends AbstractView {
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
+    //임시 데이터
+    const users = [
+      {
+        name: 'jimpark',
+        state: false,
+      },
+      {
+        name: 'huipark',
+        state: true,
+      },
+      {
+        name: 'hwankim',
+        state: true,
+      },
+      {
+        name: 'jihyeole',
+        state: false,
+      },
+    ];
+
     return `
     <div class="contentsContainer">
     <div style="padding:10px 20px; height:100%;">
@@ -27,18 +47,31 @@ export default class extends AbstractView {
     </div>
     </div>
     <div class="friendListContainer">
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <img class="threedotsImg" src="/public/threedots.png"/>
-    </div>
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <img class="threedotsImg" src="/public/threedots.png"/>
-    </div> 
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <img class="threedotsImg" src="/public/threedots.png"/>
-    </div>
+    ${users
+      .map(
+        (user, index) => `
+        <div class="friendList" key=${index}>
+        <div class="friendProfile">
+          <div class="friendProfileImg"> ${
+            user.state
+              ? '<img class="onlineImg" src="/public/online.png"/>'
+              : ''
+          }</div> 
+          <div class="friendname">${user.name}</div>
+        </div>
+        ${
+          user.state
+            ? '<img class="battlebuttonImg" src="/public/battleButton.png"/><img class="chatbuttonImg" src="/public/chatButton.png"/>'
+            : ''
+        }
+        <div class="option">
+        <img class="threedotsImg" src="/public/threedots.png" />
+        <div class="optionModal"></div>
+        </div>
+      </div>
+  `,
+      )
+      .join('')}
     </div>
     </div>
     </div>
