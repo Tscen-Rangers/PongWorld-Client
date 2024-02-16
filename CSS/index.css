@@ -6,8 +6,12 @@ html {
   width: 100dvw;
   height: 100dvh;
   color: white;
-  cursor: url(/static/public/mouseCursor.png) 8 8, auto;
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
   overflow: hidden;
+}
+
+.nav__link {
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
 }
 
 body {

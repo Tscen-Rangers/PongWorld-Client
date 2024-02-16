@@ -41,9 +41,11 @@
   font-weight: bold;
   transition: 0.5s;
   backdrop-filter: blur(3px);
+  text-decoration: none;
 }
 
 #loginBtn:hover {
   color: white;
   box-shadow: 0 0 20px 3px white;
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
 }
