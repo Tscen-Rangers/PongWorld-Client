@@ -86,12 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('headphoneImg')
     .addEventListener('click', function () {
-      document.querySelector('.modalContainer').style.display = 'block';
+      document.querySelector('.modalContainer').classList.add('show');
     });
   document
     .querySelector('.modalContainer')
     .addEventListener('click', function (e) {
-      if (e.target === this)
-        document.querySelector('.modalContainer').style.display = 'none';
+      if (e.target === this) g;
+      document.querySelector('.modalContainer').classList.remove('show');
     });
 });
