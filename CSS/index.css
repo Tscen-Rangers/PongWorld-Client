@@ -6,8 +6,12 @@ html {
   width: 100dvw;
   height: 100dvh;
   color: white;
-  cursor: url(/static/public/mouseCursor.png) 8 8, auto;
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
   overflow: hidden;
+}
+
+.nav__link {
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
 }
 
 body {
@@ -69,10 +73,16 @@ a {
   padding: 7px;
   padding-right: 50px;
   border-radius: 7px;
+  transition: 0.2s;
 
   &:hover {
     box-shadow: 0 0 10px 2px;
   }
+}
+
+.nav__link.active {
+  background-color: rgb(40, 40, 40);
+  box-shadow: 0 0 10px 2px;
 }
 
 #app {
@@ -107,11 +117,19 @@ img {
 }
 
 #headphoneImg {
-  width: 2.5%;
+  width: 32px;
+  padding: 8px;
+  border-radius: 50%;
   position: absolute;
   bottom: 3%;
   right: 2%;
   display: none;
+  color: rgb(255, 255, 255);
+  transition: 0.5s;
+
+  &:hover {
+    background-color: rgb(40, 40, 40);
+  }
 }
 
 .modalContainer {
@@ -122,7 +140,14 @@ img {
   background-color: rgba(0, 0, 0, 0.592);
   width: 100dvw;
   height: 100dvh;
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.modalContainer.show {
+  visibility: visible;
+  opacity: 1;
 }
 
 .modal {
@@ -135,8 +160,8 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 35dvw;
-  height: 25dvw;
+  width: 400px;
+  height: 300px;
   border-radius: 5px;
   font-size: 25px;
   font-weight: bold;
