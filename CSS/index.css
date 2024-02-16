@@ -69,10 +69,16 @@ a {
   padding: 7px;
   padding-right: 50px;
   border-radius: 7px;
+  transition: 0.2s;
 
   &:hover {
     box-shadow: 0 0 10px 2px;
   }
+}
+
+.nav__link.active {
+  background-color: rgb(40, 40, 40);
+  box-shadow: 0 0 10px 2px;
 }
 
 #app {

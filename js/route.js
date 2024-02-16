@@ -11,6 +11,12 @@ import FriendRequest from './pages/friendPage/FriendRequest.js';
 const navBar = document.querySelector('.nav');
 const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
+const Navs = Array.from(document.querySelectorAll('.nav__link'));
+
+const gameNav = navBar.children[0];
+const chatNav = navBar.children[1];
+const friendNav = navBar.children[2];
+const settingNav = navBar.children[3];
 
 const routes = [
   {
@@ -59,6 +65,13 @@ const routes = [
   },
 ];
 
+const seletedNavStyle = path => {
+  Navs.map(e => {
+    if (e.pathname === path) e.classList.add('active');
+    else e.classList.remove('active');
+  });
+};
+
 const pathToRegex = path =>
   new RegExp('^' + path.replace(/\//g, '\\/').replace(/:\w+/g, '(.+)') + '$');
 
@@ -100,7 +113,7 @@ const router = async () => {
     };
   }
 
-  console.log(match.route.path);
+  seletedNavStyle(match.route.path);
 
   // 일치하는 route에서 인스턴스 생성
   const view = new match.route.view(getParams(match));
