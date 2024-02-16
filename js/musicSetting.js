@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .querySelector('.modalContainer')
     .addEventListener('click', function (e) {
-      if (e.target === this) g;
-      document.querySelector('.modalContainer').classList.remove('show');
+      if (e.target === this) document.querySelect;
+      or('.modalContainer').classList.remove('show');
     });
 });
