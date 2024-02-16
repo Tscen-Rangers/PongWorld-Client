@@ -107,11 +107,19 @@ img {
 }
 
 #headphoneImg {
-  width: 2.5%;
+  width: 32px;
+  padding: 8px;
+  border-radius: 50%;
   position: absolute;
   bottom: 3%;
   right: 2%;
   display: none;
+  color: rgb(255, 255, 255);
+  transition: 0.5s;
+
+  &:hover {
+    background-color: rgb(40, 40, 40);
+  }
 }
 
 .modalContainer {
