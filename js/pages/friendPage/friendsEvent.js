@@ -1,20 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const threedotsImgs = document.querySelectorAll('.threedotsImg');
+  const battlePlayer = document.querySelector('.battlePlayer');
+  const battleCancelBtn = document.querySelector('.battleCancelBtn');
+  const confirmModal = document.querySelector('.confirmModalContainer');
+  const confirmModalMsg = document.querySelector('.confirmModalMsg');
+  const confirmBtn = document.querySelector('.confirmBtn');
+  const cancelBtn = document.querySelector('.cancelBtn');
 
-  threedotsImgs.forEach(threedotsImg => {
-    threedotsImg.addEventListener('click', event => {
-      const optionModal = event.currentTarget.nextElementSibling;
+  document.body.addEventListener('click', e => {
+    const battleModal = document.querySelector('.battleModalContainer');
+    const threedotsImg = e.target.closest('.friendsThreedotsImg');
+    const battleButtonImg = e.target.closest('.battlebuttonImg');
+    const optionBtn = e.target.closest('.optionBtn');
 
-      // 클릭된 이미지의 모달을 토글
+    if (threedotsImg) {
+      const optionModal = threedotsImg.nextElementSibling;
       optionModal.classList.toggle('active');
-
-      // 기존에 열려있는 모달이 있다면 숨김 처리
       const activeModals = document.querySelectorAll('.optionModal.active');
       activeModals.forEach(modal => {
         if (modal !== optionModal) {
           modal.classList.remove('active');
         }
       });
-    });
+    }
+
+    if (battleButtonImg) {
+      const user = battleButtonImg.dataset.user;
+      battlePlayer.innerText = `Waiting for a response from ${user}`;
+      battleModal.classList.add('active');
+    }
+    if (optionBtn) {
+      const selected = optionBtn.innerText;
+      const user = optionBtn.dataset.user;
+      confirmModalMsg.innerHTML = `Are you sure <br/> you want to ${selected} ${user}?`;
+      confirmModal.classList.add('active');
+    }
+  });
+  battleCancelBtn.addEventListener('click', () => {
+    const battleModal = document.querySelector('.battleModalContainer');
+    battleModal.classList.remove('active');
+  });
+  cancelBtn.addEventListener('click', () => {
+    confirmModal.classList.remove('active');
   });
 });
