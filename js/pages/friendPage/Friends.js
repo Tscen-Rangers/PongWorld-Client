@@ -17,6 +17,13 @@ const users = [
     state: false,
   },
 ];
+const battlePlayer = document.querySelector('.battlePlayer');
+const battleCancelBtn = document.querySelector('.battleCancelBtn');
+const confirmModal = document.querySelector('.confirmModalContainer');
+const confirmModalMsg = document.querySelector('.confirmModalMsg');
+const confirmBtn = document.querySelector('.confirmBtn');
+const cancelBtn = document.querySelector('.cancelBtn');
+const battleModal = document.querySelector('.battleModalContainer');
 
 export default class extends AbstractView {
   constructor(params) {
@@ -80,5 +87,56 @@ export default class extends AbstractView {
     </div>
     </div>
 		`;
+  }
+  afterRender() {
+    const threedotsImgs = document.querySelectorAll('.friendsThreedotsImg');
+    threedotsImgs.forEach(threedotsImg => {
+      threedotsImg.addEventListener('click', e => {
+        const optionModal = e.target.nextElementSibling;
+        optionModal.classList.toggle('active');
+        const activeModals = document.querySelectorAll('.optionModal.active');
+        activeModals.forEach(modal => {
+          if (modal !== optionModal) {
+            modal.classList.remove('active');
+          }
+        });
+      });
+    });
+    document.body.addEventListener('click', e => {
+      const clickedElement = e.target;
+      // 클릭한 요소가 모달이 아니라면 활성화된 모달을 닫기
+      if (
+        !clickedElement.closest('.optionModal') &&
+        !clickedElement.closest('.friendsThreedotsImg')
+      ) {
+        const activeModals = document.querySelectorAll('.optionModal.active');
+        activeModals.forEach(modal => {
+          modal.classList.remove('active');
+        });
+      }
+    });
+    const battleButtonImgs = document.querySelectorAll('.battlebuttonImg');
+    battleButtonImgs.forEach(battleButtonImg => {
+      battleButtonImg.addEventListener('click', e => {
+        const user = e.target.dataset.user;
+        battlePlayer.innerText = `Waiting for a response from ${user}`;
+        battleModal.classList.add('active');
+      });
+    });
+    battleCancelBtn.addEventListener('click', () => {
+      battleModal.classList.remove('active');
+    });
+    const optionBtns = document.querySelectorAll('.optionBtn');
+    optionBtns.forEach(optionBtn => {
+      optionBtn.addEventListener('click', e => {
+        const selected = e.target.innerText;
+        const user = e.target.dataset.user;
+        confirmModalMsg.innerHTML = `Are you sure <br/> you want to ${selected} ${user}?`;
+        confirmModal.classList.add('active');
+      });
+    });
+    cancelBtn.addEventListener('click', () => {
+      confirmModal.classList.remove('active');
+    });
   }
 }
