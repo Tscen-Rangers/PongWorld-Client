@@ -1,0 +1,180 @@
+.chatContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  /* 바꿔라 김현지 */
+  padding: 25px 40px;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.chatLeftContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 0.35;
+}
+
+.chatRightContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex: 0.6;
+  background-color: white;
+}
+
+.chatRoom {
+  background-color: black;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.chatLeftContainer > h1 {
+  text-shadow: 0 3px 2px rgb(151, 151, 151);
+  font-size: 2.3rem;
+}
+
+.chatNav {
+  display: flex;
+  /* 바꿔라 김현지 */
+  padding: 17px;
+  margin-left: -17px;
+  font-weight: bold;
+}
+.chatNav > * {
+  display: flex;
+  text-decoration: none;
+  color: white;
+  padding: 6px 20px;
+  align-items: center;
+  margin-right: 12px;
+  font-size: 24px;
+  transition: 0.3s;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: rgb(185, 185, 185);
+  }
+}
+
+.chatUsersContainer {
+  padding: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  border-radius: 10px;
+  margin-top: 20px;
+  backdrop-filter: blur(3px); /* 요소 뒤에 있는 배경에 블러 효과 적용 */
+}
+
+.chatUsersBlur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.598);
+  border-radius: 10px;
+  filter: blur(3px);
+}
+
+.chatUser {
+  z-index: 100;
+}
+
+.formContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#chatSearchUserForm {
+  width: 100%;
+  background-color: white;
+  padding-right: 40px;
+  padding-left: 15px;
+  border-radius: 10px;
+}
+
+#chatSearchUserInput {
+  border-radius: 10px;
+  width: 100%;
+  height: 2.3rem;
+  font-size: 1.5rem;
+
+  &::placeholder {
+    color: rgb(201, 201, 201);
+  }
+}
+
+#searchUserImage {
+  position: absolute;
+  right: 5px;
+  width: 2rem;
+  color: rgb(160, 160, 160);
+}
+
+#chattingForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 10px;
+  border-color: #e1e1e1;
+}
+
+#chattingInput {
+  width: 100%;
+  border-radius: 10px;
+  padding: 0 10px;
+  height: 2.3rem;
+  font-size: 1rem;
+}
+
+#chattingSubmitImage {
+  /* display: none; */
+  margin-right: 10px;
+}
+
+.chatUserProfile {
+  display: flex;
+  position: relative;
+  margin: 2px 0;
+  padding: 10px 7px;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+}
+
+.chatUserProfileBlur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fdfdff8d;
+  border-radius: 10px;
+  bottom: 0;
+  filter: blur(3px);
+}
+
+.chatUserInfo {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.chatUserImage {
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+}
+
+.chatUserName {
+  font-size: 1.3rem;
+  color: #797979;
+  padding: 0 15px;
+}

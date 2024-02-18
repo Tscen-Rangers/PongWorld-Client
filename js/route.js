@@ -4,6 +4,7 @@ import Game from './pages/gamePage/Game.js';
 import Friends from './pages/friendPage/Friends.js';
 import Mypage from './pages/myPage/Mypage.js';
 import Chat from './pages/chatPage/Chat.js';
+import DirectChat from './pages/chatPage/DirectChat.js';
 import SearchFriends from './pages/friendPage/SearchFriends.js';
 import Blocked from './pages/friendPage/Blocked.js';
 import FriendRequest from './pages/friendPage/FriendRequest.js';
@@ -12,11 +13,6 @@ const navBar = document.querySelector('.nav');
 const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
-
-const gameNav = navBar.children[0];
-const chatNav = navBar.children[1];
-const friendNav = navBar.children[2];
-const settingNav = navBar.children[3];
 
 const routes = [
   {
@@ -48,6 +44,10 @@ const routes = [
     view: Chat,
   },
   {
+    path: '/chat/direct',
+    view: DirectChat,
+  },
+  {
     path: '/mypage',
     view: Mypage,
   },
@@ -65,9 +65,11 @@ const routes = [
   },
 ];
 
+// 현재 선택된 Nav메뉴 스타일 활성화
 const seletedNavStyle = path => {
-  Navs.map(e => {
-    if (e.pathname === path) e.classList.add('active');
+  Navs.forEach(e => {
+    //startWith : 문자열이 특정 문자열로 시작하는지 검사
+    if (path.startsWith(e.pathname)) e.classList.add('active');
     else e.classList.remove('active');
   });
 };
@@ -118,6 +120,7 @@ const router = async () => {
   // 일치하는 route에서 인스턴스 생성
   const view = new match.route.view(getParams(match));
   document.querySelector('#app').innerHTML = await view.getHtml();
+  view.afterRender();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
