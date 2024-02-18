@@ -13,4 +13,6 @@ export default class {
   async getHtml() {
     return '';
   }
+
+  afterRender() {}
 }
