@@ -29,15 +29,15 @@ export default class extends AbstractView {
     <div class="friendListContainer">
     <div class="friendList">
     <div class="friendProfile"> </div>
-     <img class="threedotsImg" src="/public/threedots.png"/>
+     <img class="searchThreedotsImg" src="/public/threedots.png"/>
     </div>
     <div class="friendList">
     <div class="friendProfile"> </div>
-     <img class="threedotsImg" src="/public/threedots.png"/>
+     <img class="searchThreedotsImg" src="/public/threedots.png"/>
     </div> 
     <div class="friendList">
     <div class="friendProfile"> </div>
-     <img class="threedotsImg" src="/public/threedots.png"/>
+     <img class="searchThreedotsImg" src="/public/threedots.png"/>
     </div>
     </div>
     </div>

@@ -1,4 +1,22 @@
 import AbstractView from '../../AbstractView.js';
+const users = [
+  {
+    name: 'jimpark',
+    state: false,
+  },
+  {
+    name: 'huipark',
+    state: true,
+  },
+  {
+    name: 'hwankim',
+    state: true,
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+  },
+];
 
 export default class extends AbstractView {
   constructor(params) {
@@ -9,24 +27,6 @@ export default class extends AbstractView {
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
     //임시 데이터
-    const users = [
-      {
-        name: 'jimpark',
-        state: false,
-      },
-      {
-        name: 'huipark',
-        state: true,
-      },
-      {
-        name: 'hwankim',
-        state: true,
-      },
-      {
-        name: 'jihyeole',
-        state: false,
-      },
-    ];
 
     return `
     <div class="contentsContainer">
@@ -61,14 +61,18 @@ export default class extends AbstractView {
         </div>
         ${
           user.state
-            ? '<img class="battlebuttonImg" src="/public/battleButton.png"/><img class="chatbuttonImg" src="/public/chatButton.png"/>'
+            ? `<img class="battlebuttonImg" src="/public/battleButton.png" data-user="${user.name}"/><img class="chatbuttonImg" src="/public/chatButton.png"/>`
             : ''
         }
-        <div class="option">
-        <img class="threedotsImg" src="/public/threedots.png" />
-        <div class="optionModal"></div>
+      <div class="option">
+        <img class="friendsThreedotsImg" src="/public/threedots.png" />
+        <div class="optionModal">
+          <div class="optionBtn" data-user="${user.name}">block</div>
+          <div class="optionBtn" data-user="${user.name}">delete</div>
+          <div class="optionProfileBtn" data-user="${user.name}">profile</div>
         </div>
       </div>
+    </div>
   `,
       )
       .join('')}

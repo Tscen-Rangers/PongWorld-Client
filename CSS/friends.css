@@ -59,6 +59,7 @@
   font-size: 1rem;
   background-color: transparent;
   color: grey;
+  align-self: center;
 }
 
 .searchBar svg {
@@ -113,7 +114,8 @@
   font-size: 1.3rem;
 }
 
-.threedotsImg {
+.friendsThreedotsImg,
+.searchThreedotsImg {
   align-self: center;
   width: 28px;
   height: auto;
@@ -186,18 +188,31 @@
 
 .optionModal {
   display: flex;
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   background-color: white;
   z-index: 3;
-  border-radius: 15px;
+  border-radius: 18px;
   position: absolute;
-  bottom: -56px;
-  right: -70px;
+  bottom: -87px;
+  right: -110px;
   border-top-left-radius: 0;
-  display: none;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: space-around;
+  visibility: hidden;
 }
 
 .optionModal.active {
-  display: block;
+  visibility: visible;
+}
+
+.optionBtn,
+.optionProfileBtn {
+  display: flex;
+  color: #676767;
+  font-size: 1.1rem;
+  /* background-color: pink; */
+  align-items: center;
+  justify-content: center;
 }
