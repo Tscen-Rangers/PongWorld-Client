@@ -1,5 +1,40 @@
 import AbstractView from '../../AbstractView.js';
 
+const users = [
+  {
+    name: 'junpark',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+  {
+    name: 'hacho',
+    state: true,
+  },
+];
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -10,7 +45,7 @@ export default class extends AbstractView {
   async getHtml() {
     return `
     <div class="contentsContainer">
-    <div style="padding:10px 20px; height:100%;">
+    <div class="friendContainer">
     <h1 id="friendspageTitle">Friends</h1>
     <div class="friendsHeader">
     <nav class="friends_nav">
@@ -27,21 +62,46 @@ export default class extends AbstractView {
     </div>
     </div>
     <div class="friendListContainer">
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <text class="blockText">unblock</text>
-    </div>
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <text class="blockText">unblock</text>
-    </div> 
-    <div class="friendList">
-    <div class="friendProfile"> </div>
-    <text class="blockText">unblock</text>
-    </div>
     </div>
     </div>
     </div>
 		`;
+  }
+
+  updateUserList() {
+    const friendListContainer = document.querySelector('.friendListContainer');
+    friendListContainer.innerHTML = `${users
+      .map(
+        (user, index) => `
+    <div class="friendList" key=${index}>
+      <div class="friendProfile">
+        <div class="friendProfileImg">
+        ${user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''}
+        </div>
+        <div class="friendname">${user.name}</div>
+      </div>
+      <text class="blockText" data-key="${index}">unblock</text>
+    </div>
+    `,
+      )
+      .join('')}`;
+    this.bindUserListEvents();
+  }
+
+  bindUserListEvents() {
+    // 이벤트 리스너를 여기서 바인딩
+    const blockBtns = document.querySelectorAll('.blockText');
+    blockBtns.forEach(blockBtn => {
+      blockBtn.addEventListener('click', e => {
+        const index = e.target.dataset.key;
+        users.splice(index, 1); // 상태 업데이트
+        console.log(users);
+        this.updateUserList();
+      });
+    });
+  }
+
+  afterRender() {
+    this.updateUserList();
   }
 }
