@@ -6,12 +6,12 @@ html {
   width: 100dvw;
   height: 100dvh;
   color: white;
-  cursor: url(/public/mouseCursor.png) 8 8, auto;
   overflow: hidden;
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
 }
 
 .nav__link {
-  cursor: url(/public/mouseCursor.png) 8 8, auto;
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
 }
 
 input {
@@ -144,7 +144,7 @@ a {
   }
 }
 
-.modalContainer {
+.musicModalContainer {
   position: absolute;
   display: flex;
   top: 0;
@@ -157,12 +157,12 @@ a {
   transition: 0.5s;
 }
 
-.modalContainer.show {
+.musicModalContainer.show {
   visibility: visible;
   opacity: 1;
 }
 
-.modal {
+.musicModal {
   position: absolute;
   display: flex;
   background-color: rgb(223, 223, 223);
@@ -179,7 +179,7 @@ a {
   font-weight: bold;
 }
 
-.modal div p {
+.musicModal div p {
   text-shadow: 0 5px 5px rgb(183, 183, 183);
 }
 
@@ -338,4 +338,128 @@ a {
 .cancelRequestModalBtn,
 .closeRequestModalBtn {
   font-size: 1rem;
+}
+
+#gameOptionModalContainer {
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.592);
+  width: 100dvw;
+  height: 100dvh;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+#gameOptionModalContainer.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#gameModal {
+  position: absolute;
+  display: flex;
+  background-color: rgb(223, 223, 223);
+  color: rgb(61, 61, 61);
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 300px;
+  border-radius: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  justify-content: center;
+}
+
+#controlsContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding-block: 10px;
+}
+
+#mouse,
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0 25px;
+  border-radius: 30px;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: rgb(184, 184, 184);
+  }
+
+  &:active {
+    background-color: rgb(60, 71, 74);
+  }
+}
+
+#keyboard.active {
+  background-color: rgb(184, 184, 184);
+}
+
+#mouse.active {
+  background-color: rgb(184, 184, 184);
+}
+
+#mouseImage {
+  transform: rotateZ(45deg);
+}
+
+#keyboardImage {
+}
+
+#modeContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  padding-block: 10px;
+}
+
+.mode {
+  padding: 15px 25px;
+  border-radius: 30px;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: rgb(184, 184, 184);
+  }
+
+  &:active {
+    background-color: rgb(60, 71, 74);
+  }
+}
+
+.mode.active {
+  background-color: rgb(184, 184, 184);
+}
+
+.optionExplanation {
+  color: rgb(184, 184, 184);
+  text-shadow: 2px 2px 2px grey;
+}
+
+#gameOptionNextBtn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 50%;
+  padding: 5px;
+
+  &:hover {
+    background-color: rgb(184, 184, 184);
+  }
+  &:active {
+    background-color: rgb(60, 71, 74);
+  }
 }
