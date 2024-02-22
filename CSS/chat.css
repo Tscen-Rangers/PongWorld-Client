@@ -1,3 +1,8 @@
+.chat__nav,
+.chatUserProfile {
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
+}
+
 .chatContainer {
   display: flex;
   width: 100%;
@@ -16,18 +21,23 @@
 
 .chatRightContainer {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: space-between;
   padding: 0 20px;
   flex: 0.6;
-  background-color: white;
 }
 
-.chatRoom {
-  background-color: black;
-  display: flex;
-  width: 100%;
-  height: 100%;
+.chatRightContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.598);
+  border-radius: 10px;
+  filter: blur(3px);
 }
 
 .chatLeftContainer > h1 {
@@ -69,7 +79,10 @@
   backdrop-filter: blur(3px); /* 요소 뒤에 있는 배경에 블러 효과 적용 */
 }
 
-.chatUsersBlur {
+/* userContainer blur처리 */
+.chatUsersContainer::before {
+  content: '';
+  z-index: -1;
   position: absolute;
   top: 0;
   left: 0;
@@ -84,7 +97,7 @@
   z-index: 100;
 }
 
-.formContainer {
+.chatSearchFormContainer {
   display: flex;
   align-items: center;
   position: relative;
@@ -117,6 +130,8 @@
 }
 
 #chattingForm {
+  margin-top: 10px;
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -124,6 +139,7 @@
   margin-bottom: 20px;
   border: 1px solid rgb(201, 201, 201);
   border-radius: 10px;
+  background-color: white;
   border-color: #e1e1e1;
 }
 
@@ -148,23 +164,114 @@
   justify-content: space-between;
   align-items: center;
   z-index: 1;
+  color: #797979;
+  transition: 0.3s;
 }
 
+/* chatUserProfile blur처리 */
 .chatUserProfileBlur {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   background-color: #fdfdff8d;
   border-radius: 10px;
-  bottom: 0;
   filter: blur(3px);
+  transition: 0.2s;
+}
+
+.outDirectChatRoomContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  padding: 5px;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.outDirectChatRoomContainer:hover {
+  background-color: rgb(198, 198, 198);
+}
+
+.outDirectChatRoom {
+  z-index: 1;
+  fill: #878787;
+  width: 1.3rem;
+  height: 1.3rem;
+  transform: translate(2px, 1px);
+}
+
+.directMsgImageContainer {
+  z-index: 1;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 5px;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.directMsgImageContainer:hover {
+  background-color: rgb(198, 198, 198);
+}
+
+.directMsgImageContainer:hover > .directMsgImage {
+  -webkit-animation: directMsgAnime 2s cubic-bezier(0.275, 0.005, 0.015, 0.99) 1;
+}
+
+@-webkit-keyframes directMsgAnime {
+  0% {
+    transform: translate(-1px, 1px) scale(1);
+  }
+  30% {
+    transform: translate(-10px, 5px) scale(1.3);
+  }
+  100% {
+    transform: translate(15px, -15px) scale(0.3);
+  }
+}
+
+.directMsgImage {
+  transform: translate(-1px, 1px);
+  transition: 1s;
+}
+
+.chatUserProfile.active {
+  color: white;
+}
+
+.chatUserProfile.active .outDirectChatRoom {
+  fill: white;
+}
+
+.chatUserProfile.active .chatUserProfileBlur {
+  background-color: #797979;
+}
+
+/* 1.chatUserProfile.active .directMsgPath {
+  fill: white;
+} */
+
+.chatUserProfile:hover > .chatUserProfileBlur {
+  background-color: #ababab;
 }
 
 .chatUserInfo {
   display: flex;
+  position: relative;
   align-items: center;
   z-index: 1;
+}
+
+.directOnlineUserImage {
+  position: absolute;
+  width: 10.34px;
+  z-index: 2;
+  bottom: -5px;
+  left: -5px;
 }
 
 .chatUserImage {
@@ -175,6 +282,56 @@
 
 .chatUserName {
   font-size: 1.3rem;
-  color: #797979;
   padding: 0 15px;
+}
+
+.chatRoom {
+  display: flex;
+  z-index: 1;
+  display: flex;
+  overflow: auto;
+  flex-direction: column;
+  height: 100%;
+}
+
+.friendChat,
+.myChat {
+  position: relative;
+  word-break: break-all;
+  max-width: fit-content; /* 내용에 딱 맞는 최대 너비 */
+  z-index: 1;
+  color: black;
+  background-color: white;
+  padding: 5px 10px;
+  margin-top: 10px;
+  margin-left: 20px;
+  border-radius: 5px;
+  max-width: 300px;
+}
+
+.myChat {
+  align-self: flex-end;
+  margin-right: 20px;
+  margin-left: 0px;
+}
+
+.friendChat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10px;
+  border-left: 20px solid white;
+  border-top: 0px solid transparent;
+  border-bottom: 10px solid transparent;
+  transform: rotateY(180deg);
+}
+
+.myChat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -10px;
+  border-left: 20px solid white;
+  border-top: 00px solid transparent;
+  border-bottom: 10px solid transparent;
 }

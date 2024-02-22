@@ -22,8 +22,9 @@
       </nav>
       <div id="app"></div>
     </div>
-    <div class="modalContainer">
-      <div class="modal">
+    <!-- ------------- 뮤직 모달 컨테이너 ------------- -->
+    <div class="musicModalContainer">
+      <div class="musicModal">
         <div style="padding: 20px 0"><p>Background music sound</p></div>
         <div id="backgroundMusicVolumeContainer">
           <input id="backgroundMusicVolume" min="0" max="100" type="range" />
@@ -41,7 +42,9 @@
         </div>
         <audio id="musicPlayer" src="/public/커닝시티.mp3" volume="50"></audio>
       </div>
+      <!-- -------------                   ------------- -->
     </div>
+    <!-- ------------- 배틀 모달 컨테이너 ------------- -->
     <div class="battleModalContainer">
       <div class="battleModal">
         <div class="battleMsg">
@@ -105,6 +108,7 @@
         <button class="battleCancelBtn">cancel request</button>
       </div>
     </div>
+    <!-- -------------                    ------------- -->
     <div class="confirmModalContainer">
       <div class="confirmModal">
         <div class="confirmModalMsg"></div>
@@ -113,6 +117,50 @@
           <button class="confirmBtn">yes</button>
         </div>
       </div>
+    </div>
+
+    <!-- ------------- 게임 옵션 모달 컨테이너 ------------- -->
+    <div id="gameOptionModalContainer">
+      <div id="gameModal">
+        <p class="optionExplanation">controls</p>
+        <div id="controlsContainer">
+          <div id="keyboard">
+            <svg id="keyboardImage" width="30" height="30" fill="none">
+              <path
+                d="M7.5 12.5H7.5125M10 17.5H10.0125M12.5 12.5H12.5125M15 17.5H15.0125M17.5 12.5H17.5125M20 17.5H20.0125M22.5 12.5H22.5125M6.5 22.5H23.5C24.9001 22.5 25.6002 22.5 26.135 22.2275C26.6054 21.9878 26.9878 21.6054 27.2275 21.135C27.5 20.6002 27.5 19.9001 27.5 18.5V11.5C27.5 10.0999 27.5 9.3998 27.2275 8.86502C26.9878 8.39462 26.6054 8.01217 26.135 7.77248C25.6002 7.5 24.9001 7.5 23.5 7.5H6.5C5.09987 7.5 4.3998 7.5 3.86502 7.77248C3.39462 8.01217 3.01217 8.39462 2.77248 8.86502C2.5 9.3998 2.5 10.0999 2.5 11.5V18.5C2.5 19.9001 2.5 20.6002 2.77248 21.135C3.01217 21.6054 3.39462 21.9878 3.86502 22.2275C4.3998 22.5 5.09987 22.5 6.5 22.5Z"
+                stroke="black"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            <p>keyboard</p>
+          </div>
+          <div id="mouse">
+            <svg id="mouseImage" width="30" height="30" viewBox="0 0 24 24">
+              <path
+                d="M12 6a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0V7a1 1 0 0 0-1-1m0-4a7 7 0 0 0-7 7v6a7 7 0 0 0 14 0V9a7 7 0 0 0-7-7m5 13a5 5 0 0 1-10 0V9a5 5 0 0 1 10 0Z" />
+            </svg>
+            <p>mouse</p>
+          </div>
+        </div>
+        <p class="optionExplanation">mode</p>
+        <div id="modeContainer">
+          <span class="mode">easy</span>
+          <span class="mode">nomal</span>
+          <span class="mode">hard</span>
+        </div>
+        <svg
+          id="gameOptionNextBtn"
+          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
+          height="1em"
+          viewBox="0 0 1024 1024">
+          <path
+            fill="black"
+            d="M754.752 480H160a32 32 0 1 0 0 64h594.752L521.344 777.344a32 32 0 0 0 45.312 45.312l288-288a32 32 0 0 0 0-45.312l-288-288a32 32 0 1 0-45.312 45.312z" />
+        </svg>
+      </div>
+      <!-- -------------                      ------------- -->
     </div>
     <svg id="headphoneImg" viewBox="0 0 24 24">
       <path
@@ -127,8 +175,8 @@
     <script
       type="text/javascript"
       src="/js/pages/loginPage/loginEvent.js"></script>
-    <script type="module" src="/js/musicSetting.js"></script>
+    <script type="module" src="/js/bindMusicEvent.js"></script>
+    <script type="module" src="/js/bindGameOptionEvent.js"></script>
     <script type="module" src="/js/pages/friendPage/friendsEvent.js"></script>
-    <script type="module" src="/js/pages/chatPage/chatEvent.js"></script>
   </body>
 </html>

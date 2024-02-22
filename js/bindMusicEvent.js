@@ -37,7 +37,6 @@ document.getElementById('musicPrev').addEventListener('click', function () {
   // 다음 곡으로 인덱스 업데이트
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
   const music = songs[currentSongIndex]; // 업데이트된 인덱스로 곡 정보 가져오기
-  console.log(music.path);
   musicStart(music.path);
   document.getElementById('musicName').innerText = music.name; // 곡 이름 업데이트
 });
@@ -86,12 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('headphoneImg')
     .addEventListener('click', function () {
-      document.querySelector('.modalContainer').classList.add('show');
+      document.querySelector('.musicModalContainer').classList.add('show');
     });
   document
-    .querySelector('.modalContainer')
+    .querySelector('.musicModalContainer')
     .addEventListener('click', function (e) {
       if (e.target === this)
-        document.querySelector('.modalContainer').classList.remove('show');
+        document.querySelector('.musicModalContainer').classList.remove('show');
     });
 });

@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const optionModal = threedotsImg.nextElementSibling;
       optionModal.classList.toggle('active');
       const activeModals = document.querySelectorAll('.optionModal.active');
-      activeModals.forEach(modal => {
-        if (modal !== optionModal) {
-          modal.classList.remove('active');
+      activeModals.forEach(musicModal => {
+        if (musicModal !== optionModal) {
+          musicModal.classList.remove('active');
         }
       });
     }
