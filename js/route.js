@@ -48,6 +48,10 @@ const routes = [
     view: DirectChat,
   },
   {
+    path: '/chat/direct/:user',
+    view: DirectChat,
+  },
+  {
     path: '/mypage',
     view: Mypage,
   },
@@ -116,6 +120,8 @@ const router = async () => {
   }
 
   seletedNavStyle(match.route.path);
+
+  // const a = '/chat/direct/hello'.match(pathToRegex('/chat/direct/:hello'));
 
   // 일치하는 route에서 인스턴스 생성
   const view = new match.route.view(getParams(match));
