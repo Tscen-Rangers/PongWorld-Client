@@ -16,7 +16,47 @@ const users = [
     name: 'jihyeole',
     state: false,
   },
+  {
+    name: 'jimpark',
+    state: false,
+  },
+  {
+    name: 'huipark',
+    state: true,
+  },
+  {
+    name: 'hwankim',
+    state: true,
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+  },
+
+  {
+    name: 'jihyeole',
+    state: false,
+  },
+  {
+    name: 'jimpark',
+    state: false,
+  },
+  {
+    name: 'huipark',
+    state: true,
+  },
+  {
+    name: 'hwankim',
+    state: true,
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+  },
 ];
+const battlePlayer = document.querySelector('.battlePlayer');
+const battleCancelBtn = document.querySelector('.battleCancelBtn');
+const battleModal = document.querySelector('.battleModalContainer');
 
 export default class extends AbstractView {
   constructor(params) {
@@ -30,7 +70,7 @@ export default class extends AbstractView {
 
     return `
     <div class="contentsContainer">
-    <div style="padding:10px 20px; height:100%;">
+    <div class="friendContainer">
     <h1 id="friendspageTitle">Friends</h1>
     <div class="friendsHeader">
     <nav class="friends_nav">
@@ -47,38 +87,103 @@ export default class extends AbstractView {
     </div>
     </div>
     <div class="friendListContainer">
-    ${users
-      .map(
-        (user, index) => `
-        <div class="friendList" key=${index}>
-        <div class="friendProfile">
-          <div class="friendProfileImg"> ${
-            user.state
-              ? '<img class="onlineImg" src="/public/online.png"/>'
-              : ''
-          }</div> 
-          <div class="friendname">${user.name}</div>
-        </div>
-        ${
-          user.state
-            ? `<img class="battlebuttonImg" src="/public/battleButton.png" data-user="${user.name}"/><img class="chatbuttonImg" src="/public/chatButton.png"/>`
-            : ''
-        }
-      <div class="option">
-        <img class="friendsThreedotsImg" src="/public/threedots.png" />
-        <div class="optionModal">
-          <div class="optionBtn" data-user="${user.name}">block</div>
-          <div class="optionBtn" data-user="${user.name}">delete</div>
-          <div class="optionProfileBtn" data-user="${user.name}">profile</div>
-        </div>
-      </div>
-    </div>
-  `,
-      )
-      .join('')}
     </div>
     </div>
     </div>
 		`;
+  }
+
+  updateFriendList() {
+    const friendListContainer = document.querySelector('.friendListContainer');
+    friendListContainer.innerHTML = `  ${users
+      .map(
+        (user, index) => `
+      <div class="friendList" key=${index}>
+      <div class="friendProfile">
+        <div class="friendProfileImg"> ${
+          user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''
+        }</div> 
+        <div class="friendname">${user.name}</div>
+      </div>
+      ${
+        user.state
+          ? `<img class="battlebuttonImg" src="/public/battleButton.png" data-user="${user.name}"/>`
+          : ''
+      }
+      <img class="chatbuttonImg" src="/public/chatButton.png"/>
+    <div class="option">
+      <img class="friendsThreedotsImg" src="/public/threedots.png" />
+      <div class="optionModal">
+        <div class="optionBtn" data-key="${index}">block</div>
+        <div class="optionBtn" data-key="${index}">delete</div>
+      </div>
+    </div>
+  </div>
+`,
+      )
+      .join('')}`;
+    this.bindFriendListEvents();
+  }
+
+  bindFriendListEvents() {
+    const threedotsImgs = document.querySelectorAll('.friendsThreedotsImg');
+    threedotsImgs.forEach(threedotsImg => {
+      threedotsImg.addEventListener('click', e => {
+        const optionModal = e.target.nextElementSibling;
+        optionModal.classList.toggle('active');
+        const activeModals = document.querySelectorAll('.optionModal.active');
+        activeModals.forEach(modal => {
+          if (modal !== optionModal) {
+            modal.classList.remove('active');
+          }
+        });
+      });
+    });
+    document.body.addEventListener('click', e => {
+      const clickedElement = e.target;
+      // 클릭한 요소가 모달이 아니라면 활성화된 모달을 닫기
+      if (
+        !clickedElement.closest('.optionModal') &&
+        !clickedElement.closest('.friendsThreedotsImg')
+      ) {
+        const activeModals = document.querySelectorAll('.optionModal.active');
+        activeModals.forEach(modal => {
+          modal.classList.remove('active');
+        });
+      }
+    });
+    const battleButtonImgs = document.querySelectorAll('.battlebuttonImg');
+    battleButtonImgs.forEach(battleButtonImg => {
+      battleButtonImg.addEventListener('click', e => {
+        const user = e.target.dataset.user;
+        console.log(user);
+        battlePlayer.innerText = `Waiting for a response from ${user}`;
+        battleModal.classList.add('active');
+      });
+    });
+    battleCancelBtn.addEventListener('click', () => {
+      battleModal.classList.remove('active');
+    });
+    const optionBtns = document.querySelectorAll('.optionBtn');
+    optionBtns.forEach(optionBtn => {
+      optionBtn.addEventListener('click', e => {
+        const selected = e.target.innerText;
+        const index = e.target.dataset.key;
+        console.log(index);
+        if (selected === 'delete') {
+          //친구에서 삭제만
+          users.splice(index, 1);
+          this.updateFriendList();
+        } else {
+          //block하기
+          users.splice(index, 1);
+          this.updateFriendList();
+        }
+      });
+    });
+  }
+
+  afterRender() {
+    this.updateFriendList();
   }
 }

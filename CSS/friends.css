@@ -12,6 +12,7 @@
 }
 
 .friends_nav__link {
+  cursor: url(/public/mouseCursor.png) 8 8, auto;
   text-decoration: none;
   padding: 0.5% 1.5%;
   border-radius: 20px;
@@ -65,21 +66,44 @@
 .searchBar svg {
   align-self: center;
 }
-.friendListContainer {
+.friendListContainer,
+.recievedListContainer,
+.sentListContainer {
   padding: 2%;
   display: flex;
   flex-direction: column;
   flex: 1;
+  height: 100%;
+  overflow-x: hidden;
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none;
+  /* background-color: red; */
+}
+
+.friendContainer {
+  padding: 10px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: blue;
+  box-sizing: border-box;
+}
+
+.friendListContainer::-webkit-scrollbar,
+.recievedListContainer::-webkit-scrollbar,
+.sentListContainer::-webkit-scrollbar {
+  display: none;
 }
 
 /* 높이 지정 우찌 하지 */
 .friendList {
   display: flex;
   height: 55px;
-  margin-bottom: 1.5%;
-  border-radius: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.38);
-  padding: 0% 2%;
+  padding: 5px 10px;
 }
 
 .friendProfile {
@@ -98,11 +122,12 @@
   background-color: pink;
   align-self: center;
 }
+
 .onlineImg {
   height: 23%;
   position: absolute;
   bottom: -2px;
-  left: -10px;
+  left: -8px;
 }
 
 .friendname {
@@ -115,7 +140,8 @@
 }
 
 .friendsThreedotsImg,
-.searchThreedotsImg {
+.searchThreedotsImg,
+.requestRecievedThreedotsImg {
   align-self: center;
   width: 28px;
   height: auto;
@@ -148,54 +174,63 @@
   display: flex;
   flex: 1;
   position: relative;
+  background-color: pink;
+  height: 100%;
+  overflow: auto;
   /* justify-content: space-between; */
 }
 
-.recievedRequestContainer {
+.requestInnerContainer {
   display: flex;
   flex: 1;
-  margin-right: 10px;
-  /* background-color: green; */
-  border: solid 2px white;
-  border-radius: 10px;
-  position: relative;
-  margin-top: 15px;
-}
-
-.sentRequestContainer {
-  display: flex;
-  flex: 1;
-  margin-left: 10px;
-  border: solid 2px white;
-  border-radius: 10px;
-  position: relative;
-  margin-top: 15px;
-  /* background-color: blue; */
+  border-radius: 20px;
+  padding: 10px;
+  flex-direction: column;
 }
 
 .recievedTitle,
 .sentTitle {
-  position: absolute;
-  left: 10px;
-  top: -25px;
+  /* position: absolute; */
+  /* left: 10px;
+  top: -25px; */
   font-size: 1.4rem;
 }
 
-.option {
+.option,
+.searchOption,
+.requestRecievedOption {
   display: flex;
   position: relative;
 }
 
 .optionModal {
   display: flex;
-  width: 90px;
+  width: 80px;
+  /* height: 90px; */
+  background-color: white;
+  z-index: 3;
+  border-radius: 10px;
+  position: absolute;
+  bottom: -55px;
+  right: -100px;
+  border-top-left-radius: 0;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: space-around;
+  visibility: hidden;
+}
+
+.searchOptionModal,
+.requestRecievedOptionModal {
+  display: flex;
+  width: 130px;
   height: 90px;
   background-color: white;
   z-index: 3;
-  border-radius: 18px;
+  border-radius: 10px;
   position: absolute;
   bottom: -87px;
-  right: -110px;
+  right: -150px;
   border-top-left-radius: 0;
   flex-direction: column;
   padding: 10px;
@@ -207,12 +242,68 @@
   visibility: visible;
 }
 
+.searchOptionModal.active {
+  visibility: visible;
+}
+
+.requestRecievedOptionModal.active {
+  visibility: visible;
+}
+
 .optionBtn,
-.optionProfileBtn {
+.requestRecievedOptionBtn {
   display: flex;
   color: #676767;
   font-size: 1.1rem;
+  padding: 4px;
   /* background-color: pink; */
   align-items: center;
   justify-content: center;
+}
+
+.searchOptionBtns {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.searchOptionRequestBtn,
+.searchOptionBlockBtn {
+  display: flex;
+  /* padding: 0px 10px; */
+  color: black;
+  /* justify-content: flex-start; */
+  font-size: 1.2rem;
+  opacity: 0.4;
+  font-weight: bold;
+}
+
+#friendRequestBtn {
+  width: 145px;
+}
+
+.searchOptionBtn:hover {
+  opacity: 0.8;
+}
+
+.requestIcons {
+  /* background-color: red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.acceptIcon {
+  margin-left: 5px;
+  padding: 3px;
+}
+
+.cancelSentIcon,
+.rejectRecievedIcon {
+  color: grey;
+}
+
+.acceptIcon:hover .cancelSentIcon:hover,
+.rejectRecievedIcon:hover {
+  transform: scale(1.2);
 }

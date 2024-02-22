@@ -229,7 +229,8 @@ a {
   height: 30px;
 }
 .battleModalContainer,
-.confirmModalContainer {
+.confirmModalContainer,
+.cancelRequestModalContainer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,7 +256,7 @@ a {
   left: 50%;
   width: 500px;
   height: 400px;
-  border-radius: 20px;
+  border-radius: 10px;
   transform: translate(-50%, -50%);
   background-color: rgb(223, 223, 223);
   color: black;
@@ -292,7 +293,8 @@ a {
   font-size: 1rem;
 }
 
-.confirmModal {
+.confirmModal,
+.cancelRequestModal {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -302,7 +304,7 @@ a {
   left: 50%;
   width: 300px;
   height: 200px;
-  border-radius: 20px;
+  border-radius: 10px;
   transform: translate(-50%, -50%);
   background-color: rgb(223, 223, 223);
   color: black;
@@ -314,19 +316,27 @@ a {
   opacity: 1;
 }
 
-.confirmModalMsg {
+.cancelRequestModalContainer.active {
+  visibility: visible;
+  opacity: 1;
+}
+.confirmModalMsg,
+.cancelRequestModalMsg {
   text-align: center;
   font-size: 1.1rem;
   margin-top: 20px;
 }
-.confirmButtons {
+.confirmButtons,
+.cancelRequestModalButtons {
   display: flex;
   width: 100%;
   justify-content: space-around;
 }
 
 .confirmBtn,
-.cancelBtn {
+.cancelBtn,
+.cancelRequestModalBtn,
+.closeRequestModalBtn {
   font-size: 1rem;
 }
 

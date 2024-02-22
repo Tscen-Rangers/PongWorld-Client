@@ -33,7 +33,7 @@
 
 .playgameDiv {
   display: flex;
-  flex: 0.5;
+  flex: 0.4;
   justify-content: flex-end;
   align-items: center;
   padding-right: 2%;
@@ -41,13 +41,11 @@
 
 .playgameButton {
   font-size: 2rem;
-  padding: 10px;
+  /* padding: 10px; */
   border-radius: 25px;
 }
 
 .playgameButton:hover {
-  /* background-color: rgba(0, 0, 0, 0.1);
-  box-shadow: inset grey 0px 1px 3px 1px; */
   color: grey;
 }
 
