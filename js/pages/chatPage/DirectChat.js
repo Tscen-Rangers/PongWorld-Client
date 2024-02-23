@@ -20,6 +20,66 @@ const users = [
     state: false,
     image: '/public/huipark.jpg',
   },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
 ];
 
 function findUser(userName, users) {
@@ -39,42 +99,57 @@ export default class extends AbstractView {
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
     return `
-	<div class="contentsContainer">
+    <div class="contentsContainer">
     <div class="chatContainer">
-      <div class="chatLeftContainer">
-      <h1>Chat</h1>
-      <nav class="chatNav">
-        <a class="chat__nav" id="allChat" href="/chat" data-spa>
-        all
-        </a>
-        <a
-          class="chat__nav"
-        id="directChat"
-        href="/chat/direct"
-        data-spa
-        style="background-color:rgb(185, 185, 185)">
-        direct
-        </a>
-      </nav>
-      <div class="chatUsersContainer"></div>
-	  </div>
-	  <div class="chatRightContainer">
-		<div class="chatRoom"></div>
-		<form id="chattingForm">
-			<input id="chattingInput" type="text" autocomplete='off' />
-			<svg id="chattingSubmitImage" width="2rem" height="2rem" viewBox="0 0 32 32" fill="#ddd"><g><path d="M16.693 7.667a1 1 0 0 0-1.386 0L9.994 12.78c-.649.624-.207 1.72.693 1.72h3.063a.25.25 0 0 1 .25.25v9.75a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-9.75a.25.25 0 0 1 .25-.25h3.063c.9 0 1.342-1.096.693-1.72z"/><path d="M6 1a5 5 0 0 0-5 5v20a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V6a5 5 0 0 0-5-5zM3 6a3 3 0 0 1 3-3h20a3 3 0 0 1 3 3v20a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/></g></svg>
-		</form>
-	  </div>
-	</div>
+      <div style="flex:0.35;">
+        <div style="height:15%">
+          <div style="height:32px">
+            <h1 class="chatTitle">Chat</h1>
+          </div>
+          <nav class="chatNav">
+            <a class="chat__nav" id="allChat" href="/chat" data-spa>
+              all
+            </a>
+            <a
+              class="chat__nav"
+              id="directChat"
+              href="/chat/direct"
+              data-spa
+              style="background-color:rgb(185, 185, 185)">
+              direct
+            </a>
+          </nav>
+        </div>
+        <div class="chatLeftContainer" style="height: 85%;">
+          <div class="chatUserInner"></div>
+        </div>
+      </div>
+      <div class="chatRightContainer">
+        <div class="chatRoom"></div>
+        <form id="chattingForm">
+          <input id="chattingInput" type="text" autocomplete="off" />
+          <svg
+            id="chattingSubmitImage"
+            width="2rem"
+            height="2rem"
+            viewBox="0 0 32 32"
+            fill="#ddd">
+            <g>
+              <path d="M16.693 7.667a1 1 0 0 0-1.386 0L9.994 12.78c-.649.624-.207 1.72.693 1.72h3.063a.25.25 0 0 1 .25.25v9.75a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-9.75a.25.25 0 0 1 .25-.25h3.063c.9 0 1.342-1.096.693-1.72z" />
+              <path d="M6 1a5 5 0 0 0-5 5v20a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V6a5 5 0 0 0-5-5zM3 6a3 3 0 0 1 3-3h20a3 3 0 0 1 3 3v20a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z" />
+            </g>
+          </svg>
+        </form>
+      </div>
+    </div>
   </div>
 		`;
   }
 
   updateUserList() {
-    const chatUsersContainer = document.querySelector('.chatUsersContainer');
-    const chatUserProfiles = document.querySelectorAll('.chatUserProfile');
+    const chatUserInner = document.querySelector('.chatUserInner');
 
-    chatUsersContainer.innerHTML = `${users
+    chatUserInner.innerHTML = `${users
       .map(user => {
         return `<div class="chatUserProfile">
         <div class="chatUserProfileBlur"></div>
@@ -95,8 +170,6 @@ export default class extends AbstractView {
         </div>`;
       })
       .join('')}`;
-
-    chatUserProfiles.forEach(e => {});
 
     this.bindUserListEvents();
   }

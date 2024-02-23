@@ -15,8 +15,8 @@
 
 .chatLeftContainer {
   display: flex;
+  position: relative;
   flex-direction: column;
-  flex: 0.35;
 }
 
 .chatRightContainer {
@@ -40,7 +40,7 @@
   filter: blur(3px);
 }
 
-.chatLeftContainer > h1 {
+.chatTitle {
   text-shadow: 0 3px 2px rgb(151, 151, 151);
   font-size: 2.3rem;
 }
@@ -68,21 +68,8 @@
   }
 }
 
-.chatUsersContainer {
-  padding: 20px 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100%;
-  border-radius: 10px;
-  margin-top: 20px;
-  backdrop-filter: blur(3px); /* 요소 뒤에 있는 배경에 블러 효과 적용 */
-}
-
-/* userContainer blur처리 */
-.chatUsersContainer::before {
+.chatLeftContainer::before {
   content: '';
-  z-index: -1;
   position: absolute;
   top: 0;
   left: 0;
@@ -91,6 +78,16 @@
   background-color: rgba(255, 255, 255, 0.598);
   border-radius: 10px;
   filter: blur(3px);
+}
+.chatUserInner {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px;
+  border-radius: 10px;
+  overflow: auto;
+  height: 100%;
+  /* margin-bottom: 20px; */
+  /* backdrop-filter: blur(3px); 요소 뒤에 있는 배경에 블러 효과 적용 */
 }
 
 .chatUser {
@@ -250,10 +247,6 @@
 .chatUserProfile.active .chatUserProfileBlur {
   background-color: #797979;
 }
-
-/* 1.chatUserProfile.active .directMsgPath {
-  fill: white;
-} */
 
 .chatUserProfile:hover > .chatUserProfileBlur {
   background-color: #ababab;
