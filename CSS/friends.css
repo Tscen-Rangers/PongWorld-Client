@@ -88,12 +88,6 @@
   box-sizing: border-box;
 }
 
-.friendListContainer::-webkit-scrollbar,
-.recievedListContainer::-webkit-scrollbar,
-.sentListContainer::-webkit-scrollbar {
-  display: none;
-}
-
 /* 높이 지정 우찌 하지 */
 .friendList {
   display: flex;

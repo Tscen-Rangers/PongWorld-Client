@@ -1,6 +1,6 @@
 import Login from './pages/loginPage/Login.js';
 import Setting from './pages/settingPage/Setting.js';
-import Game from './pages/gamePage/Game.js';
+import Home from './pages/gamePage/Home.js';
 import Friends from './pages/friendPage/Friends.js';
 import Mypage from './pages/myPage/Mypage.js';
 import Chat from './pages/chatPage/Chat.js';
@@ -8,6 +8,7 @@ import DirectChat from './pages/chatPage/DirectChat.js';
 import SearchFriends from './pages/friendPage/SearchFriends.js';
 import Blocked from './pages/friendPage/Blocked.js';
 import FriendRequest from './pages/friendPage/FriendRequest.js';
+import Game from './pages/gamePage/Game.js';
 
 const navBar = document.querySelector('.nav');
 const mainTitle = document.querySelector('#main_title');
@@ -18,6 +19,10 @@ const routes = [
   {
     path: '/',
     view: Login,
+  },
+  {
+    path: '/home',
+    view: Home,
   },
   {
     path: '/game',
@@ -97,7 +102,10 @@ const navigateTo = url => {
 };
 
 const router = async () => {
-  navBar.style.display = location.pathname === '/' ? 'none' : 'block';
+  navBar.style.display =
+    location.pathname === '/' || location.pathname === '/game'
+      ? 'none'
+      : 'block';
   mainTitle.style.display = location.pathname === '/' ? 'none' : 'block';
   headphone.style.display = location.pathname === '/' ? 'none' : 'block';
 
