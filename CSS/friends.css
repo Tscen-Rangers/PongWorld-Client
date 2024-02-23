@@ -77,7 +77,6 @@
   overflow-x: hidden;
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none;
-  /* background-color: red; */
 }
 
 .friendContainer {
@@ -167,7 +166,6 @@
   display: flex;
   flex: 1;
   position: relative;
-  /* background-color: pink; */
   height: 100%;
   overflow: auto;
   /* justify-content: space-between; */
@@ -189,42 +187,21 @@
   font-size: 1.4rem;
 }
 
-.option,
-.searchOption,
-.requestRecievedOption {
+.option {
   display: flex;
   position: relative;
 }
 
 .optionModal {
   display: flex;
-  width: 80px;
+  width: 50px;
   /* height: 90px; */
   background-color: white;
-  z-index: 3;
+  z-index: 5;
   border-radius: 10px;
   position: absolute;
-  bottom: -55px;
-  right: -100px;
-  border-top-left-radius: 0;
-  flex-direction: column;
-  padding: 10px;
-  justify-content: space-around;
-  visibility: hidden;
-}
-
-.searchOptionModal,
-.requestRecievedOptionModal {
-  display: flex;
-  width: 130px;
-  height: 90px;
-  background-color: white;
-  z-index: 3;
-  border-radius: 10px;
-  position: absolute;
-  bottom: -87px;
-  right: -150px;
-  border-top-left-radius: 0;
+  bottom: -60px;
+  right: -22px;
   flex-direction: column;
   padding: 10px;
   justify-content: space-around;
@@ -235,16 +212,7 @@
   visibility: visible;
 }
 
-.searchOptionModal.active {
-  visibility: visible;
-}
-
-.requestRecievedOptionModal.active {
-  visibility: visible;
-}
-
-.optionBtn,
-.requestRecievedOptionBtn {
+.optionBtn {
   display: flex;
   color: #676767;
   font-size: 1.1rem;
