@@ -1,8 +1,13 @@
 * {
   margin: 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-html {
+html,
+body {
   width: 100dvw;
   height: 100dvh;
   color: white;
