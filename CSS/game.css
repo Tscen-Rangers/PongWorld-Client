@@ -68,3 +68,118 @@
   padding: 10px;
   align-items: center;
 }
+
+/*----------------game.js----------------*/
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  /* background-color: pink; */
+  width: 100%;
+}
+
+.gameScore {
+  display: flex;
+  flex: 1;
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 40px;
+  justify-content: center;
+  align-items: center;
+  /* background-color: blue; */
+}
+
+.gameBody {
+  display: flex;
+  flex: 10;
+
+  /* background-color: red; */
+}
+
+.pingpongBody {
+  display: flex;
+  flex: 3.5;
+  /* background-color: blue; */
+  justify-content: center;
+  align-items: center;
+}
+.playingUserBody {
+  display: flex;
+  flex: 1;
+  /* background-color: purple; */
+  justify-content: center;
+  align-items: center;
+}
+
+.pingpongTable {
+  display: flex;
+  width: 95%;
+  height: 90%;
+  /* background-color: pink; */
+  /* border-radius: 10px; */
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
+  box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
+    inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
+  position: relative;
+}
+
+.pingpongTable::after {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 4px;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.playingUserInfo {
+  display: flex;
+  width: 80%;
+  height: 70%;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
+  box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
+    inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
+  border-radius: 10px;
+}
+
+.myPingpongStick {
+  width: 20px;
+  height: 100px;
+  background-color: black;
+  margin-right: 20px;
+  position: absolute;
+  right: 0;
+  /* 상위 요소에 대해 중간으로 이동 후 자신의 크기 절반만큼 이동 */
+  top: 50%;
+  transform: translateY(-50%);
+  transition: 0.05s;
+}
+
+.pingpongStick {
+  width: 20px;
+  height: 100px;
+  background-color: black;
+  margin-left: 20px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pingpongBall {
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  /* border: solid 1px black; */
+  background-color: #1eff00;
+  box-shadow: 0 0 6px 2px black;
+}
