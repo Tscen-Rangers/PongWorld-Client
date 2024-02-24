@@ -1,3 +1,10 @@
+.chatbutton,
+.battlebutton,
+.friendsThreedotsImg,
+.friends_nav__link {
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
+}
+
 #friendspageTitle {
   padding-top: 2%;
   padding-left: 2%;
@@ -12,7 +19,6 @@
 }
 
 .friends_nav__link {
-  cursor: url(/public/mouseCursor.png) 8 8, auto;
   text-decoration: none;
   padding: 6px 20px;
   border-radius: 10px;
@@ -165,6 +171,7 @@
   align-self: center;
   margin: 0px 20px;
   color: #636363;
+  text-decoration: none;
 }
 
 .battlebutton {

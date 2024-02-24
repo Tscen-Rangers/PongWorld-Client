@@ -175,5 +175,13 @@
       src="/js/pages/loginPage/loginEvent.js"></script>
     <script type="module" src="/js/bindMusicEvent.js"></script>
     <script type="module" src="/js/bindGameOptionEvent.js"></script>
+    <script type="text/javascript">
+      const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+      const $battleModal = document.querySelector('.battleModalContainer');
+
+      $battleCancelBtn.addEventListener('click', () => {
+        $battleModal.classList.remove('active');
+      });
+    </script>
   </body>
 </html>

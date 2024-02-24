@@ -9,6 +9,7 @@ const history = [
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
+const $battlePlayer = document.querySelector('.battlePlayer');
 
 export default class extends AbstractView {
   constructor(params) {
@@ -81,7 +82,7 @@ export default class extends AbstractView {
       <div class="recentPlayersImg">
       <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
       <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-      </div> 
+      </div>
       <div class="versus">
          hacho VS jimpark
       </div>
@@ -117,8 +118,9 @@ export default class extends AbstractView {
 
     console.log(authorizationCode);
 
-    $playGameBtn.addEventListener('click', () =>
-      $gameOptionModalContainer.classList.add('show'),
-    );
+    $playGameBtn.addEventListener('click', () => {
+      $gameOptionModalContainer.classList.add('show');
+      $battlePlayer.innerText = `Waiting for an opponent to accept the battle request...`;
+    });
   }
 }

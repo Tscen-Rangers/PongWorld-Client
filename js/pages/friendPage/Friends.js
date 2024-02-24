@@ -1,4 +1,5 @@
 import AbstractView from '../../AbstractView.js';
+
 const users = [
   {
     name: 'jimpark',
@@ -55,8 +56,9 @@ const users = [
   },
 ];
 const battlePlayer = document.querySelector('.battlePlayer');
-const battleCancelBtn = document.querySelector('.battleCancelBtn');
-const battleModal = document.querySelector('.battleModalContainer');
+const $gameOptionModalContainer = document.getElementById(
+  'gameOptionModalContainer',
+);
 
 export default class extends AbstractView {
   constructor(params) {
@@ -71,29 +73,60 @@ export default class extends AbstractView {
     return `
     <div class="contentsContainer">
     <div class="friendContainer">
-    <h1 id="friendspageTitle">Friends</h1>
-    <div class="friendsHeader">
-    <nav class="friends_nav">
-    <a class="friends_nav__link" style="background-color:rgb(185, 185, 185);" data-spa href="/friends">friends</a>
-    <a class="friends_nav__link"  data-spa href="/friends/search">Search</a>
-    <a class="friends_nav__link" data-spa href="/friends/blocked">blocked</a>
-    <a class="friends_nav__link"  data-spa href="/friends/request">request</a>
-    </nav>
-    <div class="searchBarContainer">
-    <div class="searchBar">
-    <input type="text" name="search"/>
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="none" stroke="#979191" stroke-miterlimit="10" stroke-width="32" d="M221.09 64a157.09 157.09 0 1 0 157.09 157.09A157.1 157.1 0 0 0 221.09 64Z"/><path fill="none" stroke="#979191" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+      <h1 id="friendspageTitle">Friends</h1>
+      <div class="friendsHeader">
+        <nav class="friends_nav">
+          <a
+            class="friends_nav__link"
+            style="background-color:rgb(185, 185, 185);"
+            data-spa
+            href="/friends">
+            friends
+          </a>
+          <a class="friends_nav__link" data-spa href="/friends/search">
+            Search
+          </a>
+          <a class="friends_nav__link" data-spa href="/friends/blocked">
+            blocked
+          </a>
+          <a class="friends_nav__link" data-spa href="/friends/request">
+            request
+          </a>
+        </nav>
+        <div class="searchBarContainer">
+          <div class="searchBar">
+            <input type="text" name="search" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1em"
+              height="1em"
+              viewBox="0 0 512 512">
+              <path
+                fill="none"
+                stroke="#979191"
+                stroke-miterlimit="10"
+                stroke-width="32"
+                d="M221.09 64a157.09 157.09 0 1 0 157.09 157.09A157.1 157.1 0 0 0 221.09 64Z"
+              />
+              <path
+                fill="none"
+                stroke="#979191"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                stroke-width="32"
+                d="M338.29 338.29L448 448"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="friendListContainer"></div>
     </div>
-    </div>
-    </div>
-    <div class="friendListContainer">
-    </div>
-    </div>
-    </div>
+  </div>
 		`;
   }
 
-  updateFriendList() {
+  updateFriendList(battleOptionModal) {
     const friendListContainer = document.querySelector('.friendListContainer');
     friendListContainer.innerHTML = `  ${users
       .map(
@@ -102,7 +135,7 @@ export default class extends AbstractView {
       <div class="friendProfile">
         <div class="friendProfileImg"> ${
           user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''
-        }</div> 
+        }</div>
         <div class="friendname">${user.name}</div>
       </div>
       ${
@@ -114,7 +147,7 @@ battle
           </div>`
           : ''
       }
-      <div class="chatbutton">chat</div>
+      <a class="chatbutton" href='/chat/direct/${user.name}' data-spa>chat</a>
     <div class="option">
       <img class="friendsThreedotsImg" src="/public/threedots.png" />
       <div class="optionModal">
@@ -126,11 +159,12 @@ battle
 `,
       )
       .join('')}`;
-    this.bindFriendListEvents();
+    this.bindFriendListEvents(battleOptionModal);
   }
 
   bindFriendListEvents() {
     const threedotsImgs = document.querySelectorAll('.friendsThreedotsImg');
+
     threedotsImgs.forEach(threedotsImg => {
       threedotsImg.addEventListener('click', e => {
         const optionModal = e.target.nextElementSibling;
@@ -143,6 +177,7 @@ battle
         });
       });
     });
+
     document.body.addEventListener('click', e => {
       const clickedElement = e.target;
       // 클릭한 요소가 모달이 아니라면 활성화된 모달을 닫기
@@ -156,17 +191,15 @@ battle
         });
       }
     });
+
     const battleButtons = document.querySelectorAll('.battlebutton');
+    console.log($gameOptionModalContainer);
     battleButtons.forEach(battleButton => {
       battleButton.addEventListener('click', e => {
         const user = e.target.dataset.user;
-        console.log(user);
         battlePlayer.innerText = `Waiting for a response from ${user}`;
-        battleModal.classList.add('active');
+        $gameOptionModalContainer.classList.add('show');
       });
-    });
-    battleCancelBtn.addEventListener('click', () => {
-      battleModal.classList.remove('active');
     });
     const optionBtns = document.querySelectorAll('.optionBtn');
     optionBtns.forEach(optionBtn => {
