@@ -11,23 +11,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const $keyboard = document.getElementById('keyboard');
   const $modes = document.querySelectorAll('.mode');
   const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
+  const $battleModal = document.querySelector('.battleModalContainer');
+
+  const closeGameOptionModal = () => {
+    option.control = null;
+    option.level = null;
+    $gameOptionModalContainer.classList.remove('show');
+    $mouse.classList.remove('active');
+    $keyboard.classList.remove('active');
+    $modes.forEach($mode => {
+      $mode.classList.remove('active');
+    });
+  };
 
   $gameOptionNextBtn.addEventListener('click', () => {
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
-    else console.log(option);
+    else {
+      console.log(option);
+      localStorage.setItem('gameOption', JSON.stringify(option));
+      closeGameOptionModal();
+      $battleModal.classList.add('active');
+
+      // window.location.href = '/game';
+    }
   });
 
   $gameOptionModalContainer.addEventListener('click', e => {
     if ($gameOptionModalContainer === e.target) {
-      option.control = null;
-      option.level = null;
-      $gameOptionModalContainer.classList.remove('show');
-      $mouse.classList.remove('active');
-      $keyboard.classList.remove('active');
-      $modes.forEach($mode => {
-        $mode.classList.remove('active');
-      });
+      closeGameOptionModal();
     }
   });
 

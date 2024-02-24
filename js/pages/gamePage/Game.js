@@ -9,10 +9,6 @@ const competitior = {
   comment: '나는야 휘팍',
 };
 
-const gameOption = {
-  controls: 'keyboard',
-};
-
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -57,15 +53,17 @@ export default class extends AbstractView {
     const myPingpongStick = document.querySelector('.myPingpongStick');
     const pingpongTable = document.querySelector('.pingpongTable');
     const maxY = pingpongTable.clientHeight - myPingpongStick.clientHeight / 2;
+    const gameOption = JSON.parse(localStorage.getItem('gameOption'));
+    console.log(gameOption);
     let topValue = null;
-    if (gameOption.controls === 'mouse') {
+    if (gameOption.control === 'mouse') {
       document.addEventListener('mousemove', event => {
         const mouseY = event.clientY - 150;
         // myPingpongStick.style.top = mouseY + 'px';
         myPingpongStick.style.top = Math.min(Math.max(50, mouseY), maxY) + 'px';
       });
     }
-    if (gameOption.controls === 'keyboard') {
+    if (gameOption.control === 'keyboard') {
       const style = window.getComputedStyle(myPingpongStick);
       document.addEventListener('keydown', e => {
         console.log(style.top);

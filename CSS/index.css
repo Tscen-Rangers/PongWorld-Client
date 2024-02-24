@@ -380,7 +380,7 @@ a {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height: 300px;
+  height: 330px;
   border-radius: 5px;
   font-size: 25px;
   font-weight: bold;
@@ -466,6 +466,7 @@ a {
   bottom: 10px;
   right: 10px;
   border-radius: 50%;
+  margin-top: 20px;
   padding: 5px;
 
   &:hover {
