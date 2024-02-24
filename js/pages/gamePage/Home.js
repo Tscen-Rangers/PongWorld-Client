@@ -98,8 +98,24 @@ export default class extends AbstractView {
 		`;
   }
 
+  getAuthorizationCode() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    console.log(urlParams);
+    const error = urlParams.get('error');
+    if (error) {
+      return (window.location.href = '/');
+    }
+
+    const code = urlParams.get('code');
+    return code;
+  }
+
   afterRender() {
+    const authorizationCode = this.getAuthorizationCode();
     const $playGameBtn = document.querySelector('.playgameButton');
+
+    console.log(authorizationCode);
 
     $playGameBtn.addEventListener('click', () =>
       $gameOptionModalContainer.classList.add('show'),
