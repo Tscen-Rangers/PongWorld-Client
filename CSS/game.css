@@ -19,7 +19,11 @@
   border-radius: 20px;
   flex: 1;
   margin: 3%;
+  justify-content: center;
+  align-items: center;
   position: relative;
+  flex-direction: column;
+  /* padding-top: 20px; */
 }
 
 .usersHistoryBody {
@@ -29,6 +33,8 @@
   border-radius: 20px;
   background-color: rgba(255, 255, 255, 0.38);
   padding: 10px;
+  backdrop-filter: blur(2px);
+  overflow: auto;
 }
 
 .playgameDiv {
@@ -64,7 +70,8 @@
 
 .usersHistory {
   display: flex;
-  flex: 1;
+  min-height: 90px;
+  width: 100%;
   padding: 10px;
   /* background-color: pink; */
 }
@@ -96,14 +103,23 @@
   left: 70px;
 }
 
-.versus,
-.resultScore {
+.versus {
   display: flex;
   flex: 2;
   font-size: 1.5rem;
   align-self: center;
   justify-content: center;
   word-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: aqua; */
+}
+.resultScore {
+  display: flex;
+  flex: 2;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  letter-spacing: 10px;
   text-shadow: 1px 1px 4px grey;
   /* background-color: aqua; */
 }
@@ -125,39 +141,66 @@
   border-radius: 50%;
 }
 
+.line {
+  width: 100%;
+  min-height: 2px;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 2px 1px 1px rgba(111, 111, 111, 0.3);
+}
+
+.rankersInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  /* background-color: red; */
+}
+
+.rankersImgBody,
+.rankersImg {
+  margin-top: 10px;
+  width: 120px;
+  height: 120px;
+  /* background-color: black; */
+  border-radius: 10px;
+  /* margin-top: 20px; */
+}
+
+.rankersName {
+  display: flex;
+  /* background-color: black; */
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+}
+
 /*----------------game.js----------------*/
 
 .gameContainer {
   display: flex;
   flex: 1;
   flex-direction: column;
-  /* align-items: center; */
-  /* background-color: pink; */
 }
 
 .gameScore {
   display: flex;
-  /* flex: 1; */
   font-size: 3rem;
   font-weight: bold;
   width: 150px;
-  /* background-color: rebeccapurple; */
   justify-content: space-around;
   align-items: center;
   text-align: center;
-  /* text-shadow: 2px 3px 1px black; */
 }
 
 .competitorsScore,
 .myScore {
   display: flex;
-  /* background-color: green; */
 }
 
 .gameBody {
   display: flex;
   flex: 10;
-  /* padding: 0px 20px; */
 }
 
 .pingpongBody {
@@ -170,7 +213,6 @@
 .playingUserBody {
   display: flex;
   flex: 1;
-  /* background-color: purple; */
   justify-content: center;
   align-items: center;
 }
@@ -179,14 +221,12 @@
   display: flex;
   width: 95%;
   height: 90%;
-  /* background-color: pink; */
   border-radius: 10px;
   background: linear-gradient(
     to top,
     rgba(255, 255, 255, 0),
     rgba(255, 255, 255, 1)
   );
-  /* backdrop-filter: blur(5px); */
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
   position: relative;
@@ -242,19 +282,16 @@
   width: 20px;
   height: 20px;
   border-radius: 50px;
-  /* border: solid 1px black; */
   background-color: #1eff00;
   box-shadow: 0 0 6px 2px black;
 }
 
 .playingUserImage {
-  /* margin-top: 15px; */
   display: flex;
   width: 170px;
   height: 170px;
   border-radius: 10px;
   justify-content: center;
-  /* background-color: pink; */
 }
 
 .competitorsImg,
@@ -272,11 +309,8 @@
   justify-content: center;
   color: grey;
   padding: 10px;
-  /* background-color: grey; */
   border-radius: 10px;
   font-weight: bold;
-  /* border: solid 2px white; */
-  /* text-shadow: 2px 2px 2px grey; */
   align-items: center;
 }
 
@@ -284,7 +318,6 @@
 }
 
 .playingUserComment {
-  /* margin-top: 20px; */
   display: flex;
   width: 100%;
   height: 320px;
@@ -292,9 +325,6 @@
   align-items: center;
   font-size: 1.8rem;
   flex-direction: column;
-  /* background-color: red; */
-  /* box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
-    inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white; */
   border-radius: 10px;
 }
 

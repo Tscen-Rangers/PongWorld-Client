@@ -1,9 +1,83 @@
 import AbstractView from '../../AbstractView.js';
 
-const history = [
-  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
-  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
-  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
+const histories = [
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+  {
+    player1: 'jimpark',
+    player2: 'hacho',
+    player1Score: 2,
+    player2Score: 3,
+    date: '2 days ago',
+  },
+];
+
+const Rankings = [
+  {rankersName: 'jimpark', score: 4000},
+  {rankersName: 'huipark', score: 3600},
+  {rankersName: 'jihyeole', score: 2800},
+  {rankersName: 'yubchoi', score: 2000},
 ];
 
 const $gameOptionModalContainer = document.getElementById(
@@ -34,6 +108,10 @@ export default class extends AbstractView {
           d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
         />
       </svg>
+      <div class="rankersInfo">
+      <div class="rankersImgBody"><img class="rankersImg" src="/public/huipark.jpg"/></div>
+      <div class="rankersName">huipark</div>
+      </div>
     </div>
     <div class="usersRank">
       <svg
@@ -77,19 +155,36 @@ export default class extends AbstractView {
     <img id="moreImg" src="/public/more.png" />
   </div>
   <div class="usersHistoryBody">
-    <div class="usersHistory">
-      <div class="recentPlayersImg">
-      <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-      <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-      </div> 
-      <div class="versus">
-         hacho VS jimpark
-      </div>
-      <div class="resultScore">3 : 2</div>
-      <div class="gameDate">2 days ago</div>
-    </div>
-    <div class="usersHistory"></div>
-    <div class="usersHistory"></div>
+      ${histories
+        .map(
+          (history, index) => `
+            <div class="usersHistory">
+                <div class="recentPlayersImg">
+                     <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
+                    <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
+                </div> 
+                <div class="versus">
+                  ${history.player1} VS ${history.player2}
+                </div>
+                <div class="resultScore">
+                <text style="color :${
+                  history.player1Score > history.player2Score
+                    ? 'black'
+                    : 'white'
+                }">${history.player1Score}</text>
+                :
+                <text style="color : ${
+                  history.player2Score > history.player1Score
+                    ? 'black'
+                    : 'white'
+                }">${history.player2Score}<text/></div>
+               <div class="gameDate">${history.date}</div>
+               </div>
+               ${index === 9 ? '' : '<div class="line"></div>'}
+            
+      `,
+        )
+        .join('')}
   </div>
   <div class="playgameDiv">
     <text class="playgameButton">play game</text>
