@@ -1,5 +1,11 @@
 import AbstractView from '../../AbstractView.js';
 
+const history = [
+  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
+  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
+  {player1: 'jimpark', player2: 'hacho', res: '2:3', date: '2 days ago'},
+];
+
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
@@ -71,9 +77,19 @@ export default class extends AbstractView {
     <img id="moreImg" src="/public/more.png" />
   </div>
   <div class="usersHistoryBody">
-    <div class="usersHistory">hee</div>
-    <div class="usersHistory">hehe</div>
-    <div class="usersHistory">hehe</div>
+    <div class="usersHistory">
+      <div class="recentPlayersImg">
+      <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
+      <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
+      </div> 
+      <div class="versus">
+         hacho VS jimpark
+      </div>
+      <div class="resultScore">3 : 2</div>
+      <div class="gameDate">2 days ago</div>
+    </div>
+    <div class="usersHistory"></div>
+    <div class="usersHistory"></div>
   </div>
   <div class="playgameDiv">
     <text class="playgameButton">play game</text>

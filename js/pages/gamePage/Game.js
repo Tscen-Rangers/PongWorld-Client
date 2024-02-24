@@ -20,20 +20,35 @@ export default class extends AbstractView {
   }
   async getHtml() {
     return `
-          <div class="gameScore">2:3</div>
-          <div class="gameBody">
-          <div class="playingUserBody">
-            <div class="playingUserInfo"></div>
-          </div>
-          <div class="pingpongBody">
-            <div class="pingpongTable">
+    <div class="gameBody">
+    <div class="playingUserBody">
+    <div class="playingUserInfo">
+    <div class="playingUserName">${competitior.name}</div>
+    <div class="playingUserImage"><img class="competitorsImg" src="/public/huipark.jpg"/></div>
+    <div class="playingUserHistory"></div>
+    <div class="playingUserComment">
+    score
+    <div class="competitorsTotalScore">1231</div></div>
+    </div>
+    </div>
+    <div class="pingpongBody">
+    <div class="gameScore"><text class="competitorsScore">2</text>:<text class="myScore">3</text></div>
+    <div class="pingpongTable">
             <div class="pingpongStick"></div>
             <div class="pingpongBall"></div>
             <div class="myPingpongStick"></div>
             </div>
           </div>
           <div class="playingUserBody">
-          <div class="playingUserInfo"></div>
+            <div class="playingUserInfo">
+            <div class="playingUserName">${me.name}</div>
+              <div class="playingUserImage"><img class="myImg" src="/public/huipark.jpg"/></div>
+              <div class="playingUserHistory"></div>
+              <div class="playingUserComment">
+                score
+                <div class="myTotalScore">13000</div>
+              </div>
+            </div>
           </div>
           </div>
             `;

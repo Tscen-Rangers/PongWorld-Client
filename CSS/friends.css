@@ -14,8 +14,8 @@
 .friends_nav__link {
   cursor: url(/public/mouseCursor.png) 8 8, auto;
   text-decoration: none;
-  padding: 0.5% 1.5%;
-  border-radius: 20px;
+  padding: 6px 20px;
+  border-radius: 10px;
   color: white;
   margin-right: 1.5%;
   font-size: 1.5rem;
@@ -24,7 +24,7 @@
 }
 
 .friends_nav__link:hover {
-  background-color: rgba(111, 111, 111, 0.1);
+  background-color: rgb(185, 185, 185);
 }
 .friendsHeader {
   display: flex;
@@ -152,14 +152,74 @@
   font-weight: bold;
 }
 
-.battlebuttonImg,
-.chatbuttonImg {
-  width: auto;
-  height: 60%;
+.chatbutton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #aeaeae;
+  width: 60px;
+  height: 35px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 5px;
   align-self: center;
-  /* height: 34px; */
+  margin: 0px 20px;
+  color: #636363;
 }
 
+.battlebutton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #aeaeae;
+  width: 120px;
+  height: 35px;
+  border-radius: 5px;
+  align-self: center;
+  color: #636363;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+@keyframes leftgloveMove {
+  0% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(-1px);
+  }
+}
+
+@keyframes rightgloveMove {
+  0% {
+    transform: translateX(2px);
+  }
+  50% {
+    transform: translateX(-3px);
+  }
+  100% {
+    transform: translateX(1px);
+  }
+}
+
+.leftgloveImg {
+  margin-left: 5px;
+}
+
+.rightgloveImg {
+  margin-left: 2px;
+}
+
+.battlebutton:hover .leftgloveImg {
+  animation: leftgloveMove 1s 2 linear;
+}
+
+.battlebutton:hover .rightgloveImg {
+  animation: rightgloveMove 1s 2 linear;
+}
 /* request */
 
 .requestContainer {

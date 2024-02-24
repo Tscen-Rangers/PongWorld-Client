@@ -66,41 +66,104 @@
   display: flex;
   flex: 1;
   padding: 10px;
+  /* background-color: pink; */
+}
+
+.recentPlayersImg {
+  display: flex;
+  flex: 1;
+  /* background-color: red; */
   align-items: center;
+  position: relative;
+}
+
+.recentPlayer1Img {
+  width: 60px;
+  height: 60px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  left: 20px;
+  border: solid 1px white;
+}
+.recentPlayer2Img {
+  width: 60px;
+  height: 60px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  border: solid 1px white;
+  left: 70px;
+}
+
+.versus,
+.resultScore {
+  display: flex;
+  flex: 2;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  word-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: aqua; */
+}
+
+.gameDate {
+  display: flex;
+  flex: 1;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  word-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: blue; */
+}
+
+.recentPlayerImg {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
 }
 
 /*----------------game.js----------------*/
 
 .gameContainer {
   display: flex;
+  flex: 1;
   flex-direction: column;
   /* align-items: center; */
   /* background-color: pink; */
-  width: 100%;
 }
 
 .gameScore {
   display: flex;
-  flex: 1;
+  /* flex: 1; */
   font-size: 3rem;
   font-weight: bold;
-  letter-spacing: 40px;
-  justify-content: center;
+  width: 150px;
+  /* background-color: rebeccapurple; */
+  justify-content: space-around;
   align-items: center;
-  /* background-color: blue; */
+  text-align: center;
+  /* text-shadow: 2px 3px 1px black; */
+}
+
+.competitorsScore,
+.myScore {
+  display: flex;
+  /* background-color: green; */
 }
 
 .gameBody {
   display: flex;
   flex: 10;
-
-  /* background-color: red; */
+  /* padding: 0px 20px; */
 }
 
 .pingpongBody {
   display: flex;
-  flex: 3.5;
-  /* background-color: blue; */
+  flex-direction: column;
+  flex: 5;
   justify-content: center;
   align-items: center;
 }
@@ -117,12 +180,13 @@
   width: 95%;
   height: 90%;
   /* background-color: pink; */
-  /* border-radius: 10px; */
+  border-radius: 10px;
   background: linear-gradient(
     to top,
     rgba(255, 255, 255, 0),
     rgba(255, 255, 255, 1)
   );
+  /* backdrop-filter: blur(5px); */
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
   position: relative;
@@ -140,15 +204,14 @@
 .playingUserInfo {
   display: flex;
   width: 80%;
-  height: 70%;
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 1)
-  );
+  height: 40%;
+  background: linear-gradient(to top, black, white);
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
   border-radius: 10px;
+  padding: 10px;
+  align-items: center;
+  flex-direction: column;
 }
 
 .myPingpongStick {
@@ -182,4 +245,61 @@
   /* border: solid 1px black; */
   background-color: #1eff00;
   box-shadow: 0 0 6px 2px black;
+}
+
+.playingUserImage {
+  /* margin-top: 15px; */
+  display: flex;
+  width: 170px;
+  height: 170px;
+  border-radius: 10px;
+  justify-content: center;
+  /* background-color: pink; */
+}
+
+.competitorsImg,
+.myImg {
+  width: 170px;
+  height: 170px;
+  border-radius: 10px;
+}
+
+.playingUserName {
+  display: flex;
+  width: 200px;
+  height: 60px;
+  font-size: 2rem;
+  justify-content: center;
+  color: grey;
+  padding: 10px;
+  /* background-color: grey; */
+  border-radius: 10px;
+  font-weight: bold;
+  /* border: solid 2px white; */
+  /* text-shadow: 2px 2px 2px grey; */
+  align-items: center;
+}
+
+.playingUserHistory {
+}
+
+.playingUserComment {
+  /* margin-top: 20px; */
+  display: flex;
+  width: 100%;
+  height: 320px;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  flex-direction: column;
+  /* background-color: red; */
+  /* box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
+    inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white; */
+  border-radius: 10px;
+}
+
+.competitorsTotalScore,
+.myTotalScore {
+  display: flex;
+  font-size: 2rem;
 }

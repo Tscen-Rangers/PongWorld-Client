@@ -51,7 +51,7 @@ export default class extends AbstractView {
     <nav class="friends_nav">
     <a class="friends_nav__link"  data-spa href="/friends">friends</a>
     <a class="friends_nav__link"  data-spa href="/friends/search">Search</a>
-    <a class="friends_nav__link" style="background-color:rgba(111,111,111,0.38)"data-spa href="/friends/blocked">blocked</a>
+    <a class="friends_nav__link" style="background-color:rgb(185, 185, 185);"data-spa href="/friends/blocked">blocked</a>
     <a class="friends_nav__link"  data-spa href="/friends/request">request</a>
     </nav>
     <div class="searchBarContainer">

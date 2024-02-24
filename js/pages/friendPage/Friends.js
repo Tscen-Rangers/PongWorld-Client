@@ -74,7 +74,7 @@ export default class extends AbstractView {
     <h1 id="friendspageTitle">Friends</h1>
     <div class="friendsHeader">
     <nav class="friends_nav">
-    <a class="friends_nav__link" style="background-color:rgba(111,111,111,0.38)" data-spa href="/friends">friends</a>
+    <a class="friends_nav__link" style="background-color:rgb(185, 185, 185);" data-spa href="/friends">friends</a>
     <a class="friends_nav__link"  data-spa href="/friends/search">Search</a>
     <a class="friends_nav__link" data-spa href="/friends/blocked">blocked</a>
     <a class="friends_nav__link"  data-spa href="/friends/request">request</a>
@@ -107,10 +107,14 @@ export default class extends AbstractView {
       </div>
       ${
         user.state
-          ? `<img class="battlebuttonImg" src="/public/battleButton.png" data-user="${user.name}"/>`
+          ? `<div class="battlebutton" data-user="${user.name}"/>
+battle
+            <img class="leftgloveImg" src="/public/leftglove.png"/>
+            <img class="rightgloveImg" src="/public/rightglove.png"/>
+          </div>`
           : ''
       }
-      <img class="chatbuttonImg" src="/public/chatButton.png"/>
+      <div class="chatbutton">chat</div>
     <div class="option">
       <img class="friendsThreedotsImg" src="/public/threedots.png" />
       <div class="optionModal">
@@ -152,9 +156,9 @@ export default class extends AbstractView {
         });
       }
     });
-    const battleButtonImgs = document.querySelectorAll('.battlebuttonImg');
-    battleButtonImgs.forEach(battleButtonImg => {
-      battleButtonImg.addEventListener('click', e => {
+    const battleButtons = document.querySelectorAll('.battlebutton');
+    battleButtons.forEach(battleButton => {
+      battleButton.addEventListener('click', e => {
         const user = e.target.dataset.user;
         console.log(user);
         battlePlayer.innerText = `Waiting for a response from ${user}`;
