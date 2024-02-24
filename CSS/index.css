@@ -1,6 +1,6 @@
 * {
   margin: 0;
-  font-family: 'Kdam Thmor Pro', sans-serif;
+  /* font-family: 'Kdam Thmor Pro', sans-serif; */
 
   &::-webkit-scrollbar {
     display: none;
@@ -124,7 +124,6 @@ a {
 .contentsContainer {
   display: flex;
   flex-direction: column;
-  /* backdrop-filter: blur(5px); */
   background: linear-gradient(
     to top,
     rgba(255, 255, 255, 0),
