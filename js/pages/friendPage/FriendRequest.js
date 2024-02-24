@@ -121,7 +121,7 @@ export default class extends AbstractView {
           </a>
           <a
             class="friends_nav__link"
-            style="background-color:rgba(111,111,111,0.38)"
+            style="background-color:rgb(185, 185, 185);"
             data-spa
             href="/friends/request">
             request
