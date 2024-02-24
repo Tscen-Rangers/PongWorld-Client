@@ -53,6 +53,7 @@
   box-shadow: 0 0 20px 3px white;
   cursor: url(/public/mouseCursor.png) 8 8, auto;
   filter: none;
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
 }
 
 #logo42 {
