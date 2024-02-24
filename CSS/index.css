@@ -1,5 +1,6 @@
 * {
   margin: 0;
+  font-family: 'Kdam Thmor Pro', sans-serif;
 
   &::-webkit-scrollbar {
     display: none;
@@ -11,7 +12,6 @@ body {
   width: 100dvw;
   height: 100dvh;
   color: white;
-  overflow: hidden;
   cursor: url(/public/mouseCursor.png) 8 8, auto;
 }
 
