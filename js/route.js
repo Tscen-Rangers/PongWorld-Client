@@ -1,6 +1,6 @@
 import Login from './pages/loginPage/Login.js';
 import Setting from './pages/settingPage/Setting.js';
-import Home from './pages/gamePage/Home.js';
+import Home from './pages/homePage/Home.js';
 import Friends from './pages/friendPage/Friends.js';
 import Mypage from './pages/myPage/Mypage.js';
 import Chat from './pages/chatPage/Chat.js';

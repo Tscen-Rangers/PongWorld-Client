@@ -1,0 +1,176 @@
+#gamepageTitle {
+  text-align: center;
+  text-shadow: 1px 2.3px 2px grey;
+  font-size: 2.3rem;
+  margin-top: 20px;
+  /* background-color: blue; */
+}
+
+.usersRankBody {
+  display: flex;
+  flex: 1.1;
+  flex-direction: row;
+  /* background-color: blueviolet; */
+}
+
+.usersRank {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.38);
+  border-radius: 20px;
+  flex: 1;
+  margin: 3%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+  /* padding-top: 20px; */
+}
+
+.usersHistoryBody {
+  display: flex;
+  flex: 1.5;
+  flex-direction: column;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.38);
+  padding: 10px;
+  backdrop-filter: blur(2px);
+  overflow: auto;
+}
+
+.playgameDiv {
+  display: flex;
+  flex: 0.4;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 2%;
+}
+
+.playgameButton {
+  font-size: 2rem;
+  /* padding: 10px; */
+  border-radius: 25px;
+}
+
+.playgameButton:hover {
+  color: grey;
+}
+
+#moreImg {
+  display: flex;
+  align-self: center;
+  width: 6%;
+  opacity: 0.5;
+}
+
+.starImg {
+  position: absolute;
+  top: -16px;
+  left: -15px;
+}
+
+.usersHistory {
+  display: flex;
+  min-height: 90px;
+  width: 100%;
+  padding: 10px;
+  /* background-color: pink; */
+}
+
+.recentPlayersImg {
+  display: flex;
+  flex: 1;
+  /* background-color: red; */
+  align-items: center;
+  position: relative;
+}
+
+.recentPlayer1Img {
+  width: 60px;
+  height: 60px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  left: 20px;
+  border: solid 1px white;
+}
+.recentPlayer2Img {
+  width: 60px;
+  height: 60px;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  border: solid 1px white;
+  left: 70px;
+}
+
+.versus {
+  display: flex;
+  flex: 2;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  word-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: aqua; */
+}
+.resultScore {
+  display: flex;
+  flex: 2;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  letter-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: aqua; */
+}
+
+.gameDate {
+  display: flex;
+  flex: 1;
+  font-size: 1.5rem;
+  align-self: center;
+  justify-content: center;
+  word-spacing: 10px;
+  text-shadow: 1px 1px 4px grey;
+  /* background-color: blue; */
+}
+
+.recentPlayerImg {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.line {
+  width: 100%;
+  min-height: 2px;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 2px 1px 1px rgba(111, 111, 111, 0.3);
+}
+
+.rankersInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  /* background-color: red; */
+}
+
+.rankersImgBody,
+.rankersImg {
+  margin-top: 10px;
+  width: 120px;
+  height: 120px;
+  /* background-color: black; */
+  border-radius: 10px;
+  /* margin-top: 20px; */
+}
+
+.rankersName {
+  display: flex;
+  /* background-color: black; */
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+}
