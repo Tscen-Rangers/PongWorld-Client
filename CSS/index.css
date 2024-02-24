@@ -129,8 +129,8 @@ a {
     rgba(255, 255, 255, 0),
     rgba(255, 255, 255, 1)
   );
-  height: 78%;
-  width: 75%;
+  height: 78vh;
+  width: 61vw;
   margin-top: 2%;
   margin-left: 6%;
   border-radius: 10px;
