@@ -52,7 +52,7 @@ export default class extends AbstractView {
     <a class="friends_nav__link"  data-spa href="/friends">friends</a>
     <a class="friends_nav__link"  data-spa href="/friends/search">Search</a>
     <a class="friends_nav__link" style="background-color:rgb(185, 185, 185);"data-spa href="/friends/blocked">blocked</a>
-    <a class="friends_nav__link"  data-spa href="/friends/request">request</a>
+    <a class="friends_nav__link" id="request_nav__link" data-spa href="/friends/request">request<div class="requestBadge"><div class="requestBadgeInner"></div></div></a>
     </nav>
     <div class="searchBarContainer">
     <div class="searchBar">
@@ -102,6 +102,11 @@ export default class extends AbstractView {
   }
 
   afterRender() {
+    const requestBadge = document.querySelector('.requestBadge');
+    requestBadge.firstChild.innerText = localStorage.getItem('newRequest');
+    if (parseInt(localStorage.getItem('newRequest')))
+      requestBadge.classList.add('active');
+    else requestBadge.classList.remove('active');
     this.updateUserList();
   }
 }

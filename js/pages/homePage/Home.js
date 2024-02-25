@@ -78,12 +78,15 @@ const Rankings = [
   {rankersName: 'huipark', score: 3600},
   {rankersName: 'jihyeole', score: 2800},
   {rankersName: 'yubchoi', score: 2000},
+  {rankersName: 'junkpark', score: 1500},
 ];
 
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
 const $battlePlayer = document.querySelector('.battlePlayer');
+const $battleModalContainer = document.querySelector('.battleModalContainer');
+const $battleMsg = document.querySelector('.battleMsg');
 
 export default class extends AbstractView {
   constructor(params) {
@@ -110,8 +113,9 @@ export default class extends AbstractView {
         />
       </svg>
       <div class="rankersInfo">
-      <div class="rankersImgBody"><img class="rankersImg" src="/public/huipark.jpg"/></div>
-      <div class="rankersName">huipark</div>
+     <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
+       Rankings[0].rankersName
+     }</div>
       </div>
     </div>
     <div class="usersRank">
@@ -126,6 +130,11 @@ export default class extends AbstractView {
           d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
         />
       </svg>
+      <div class="rankersInfo">
+      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
+        Rankings[1].rankersName
+      }</div>
+       </div>
     </div>
     <div class="usersRank">
       <svg
@@ -139,6 +148,11 @@ export default class extends AbstractView {
           d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
         />
       </svg>
+      <div class="rankersInfo">
+      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
+        Rankings[2].rankersName
+      }</div>
+       </div>
     </div>
     <div class="usersRank">
       <svg
@@ -152,8 +166,30 @@ export default class extends AbstractView {
           d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
         />
       </svg>
+      <div class="rankersInfo">
+      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
+        Rankings[3].rankersName
+      }</div>
+       </div>
     </div>
-    <img id="moreImg" src="/public/more.png" />
+    <div class="usersRank">
+    <svg
+      class="starImg"
+      xmlns="http://www.w3.org/2000/svg"
+      width="3em"
+      height="3em"
+      viewBox="0 0 24 24">
+      <path
+        fill="#C4BFBF"
+        d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
+      />
+    </svg>
+    <div class="rankersInfo">
+    <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
+      Rankings[4].rankersName
+    }</div>
+     </div>
+  </div>
   </div>
   <div class="usersHistoryBody">
       ${histories
@@ -188,7 +224,24 @@ export default class extends AbstractView {
         .join('')}
   </div>
   <div class="playgameDiv">
-    <text class="playgameButton">play game</text>
+    <div class="tournamentButton">tournament<img style="margin-left:5px;" src="/public/tournament.svg
+    "/></div>
+    <div class="quickMatchButton">quick match<img style="margin-left:5px;" src="/public/quickmatch.svg" /></div>
+  </div>
+  <div class="quickMatchModalContainer">
+      <div class="quickMatchModal">
+        <div class="matchingText">Waiting for a match to be found</div>
+        <div class="matchingOpponent">
+          <div class="myMatching">
+          <img class="myMatchingImg" src="/public/huipark.jpg"/>
+          </div>
+          vs
+          <div class="opponentMatching">
+          <img class="opponentMatchingImg" src="/public/threedotsLoading.svg"/>
+          </div>
+        </div>
+           <button class="matchingCancelBtn">cancel</button>
+        </div>
   </div>
 </div>
 		`;
@@ -209,13 +262,24 @@ export default class extends AbstractView {
 
   afterRender() {
     const authorizationCode = this.getAuthorizationCode();
-    const $playGameBtn = document.querySelector('.playgameButton');
+    const $quickMatchBtn = document.querySelector('.quickMatchButton');
+    const $tournamentBtn = document.querySelector('.tournamentButton');
+    const $quickMatchModal = document.querySelector(
+      '.quickMatchModalContainer',
+    );
+    const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
 
     console.log(authorizationCode);
-
-    $playGameBtn.addEventListener('click', () => {
-      $gameOptionModalContainer.classList.add('show');
-      $battlePlayer.innerText = `Waiting for an opponent to accept the battle request...`;
+    $tournamentBtn.addEventListener('click', () => {
+      $battleMsg.innerHTML =
+        'Waiting for all <br /> players to join the tournament...';
+      $battleModalContainer.classList.add('active');
+    });
+    $quickMatchBtn.addEventListener('click', () => {
+      $quickMatchModal.classList.add('active');
+    });
+    $matchingCancelBtn.addEventListener('click', () => {
+      $quickMatchModal.classList.remove('active');
     });
   }
 }
