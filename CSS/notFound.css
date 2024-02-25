@@ -1,0 +1,28 @@
+.notFoundPageLink {
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
+}
+
+#notFoundPageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100dvw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#notFoundImgae {
+  width: 40dvw;
+  height: 40dvw;
+}
+
+.notFoundPageLink {
+  padding: 10px 10px;
+  text-decoration: none;
+  color: white;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
