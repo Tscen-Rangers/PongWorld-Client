@@ -281,17 +281,16 @@
 .chatRoom {
   display: flex;
   z-index: 1;
-  display: flex;
   overflow: auto;
   flex-direction: column;
   height: 100%;
+  min-width: 240px;
 }
 
 .friendChat,
 .myChat {
   position: relative;
   word-break: break-all;
-  max-width: fit-content; /* 내용에 딱 맞는 최대 너비 */
   z-index: 1;
   color: black;
   background-color: white;
@@ -299,7 +298,7 @@
   margin-top: 10px;
   margin-left: 20px;
   border-radius: 5px;
-  max-width: 300px;
+  align-self: flex-start;
 }
 
 .myChat {

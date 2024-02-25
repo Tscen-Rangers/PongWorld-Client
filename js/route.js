@@ -9,6 +9,7 @@ import SearchFriends from './pages/friendPage/SearchFriends.js';
 import Blocked from './pages/friendPage/Blocked.js';
 import FriendRequest from './pages/friendPage/FriendRequest.js';
 import Game from './pages/gamePage/Game.js';
+import NotFound from './pages/notFoundPage/notFound.js';
 
 const navBar = document.querySelector('.nav');
 const mainTitle = document.querySelector('#main_title');
@@ -16,6 +17,10 @@ const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
 
 const routes = [
+  {
+    path: '/404',
+    view: NotFound,
+  },
   {
     path: '/',
     view: Login,
@@ -125,6 +130,8 @@ const router = async () => {
       route: routes[0],
       result: [location.pathname],
     };
+    headphone.style.display = 'none';
+    navBar.style.display = 'none';
   }
 
   seletedNavStyle(match.route.path);

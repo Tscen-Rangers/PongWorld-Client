@@ -1,5 +1,38 @@
 import AbstractView from '../../AbstractView.js';
 
+let retryCount = 0;
+const maxRetry = 5;
+const retryDelay = 2000; // 2초
+let chatSocket = null;
+
+function connectWebSocket() {
+  chatSocket = new WebSocket(
+    'ws://' + '127.0.0.1:8000' + '/ws/chat/' + 'public' + '/',
+  );
+
+  chatSocket.onerror = function () {
+    if (retryCount < maxRetry) {
+      setTimeout(() => {
+        console.log(`연결 실패. ${retryCount + 1}번째 재연결 시도 중...`);
+        retryCount++;
+        connectWebSocket();
+      }, retryDelay);
+    } else {
+      console.log('WebSocket 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      // 사용자에게 연결 실패 알림
+    }
+  };
+
+  chatSocket.onopen = function () {
+    console.log('WebSocket 연결 성공');
+    retryCount = 0; // 연결 성공 시 재시도 카운트 초기화
+  };
+
+  // 기타 WebSocket 이벤트 핸들러 구현...
+}
+
+connectWebSocket();
+
 const users = [
   {
     name: 'jimpark',
@@ -187,37 +220,64 @@ export default class extends AbstractView {
     chatSearchUserInput.addEventListener('input', e => {});
   }
 
+  connectionChatSocket() {
+    const $chattingForm = document.querySelector('#chattingForm');
+    const $chatRoom = document.querySelector('.chatRoom');
+    const $chattingInput = document.querySelector('#chattingInput');
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const senderID = urlParams.get('sender_id');
+
+    $chattingForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!$chattingInput.value.length) return;
+
+      chatSocket.send(
+        JSON.stringify({
+          sender_id: senderID,
+          message: $chattingInput.value,
+        }),
+      );
+      $chattingInput.value = '';
+    });
+    chatSocket.onmessage = e => {
+      const data = JSON.parse(e.data);
+      const opponentName = document.createElement('div');
+      const newMsg = document.createElement('div');
+      newMsg.style.color = 'black';
+
+      if (Number(data.sender_id) === Number(senderID)) {
+        newMsg.textContent = data.message;
+        newMsg.setAttribute('class', 'myChat');
+        $chatRoom.appendChild(newMsg);
+        $chatRoom.scrollTop = $chatRoom.scrollHeight;
+        chattingSubmitImage.setAttribute('fill', '#ddd');
+      } else {
+        opponentName.textContent = data.sender_name;
+        opponentName.style.color = 'black';
+        opponentName.style.marginBottom = '-10px';
+        newMsg.textContent = data.message;
+        newMsg.setAttribute('class', 'friendChat');
+        $chatRoom.appendChild(opponentName);
+        $chatRoom.appendChild(newMsg);
+        $chatRoom.scrollTop = $chatRoom.scrollHeight;
+      }
+    };
+  }
+
   afterRender() {
-    const chattingForm = document.querySelector('#chattingForm');
-    const chattingInput = document.querySelector('#chattingInput');
     const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
-    const chatUserProfiles = document.querySelectorAll('.chatUserProfile');
-    const chatRoom = document.querySelector('.chatRoom');
     const directMsgImageContainer = document.querySelectorAll(
       '.directMsgImageContainer',
     );
 
     this.bindSearchUserInputEvent();
+    this.connectionChatSocket();
 
     chattingInput.addEventListener('input', e => {
       if (e.target.value.length)
         chattingSubmitImage.setAttribute('fill', 'black');
       else chattingSubmitImage.setAttribute('fill', '#ddd');
-    });
-
-    chattingForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!chattingInput.value.length) return;
-      const newMsg = document.createElement('div');
-      //   const newP = document.createElement('p');
-      newMsg.style.color = 'black';
-      newMsg.textContent = `${chattingInput.value}`;
-      newMsg.setAttribute('class', 'myChat');
-      chatRoom.appendChild(newMsg);
-      chatRoom.scrollTop = chatRoom.scrollHeight;
-      chattingSubmitImage.setAttribute('fill', '#ddd');
-      chattingInput.value = '';
-      console.log('Chat form submitted');
     });
   }
 }
