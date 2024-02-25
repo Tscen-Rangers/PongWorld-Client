@@ -51,6 +51,8 @@
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
   position: relative;
+  align-items: center;
+  justify-content: center;
 }
 
 .pingpongTable::after {
@@ -135,10 +137,7 @@
   align-items: center;
 }
 
-.playingUserHistory {
-}
-
-.playingUserComment {
+.playingUserTotalScore {
   display: flex;
   width: 100%;
   height: 320px;
@@ -153,4 +152,11 @@
 .myTotalScore {
   display: flex;
   font-size: 2rem;
+}
+
+.pongworldImg {
+  opacity: 0.2;
+  width: 200px;
+  height: 150px;
+  transform: translateX(14px);
 }

@@ -272,6 +272,7 @@ export default class extends AbstractView {
         cancelRequestModal.classList.remove('active');
       });
     }
+    localStorage.setItem('newRequest', 0);
     this.updateReceivedUserList();
     this.updateSentUserList();
   }

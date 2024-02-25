@@ -55,7 +55,8 @@ const users = [
     state: false,
   },
 ];
-const battlePlayer = document.querySelector('.battlePlayer');
+
+const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
@@ -89,8 +90,9 @@ export default class extends AbstractView {
           <a class="friends_nav__link" data-spa href="/friends/blocked">
             blocked
           </a>
-          <a class="friends_nav__link" data-spa href="/friends/request">
+          <a class="friends_nav__link"  id="request_nav__link" data-spa href="/friends/request">
             request
+          <div class="requestBadge"><div class="requestBadgeInner"></div></div>
           </a>
         </nav>
         <div class="searchBarContainer">
@@ -147,7 +149,11 @@ battle
           </div>`
           : ''
       }
-      <a class="chatbutton" href='/chat/direct/${user.name}' data-spa>chat</a>
+      <a class="chatbutton" href='/chat/direct/${
+        user.name
+      }' data-spa>chat<svg class="chatMsgImage" style="margin-left:5px;" width="0.9em" height="0.9em" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
+      <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#636363"/>
+      </svg></a>
     <div class="option">
       <img class="friendsThreedotsImg" src="/public/threedots.png" />
       <div class="optionModal">
@@ -193,11 +199,10 @@ battle
     });
 
     const battleButtons = document.querySelectorAll('.battlebutton');
-    console.log($gameOptionModalContainer);
     battleButtons.forEach(battleButton => {
       battleButton.addEventListener('click', e => {
         const user = e.target.dataset.user;
-        battlePlayer.innerText = `Waiting for a response from ${user}`;
+        battleMsg.innerText = `Waiting for a response from ${user}...`;
         $gameOptionModalContainer.classList.add('show');
       });
     });
@@ -222,5 +227,11 @@ battle
 
   afterRender() {
     this.updateFriendList();
+    localStorage.setItem('newRequest', 1);
+    const requestBadge = document.querySelector('.requestBadge');
+    requestBadge.firstChild.innerText = localStorage.getItem('newRequest');
+    if (parseInt(localStorage.getItem('newRequest')))
+      requestBadge.classList.add('active');
+    else requestBadge.classList.remove('active');
   }
 }

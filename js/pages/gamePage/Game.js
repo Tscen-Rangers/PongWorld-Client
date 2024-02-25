@@ -21,8 +21,7 @@ export default class extends AbstractView {
     <div class="playingUserInfo">
     <div class="playingUserName">${competitior.name}</div>
     <div class="playingUserImage"><img class="competitorsImg" src="/public/huipark.jpg"/></div>
-    <div class="playingUserHistory"></div>
-    <div class="playingUserComment">
+    <div class="playingUserTotalScore">
     score
     <div class="competitorsTotalScore">1231</div></div>
     </div>
@@ -30,6 +29,7 @@ export default class extends AbstractView {
     <div class="pingpongBody">
     <div class="gameScore"><text class="competitorsScore">2</text>:<text class="myScore">3</text></div>
     <div class="pingpongTable">
+            <img class="pongworldImg" src="/public/pongworld.png"/>
             <div class="pingpongStick"></div>
             <div class="pingpongBall"></div>
             <div class="myPingpongStick"></div>
@@ -39,8 +39,7 @@ export default class extends AbstractView {
             <div class="playingUserInfo">
             <div class="playingUserName">${me.name}</div>
               <div class="playingUserImage"><img class="myImg" src="/public/huipark.jpg"/></div>
-              <div class="playingUserHistory"></div>
-              <div class="playingUserComment">
+              <div class="playingUserTotalScore">
                 score
                 <div class="myTotalScore">13000</div>
               </div>

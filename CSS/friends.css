@@ -163,7 +163,7 @@
   align-items: center;
   justify-content: center;
   background-color: #aeaeae;
-  width: 60px;
+  width: 70px;
   height: 35px;
   font-size: 1.2rem;
   font-weight: bold;
@@ -172,6 +172,27 @@
   margin: 0px 20px;
   color: #636363;
   text-decoration: none;
+}
+
+@-webkit-keyframes chatMsgAnime {
+  0% {
+    transform: translate(-1px, 1px) scale(1);
+  }
+  30% {
+    transform: translate(-2px, 3px) scale(1.2);
+  }
+  100% {
+    transform: translate(11px, -11px) scale(0.3);
+  }
+}
+
+.chatbutton:hover > .chatMsgImage {
+  -webkit-animation: chatMsgAnime 2s cubic-bezier(0.275, 0.005, 0.015, 0.99) 1;
+}
+
+.chatMsgImage {
+  transform: translate(-1px, 1px);
+  transition: 1s;
 }
 
 .battlebutton {
@@ -331,7 +352,39 @@
   color: grey;
 }
 
-.acceptIcon:hover .cancelSentIcon:hover,
+.acceptIcon:hover,
+.cancelSentIcon:hover,
 .rejectRecievedIcon:hover {
   transform: scale(1.2);
+}
+
+#request_nav__link {
+  position: relative;
+}
+
+.requestBadge {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.4);
+  top: -2px;
+  right: 2px;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.requestBadgeInner {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+}
+
+.requestBadge.active {
+  visibility: visible;
 }
