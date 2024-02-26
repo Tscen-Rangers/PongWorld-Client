@@ -253,3 +253,13 @@
   background-color: rgba(111, 111, 111, 0.3);
   font-size: 1rem;
 }
+
+.currentStaff {
+  display: flex;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  /* background-color: red; */
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}

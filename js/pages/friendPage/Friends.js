@@ -203,6 +203,7 @@ battle
       battleButton.addEventListener('click', e => {
         const user = e.target.dataset.user;
         battleMsg.innerText = `Waiting for a response from ${user}...`;
+        $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
         $gameOptionModalContainer.classList.add('show');
       });
     });

@@ -40,8 +40,8 @@
 
 .pingpongTable {
   display: flex;
-  width: 95%;
-  height: 90%;
+  height: 49vw;
+  width: 68vw;
   border-radius: 10px;
   background: linear-gradient(
     to top,
@@ -66,8 +66,8 @@
 
 .playingUserInfo {
   display: flex;
-  width: 80%;
-  height: 40%;
+  width: 12vw;
+  height: 22vw;
   background: linear-gradient(to top, black, white);
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
@@ -172,9 +172,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* visibility: hidden;
+  visibility: hidden;
   transition: 0.5s;
-  opacity: 0; */
+  opacity: 0;
 }
 
 .gameResultModalContainer.active {
