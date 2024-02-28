@@ -254,9 +254,9 @@ export default class extends AbstractView {
         .join('')}
   </div>
   <div class="playgameDiv">
-    <div class="tournamentButton">tournament<img style="margin-left:5px;" src="/public/tournament.svg
+    <div class="tournamentButton"><text class="tournamentButtonText">tournament</text><img class="tournamentSvg" src="/public/tournament.svg
     "/></div>
-    <div class="quickMatchButton">quick match<img style="margin-left:5px;" src="/public/quickmatch.svg" /></div>
+    <div class="quickMatchButton"><text class="quickMatchButtonText">quick match</text><img class="quickMatchSvg" src="/public/quickmatch.svg" /></div>
   </div>
   <div class="quickMatchModalContainer">
       <div class="quickMatchModal">

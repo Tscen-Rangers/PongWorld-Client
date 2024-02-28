@@ -479,9 +479,16 @@ a {
 
 @media (max-width: 768px) {
   html {
-    font-size: 12px;
+    font-size: 13px;
   }
   .main_body {
     flex-direction: column;
+  }
+  #app {
+    margin-left: 0px;
+    align-items: center;
+  }
+  .contentsContainer {
+    width: 75vw;
   }
 }
