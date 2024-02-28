@@ -25,10 +25,8 @@ function connectWebSocket() {
 
   chatSocket.onopen = function () {
     console.log('WebSocket 연결 성공');
-    retryCount = 0; // 연결 성공 시 재시도 카운트 초기화
+    retryCount = 0;
   };
-
-  // 기타 WebSocket 이벤트 핸들러 구현...
 }
 
 connectWebSocket();
@@ -226,7 +224,7 @@ export default class extends AbstractView {
     const $chattingInput = document.querySelector('#chattingInput');
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const senderID = urlParams.get('sender_id');
+    const senderID = urlParams.get('user_id');
 
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
@@ -234,7 +232,7 @@ export default class extends AbstractView {
 
       chatSocket.send(
         JSON.stringify({
-          sender_id: senderID,
+          user_id: senderID,
           message: $chattingInput.value,
         }),
       );
@@ -246,14 +244,14 @@ export default class extends AbstractView {
       const newMsg = document.createElement('div');
       newMsg.style.color = 'black';
 
-      if (Number(data.sender_id) === Number(senderID)) {
+      if (Number(data.user_id) === Number(senderID)) {
         newMsg.textContent = data.message;
         newMsg.setAttribute('class', 'myChat');
         $chatRoom.appendChild(newMsg);
         $chatRoom.scrollTop = $chatRoom.scrollHeight;
         chattingSubmitImage.setAttribute('fill', '#ddd');
       } else {
-        opponentName.textContent = data.sender_name;
+        opponentName.textContent = data.user_name;
         opponentName.style.color = 'black';
         opponentName.style.marginBottom = '-10px';
         newMsg.textContent = data.message;

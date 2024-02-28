@@ -8,9 +8,9 @@
 
 .usersRankBody {
   display: flex;
-  flex: 1.1;
+  flex: 1;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   /* background-color: blueviolet; */
 }
@@ -19,9 +19,9 @@
   display: flex;
   background-color: rgba(255, 255, 255, 0.38);
   border-radius: 10px;
-  width: 150px;
-  height: 150px;
-  margin: 25px;
+  width: 10dvw;
+  height: 10dvw;
+  /* margin: 25px; */
   justify-content: center;
   align-items: center;
   position: relative;

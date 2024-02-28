@@ -1,90 +1,12 @@
 import AbstractView from '../../AbstractView.js';
-const users = [
-  {
-    name: 'jimpark',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'huipark',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'hwankim',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jimpark',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'huipark',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'hwankim',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jimpark',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'huipark',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'hwankim',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jimpark',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'huipark',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'hwankim',
-    state: true,
-    image: '/public/huipark.jpg',
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-    image: '/public/huipark.jpg',
-  },
-];
 
-function findUser(userName, users) {
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].name === userName) return i;
+function findUser(userName, rooms) {
+  for (let i = 0; i < rooms.length; i++) {
+    if (
+      rooms[i].user1_nickname === userName ||
+      rooms[i].user2_nickname === userName
+    )
+      return i;
   }
   return -1;
 }
@@ -146,21 +68,20 @@ export default class extends AbstractView {
 		`;
   }
 
-  updateUserList() {
+  updateUserList(chattingRooms, user_id) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
-    chatUserInner.innerHTML = `${users
-      .map(user => {
-        return `<div class="chatUserProfile">
+    chatUserInner.innerHTML = `${chattingRooms.data
+      .map(room => {
+        return `<div class="chatUserProfile" data-userid="${
+          room.user1 === user_id ? room.user2 : room.user1
+        }">
         <div class="chatUserProfileBlur"></div>
           <div class="chatUserInfo">
           <img class="chatUserImage" src="/public/huipark.jpg"/>
-          <p class="chatUserName">${user.name}</p>
-          ${
-            user.state
-              ? `<img class="directOnlineUserImage" src="/public/online.png"/>`
-              : ``
-          }
+          <p class="chatUserName">${
+            room.user1 === user_id ? room.user2_nickname : room.user1_nickname
+          }</p>
         </div>
           <div class="outDirectChatRoomContainer">
             <svg class="outDirectChatRoom" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -171,14 +92,84 @@ export default class extends AbstractView {
       })
       .join('')}`;
 
-    this.bindUserListEvents();
+    this.bindUserListEvents(chattingRooms, user_id);
   }
 
-  bindUserListEvents() {
+  bindUserListEvents(chattingRooms, user_id) {
     const outDirectChatRoomContainer = document.querySelectorAll(
       '.outDirectChatRoomContainer',
     );
-    const chatUserProfiles = document.querySelectorAll('.chatUserProfile');
+    const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
+    const $chattingForm = document.querySelector('#chattingForm');
+    const $chattingInput = document.querySelector('#chattingInput');
+    const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
+    const $chatRoom = document.querySelector('.chatRoom');
+    let directSocket = null;
+    let chatRoomID = null;
+    let msgTarget = null;
+
+    function reconnectWebSocket() {
+      if (directSocket) {
+        directSocket.close();
+        console.log('DirectSocket is Close!!! Trying to reconnect...');
+      }
+      directSocket = new WebSocket(
+        `ws://127.0.0.1:8000/ws/chat/private/${user_id}/${msgTarget}/`,
+      );
+      directSocket.onopen = () => {
+        console.log('DirectSocket is Connected!!!');
+      };
+      directSocket.onerror = error => {
+        console.error('WebSocket error:', error);
+      };
+      directSocket.onmessage = async e => {
+        const data = JSON.parse(e.data);
+        const opponentName = document.createElement('div');
+        const newMsg = document.createElement('div');
+        newMsg.style.color = 'black';
+        console.log(data);
+
+        if (data.chatroom_id) {
+          chatRoomID = data.chatroom_id;
+          try {
+            const res = await fetch(
+              `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
+            );
+            if (!res.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const prevChat = await res.json();
+            console.log(prevChat);
+          } catch (error) {
+            console.error('Fetch error:', error);
+          }
+        } else {
+          console.log(data.user_id, user_id);
+          if (Number(data.user_id) === user_id) {
+            newMsg.textContent = data.message;
+            newMsg.setAttribute('class', 'myChat');
+            $chatRoom.appendChild(newMsg);
+            $chatRoom.scrollTop = $chatRoom.scrollHeight;
+            $chattingSubmitImage.setAttribute('fill', '#ddd');
+          } else {
+            opponentName.textContent = data.user_name;
+            opponentName.style.color = 'black';
+            opponentName.style.marginBottom = '-10px';
+            newMsg.textContent = data.message;
+            newMsg.setAttribute('class', 'friendChat');
+            $chatRoom.appendChild(opponentName);
+            $chatRoom.appendChild(newMsg);
+            $chatRoom.scrollTop = $chatRoom.scrollHeight;
+          }
+        }
+      };
+    }
+
+    $chattingInput.addEventListener('input', e => {
+      if (e.target.value.length)
+        $chattingSubmitImage.setAttribute('fill', 'black');
+      else $chattingSubmitImage.setAttribute('fill', '#ddd');
+    });
 
     outDirectChatRoomContainer.forEach((e, idx) =>
       e.addEventListener('click', e => {
@@ -187,49 +178,75 @@ export default class extends AbstractView {
       }),
     );
 
-    chatUserProfiles.forEach(profile => {
-      profile.addEventListener('click', e => {
-        chatUserProfiles.forEach(profile => {
+    $chattingForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!$chattingInput.value.length) return;
+      if (directSocket && directSocket.readyState === WebSocket.OPEN) {
+        directSocket.send(
+          JSON.stringify({
+            user_id: Number(user_id),
+            chatroom_id: Number(chatRoomID),
+            message: $chattingInput.value,
+          }),
+        );
+      } else {
+        console.error('WebSocket 연결이 닫혔거나 닫히는 중입니다.');
+      }
+      $chattingInput.value = '';
+    });
+
+    $chatUserProfiles.forEach(profile => {
+      profile.addEventListener('click', async e => {
+        // 기존 active 클래스 삭제
+        $chatUserProfiles.forEach(profile => {
           profile.classList.remove('active');
         });
+
         e.currentTarget.classList.add('active');
-        this.target = e.currentTarget.innerText;
+
+        msgTarget = e.currentTarget.dataset.userid; //타겟 아이디
+        reconnectWebSocket();
       });
     });
 
     if (this.params.user) {
-      let idx = findUser(this.params.user, users);
-      chatUserProfiles[idx].classList.add('active');
-      this.target = this.params.user;
+      let idx = findUser(this.params.user, chattingRooms.data);
+      if (idx === -1) {
+        // 채팅방 목록에 없을떄!!
+      } else {
+        $chatUserProfiles[idx].classList.add('active');
+        this.target = this.params.user;
+      }
     }
   }
 
-  afterRender() {
-    const chattingForm = document.querySelector('#chattingForm');
-    const chattingInput = document.querySelector('#chattingInput');
-    const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
-    const chatRoom = document.querySelector('.chatRoom');
+  async getChattingRoom(user_id) {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/chat/${user_id}/rooms`);
+      const chattingRooms = await res.json();
+      // console.log(chattingRooms);
+      return chattingRooms;
+    } catch (error) {
+      console.error('Error fetching chatting rooms:', error);
+    }
+  }
 
-    this.updateUserList();
+  async afterRender() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const user_id = Number(urlParams.get('user_id'));
 
-    chattingInput.addEventListener('input', e => {
-      if (e.target.value.length)
-        chattingSubmitImage.setAttribute('fill', 'black');
-      else chattingSubmitImage.setAttribute('fill', '#ddd');
-    });
+    // const chattingForm = document.querySelector('#chattingForm');
+    // const chattingInput = document.querySelector('#chattingInput');
+    // const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
+    // const chatRoom = document.querySelector('.chatRoom');
 
-    chattingForm.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!chattingInput.value.length) return;
-      const newMsg = document.createElement('div');
-      newMsg.style.color = 'black';
-      newMsg.textContent = `${chattingInput.value}`;
-      newMsg.setAttribute('class', 'myChat');
-      chatRoom.appendChild(newMsg);
-      chatRoom.scrollTop = chatRoom.scrollHeight;
-      chattingSubmitImage.setAttribute('fill', '#ddd');
-      chattingInput.value = '';
-      console.log('Chat form submitted');
-    });
+    const chattingRooms = await this.getChattingRoom(user_id);
+    this.updateUserList(chattingRooms, user_id);
   }
 }
+// ${
+//   room.state
+//     ? `<img class="directOnlineUserImage" src="/public/online.png"/>`
+//     : ``
+// }
