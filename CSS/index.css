@@ -147,7 +147,7 @@ a {
   width: 32px;
   padding: 8px;
   border-radius: 50%;
-  position: absolute;
+  position: fixed;
   bottom: 3%;
   right: 2%;
   display: none;
@@ -474,5 +474,14 @@ a {
   }
   &:active {
     background-color: rgb(60, 71, 74);
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+  .main_body {
+    flex-direction: column;
   }
 }
