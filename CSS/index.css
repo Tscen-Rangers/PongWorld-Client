@@ -509,8 +509,6 @@ a {
 @media (max-width: 768px) {
   html {
     font-size: 12px;
-    height: 100dvh;
-    width: 100dvw;
   }
   #navBar {
     display: flex;
@@ -538,8 +536,16 @@ a {
     box-sizing: content-box;
     justify-content: center;
     align-items: center;
+    font-size: 13px;
   }
   .main_body {
     flex-direction: column;
+  }
+  #app {
+    margin-left: 0px;
+    align-items: center;
+  }
+  .contentsContainer {
+    width: 75vw;
   }
 }

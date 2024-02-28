@@ -22,6 +22,8 @@
   width: 10dvw;
   height: 10dvw;
   /* margin: 25px; */
+  min-height: 80px;
+  min-width: 80px;
   justify-content: center;
   align-items: center;
   position: relative;
@@ -50,13 +52,19 @@
 .quickMatchButton,
 .tournamentButton {
   display: flex;
+  height: 30px;
   font-size: 1.7rem;
-  margin-left: 40px;
+  margin-left: 2dvw;
   font-weight: 400;
   border-radius: 10px;
   padding: 5px;
   align-items: center;
   border: 2px solid white;
+}
+
+.tournamentSvg,
+.quickMatchSvg {
+  margin-left: 5px;
 }
 
 .quickMatchButton:hover,
@@ -73,7 +81,7 @@
 
 .usersHistory {
   display: flex;
-  min-height: 90px;
+  min-height: 80px;
   width: 100%;
   padding: 10px;
   /* background-color: pink; */
@@ -89,8 +97,8 @@
 .recentPlayer1Img {
   width: 3.8dvw;
   height: 3.8dvw;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: 40px;
+  min-height: 40px;
   background-color: black;
   border-radius: 50%;
   position: absolute;
@@ -99,8 +107,8 @@
 .recentPlayer2Img {
   width: 3.8dvw;
   height: 3.8dvw;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: 40px;
+  min-height: 40px;
   background-color: black;
   border-radius: 50%;
   position: absolute;
@@ -110,7 +118,7 @@
 
 .versus {
   display: flex;
-  flex: 2;
+  flex: 1;
   font-size: 1.4rem;
   align-self: center;
   justify-content: center;
@@ -120,7 +128,7 @@
 }
 .resultScore {
   display: flex;
-  flex: 2;
+  flex: 1;
   font-size: 1.4rem;
   align-self: center;
   justify-content: center;
@@ -174,11 +182,13 @@
   position: absolute;
   align-items: center;
   justify-content: center;
-  font-size: 1dvw;
+  font-size: 1rem;
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.8);
   width: 5dvw;
   height: 2.3dvw;
+  min-width: 80px;
+  min-height: 20px;
   /* padding: 8px; */
   bottom: 0px;
   right: 0px;
@@ -273,5 +283,53 @@
   }
   .usersRankBody {
     flex: 0.7;
+  }
+}
+
+@media (max-width: 600px) {
+  .tournamentButtonText {
+    display: none;
+  }
+  .quickMatchButtonText {
+    display: none;
+  }
+  .tournamentSvg,
+  .quickMatchSvg {
+    margin-left: 0px;
+  }
+  .usersRankBody {
+    /* flex-direction: column; */
+    /* background-color: pink; */
+    padding: 10px 0px;
+  }
+  .usersRank {
+    min-height: 0px;
+    min-width: 60px;
+    height: 9dvw;
+    /* background-color: blue; */
+  }
+  .rankersImg {
+    display: none;
+  }
+  .rankersName {
+    position: relative;
+    background-color: transparent;
+    font-size: 2.2dvw;
+  }
+  .starImg {
+    width: 2.5em;
+    height: 2.5em;
+  }
+}
+
+@media (max-width: 420px) {
+  .usersRankBody {
+    flex-direction: column;
+  }
+  .usersRank {
+    min-height: 0px;
+    min-width: 60px;
+    height: 9dvw;
+    /* background-color: blue; */
   }
 }
