@@ -88,22 +88,25 @@
 }
 
 .recentPlayer1Img {
-  width: 60px;
-  height: 60px;
+  width: 3.8dvw;
+  height: 3.8dvw;
+  min-width: 50px;
+  min-height: 50px;
   background-color: black;
   border-radius: 50%;
   position: absolute;
-  left: 20px;
   border: solid 1px white;
 }
 .recentPlayer2Img {
-  width: 60px;
-  height: 60px;
+  width: 3.8dvw;
+  height: 3.8dvw;
+  min-width: 50px;
+  min-height: 50px;
   background-color: black;
   border-radius: 50%;
   position: absolute;
   border: solid 1px white;
-  left: 70px;
+  left: 3.2dvw;
 }
 
 .versus {
@@ -139,8 +142,8 @@
 }
 
 .recentPlayerImg {
-  width: 60px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
 }
 
@@ -172,10 +175,12 @@
   position: absolute;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1dvw;
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 8px;
+  width: 5dvw;
+  height: 2.3dvw;
+  /* padding: 8px; */
   bottom: 0px;
   right: 0px;
   border-bottom-right-radius: 10px;
