@@ -19,26 +19,28 @@
       rel="stylesheet" />
   </head>
   <body>
-    <header id="main_title">
-      <a
-        href="/home"
-        data-spa
-        style="
-          text-decoration: none;
-          color: white;
-          cursor: url(/public/pointerCursor.png) 8 8, auto;
-        ">
-        <text>PONG WORLD</text><br />
-        <text style="letter-spacing: 4px">ㅍㅣㅇㅍㅗㅇ</text>
-      </a>
-    </header>
     <div class="main_body">
-      <nav class="nav">
-        <a class="nav__link" data-spa href="/home">Game</a>
-        <a class="nav__link" data-spa href="/chat">Chat</a>
-        <a class="nav__link" data-spa href="/friends">Friends</a>
-        <a class="nav__link" data-spa href="/mypage">MyPage</a>
-      </nav>
+      <div id="navBar">
+        <header id="main_title">
+          <a
+            href="/home"
+            data-spa
+            style="
+              text-decoration: none;
+              color: white;
+              cursor: url(/public/pointerCursor.png) 8 8, auto;
+            ">
+            <text>PONG WORLD</text><br />
+            <text style="letter-spacing: 4px">ㅍㅣㅇㅍㅗㅇ</text>
+          </a>
+        </header>
+        <nav class="nav">
+          <a class="nav__link" data-spa href="/home">Game</a>
+          <a class="nav__link" data-spa href="/chat">Chat</a>
+          <a class="nav__link" data-spa href="/friends">Friends</a>
+          <a class="nav__link" data-spa href="/mypage">MyPage</a>
+        </nav>
+      </div>
       <div id="app"></div>
     </div>
     <!-- ------------- 뮤직 모달 컨테이너 ------------- -->
