@@ -327,3 +327,6 @@
   border-top: 00px solid transparent;
   border-bottom: 10px solid transparent;
 }
+
+@media (max-width: 768px) {
+}

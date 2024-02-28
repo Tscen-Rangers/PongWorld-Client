@@ -107,10 +107,10 @@ const navigateTo = url => {
 };
 
 const router = async () => {
-  navBar.style.display =
+  navBar.style.visibilty =
     location.pathname === '/' || location.pathname === '/game'
-      ? 'none'
-      : 'block';
+      ? 'hidden'
+      : 'visible';
   mainTitle.style.display = location.pathname === '/' ? 'none' : 'block';
   headphone.style.display = location.pathname === '/' ? 'none' : 'block';
 
@@ -131,7 +131,7 @@ const router = async () => {
       result: [location.pathname],
     };
     headphone.style.display = 'none';
-    navBar.style.display = 'none';
+    navBar.style.visibilty = 'hidden';
   }
 
   seletedNavStyle(match.route.path);
