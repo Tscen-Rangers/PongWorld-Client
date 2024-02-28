@@ -67,14 +67,17 @@ a {
 }
 .main_body {
   display: flex;
-  height: 100%;
-  width: 100%;
+  width: 100dvw;
+  height: 100dvh;
   flex-direction: row;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .nav {
   display: none;
   flex-direction: column;
   padding: 3% 2%;
+  margin-top: 20%;
 }
 .nav__link {
   display: flex;
@@ -101,8 +104,10 @@ a {
 
 #app {
   display: flex;
+  justify-content: center;
   flex: 1;
   flex-direction: column;
+  margin-left: 10%;
 }
 
 img {
@@ -131,8 +136,6 @@ a {
   );
   height: 78vh;
   width: 61vw;
-  margin-top: 2%;
-  margin-left: 6%;
   border-radius: 10px;
   padding: 1%;
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
