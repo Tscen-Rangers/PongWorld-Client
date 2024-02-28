@@ -21,19 +21,25 @@
   <body>
     <div class="main_body">
       <div id="navBar">
-        <header id="main_title">
-          <a
-            href="/home"
-            data-spa
-            style="
-              text-decoration: none;
-              color: white;
-              cursor: url(/public/pointerCursor.png) 8 8, auto;
-            ">
-            <text>PONG WORLD</text><br />
-            <text style="letter-spacing: 4px">ㅍㅣㅇㅍㅗㅇ</text>
-          </a>
-        </header>
+        <div id="headerConatainer">
+          <header id="main_title">
+            <a
+              href="/home"
+              data-spa
+              style="
+                text-decoration: none;
+                color: white;
+                cursor: url(/public/pointerCursor.png) 8 8, auto;
+              ">
+              <text>PONG WORLD</text><br />
+              <text style="letter-spacing: 4px">ㅍㅣㅇㅍㅗㅇ</text>
+            </a>
+          </header>
+          <div class="menu">
+            <div id="f"></div>
+            <div id="s"></div>
+          </div>
+        </div>
         <nav class="nav">
           <a class="nav__link" data-spa href="/home">Game</a>
           <a class="nav__link" data-spa href="/chat">Chat</a>
@@ -188,6 +194,7 @@
     <script
       type="text/javascript"
       src="/js/pages/loginPage/loginEvent.js"></script>
+    <script type="module" src="/js/menuEvent.js"></script>
     <script type="module" src="/js/bindMusicEvent.js"></script>
     <script type="module" src="/js/bindGameOptionEvent.js"></script>
     <script type="text/javascript">
