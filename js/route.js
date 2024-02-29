@@ -11,7 +11,7 @@ import FriendRequest from './pages/friendPage/FriendRequest.js';
 import Game from './pages/gamePage/Game.js';
 import NotFound from './pages/notFoundPage/notFound.js';
 
-const navBar = document.querySelector('.nav');
+const navBar = document.querySelector('#navBar');
 const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
@@ -109,10 +109,6 @@ const navigateTo = url => {
 const router = async () => {
   navBar.style.display =
     location.pathname === '/' || location.pathname === '/game'
-      ? 'none'
-      : 'block';
-  mainTitle.style.display =
-    (location.pathname === '/') | (location.pathname === '/game')
       ? 'none'
       : 'block';
   headphone.style.display = location.pathname === '/' ? 'none' : 'block';
