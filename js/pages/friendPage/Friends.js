@@ -55,7 +55,8 @@ const users = [
     state: false,
   },
 ];
-
+const $battleModalContainer = document.querySelector('.battleModalContainer');
+const $battleCancelBtn = document.querySelector('.battleCancelBtn');
 const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
@@ -201,7 +202,7 @@ battle
     const battleButtons = document.querySelectorAll('.battlebutton');
     battleButtons.forEach(battleButton => {
       battleButton.addEventListener('click', e => {
-        const user = e.target.dataset.user;
+        const user = e.currentTarget.dataset.user;
         battleMsg.innerText = `Waiting for a response from ${user}...`;
         $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
         $gameOptionModalContainer.classList.add('show');
@@ -227,6 +228,10 @@ battle
   }
 
   afterRender() {
+    $battleCancelBtn.addEventListener('click', () => {
+      $battleModalContainer.classList.remove('active');
+    });
+    $battleCancelBtn.addEventListener('click', {});
     this.updateFriendList();
     localStorage.setItem('newRequest', 1);
     const requestBadge = document.querySelector('.requestBadge');

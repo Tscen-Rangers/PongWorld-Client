@@ -13,20 +13,23 @@
 }
 
 .friends_nav {
-  padding: 2% 2% 2% 2%;
+  padding: 2%;
   display: flex;
   flex: 1;
 }
 
 .friends_nav__link {
   text-decoration: none;
-  padding: 6px 20px;
+  padding: 2px 20px;
   border-radius: 10px;
   color: white;
   margin-right: 1.5%;
   font-size: 1.5rem;
   font-weight: bold;
   text-shadow: 1px 1px 1px rgba(111, 111, 111, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .friends_nav__link:hover {
@@ -435,7 +438,7 @@
 
 @media (max-width: 800px) {
   .friends_nav__link {
-    padding: 4px 15px;
+    padding: 2px 15px;
   }
 }
 
@@ -447,7 +450,7 @@
 
 @media (max-width: 560px) {
   .friends_nav__link {
-    padding: 4px 3px;
+    padding: 2px 3px;
   }
   .leftgloveImg {
     display: none;
