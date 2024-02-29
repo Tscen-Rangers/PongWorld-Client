@@ -13,6 +13,7 @@ body {
   height: 100dvh;
   color: white;
   cursor: url(/public/mouseCursor.png) 8 8, auto;
+  overflow-x: hidden;
 }
 
 .nav__link {
@@ -136,7 +137,6 @@ a {
   justify-content: center;
   flex: 1;
   flex-direction: column;
-  margin-left: 10%;
 }
 
 img {
@@ -169,7 +169,8 @@ a {
   padding: 1%;
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
-  /* box-shadow: inset rgba(255, 255, 255, 0.2) 3px -5px 9px 2px; */
+  min-width: 300px;
+  margin-left: 13%;
 }
 
 #headphoneImg {
@@ -542,7 +543,6 @@ a {
     box-sizing: content-box;
     justify-content: center;
     align-items: center;
-    font-size: 13px;
   }
   .main_body {
     flex-direction: column;

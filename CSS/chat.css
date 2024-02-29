@@ -13,7 +13,16 @@
   justify-content: space-between;
 }
 
+#chatHeader {
+  height: 25%;
+}
+
+#directChatHeader {
+  height: 15%;
+}
+
 .chatLeftContainer {
+  height: 75%;
   display: flex;
   position: relative;
   flex-direction: column;
@@ -78,6 +87,7 @@
   background-color: rgba(255, 255, 255, 0.598);
   border-radius: 10px;
   filter: blur(3px);
+  z-index: -1;
 }
 .chatUserInner {
   display: flex;
@@ -328,5 +338,31 @@
   border-bottom: 10px solid transparent;
 }
 
-@media (max-width: 768px) {
+@media (width < 1024px) {
+  .chatContainer {
+    padding: 0;
+  }
+  .chatUserImage {
+    display: none;
+  }
+}
+
+@media (width < 768px) {
+  .chatNav > * {
+    padding: 0;
+    font-size: 19px;
+  }
+  .chatUserInner {
+    padding: 0;
+  }
+  .chatRoom {
+    min-width: 100px;
+  }
+  #chatSearchUserInput {
+    font-size: 1rem;
+  }
+  .directMsgImageContainer {
+    width: 1rem;
+    height: 1rem;
+  }
 }

@@ -24,7 +24,7 @@ export default class extends AbstractView {
     <div class="contentsContainer">
     <div class="chatContainer">
       <div style="flex:0.35;">
-        <div style="height:15%">
+        <div id="directChatHeader">
           <div style="height:32px">
             <h1 class="chatTitle">Chat</h1>
           </div>
