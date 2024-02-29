@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/CSS/myPage.css" />
     <link rel="stylesheet" href="/CSS/chat.css" />
     <link rel="stylesheet" href="/CSS/notFound.css" />
+    <link rel="stylesheet" href="/CSS/signup.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,7 +43,7 @@
                 cursor: url(/public/pointerCursor.png) 8 8, auto;
               ">
               <text>PONG WORLD</text><br />
-              <text style="letter-spacing: 4px">ㅍㅣㅇㅍㅗㅇ</text>
+              <text id="ko_header">ㅍㅣㅇㅍㅗㅇ</text>
             </a>
           </header>
           <div class="menu">
@@ -236,14 +237,5 @@
     <script type="module" src="/js/menuEvent.js"></script>
     <script type="module" src="/js/bindMusicEvent.js"></script>
     <script type="module" src="/js/bindGameOptionEvent.js"></script>
-    <script type="text/javascript">
-      const $battleCancelBtn = document.querySelector('.battleCancelBtn');
-      const $battleModal = document.querySelector('.battleModalContainer');
-
-      // $battleCancelBtn.addEventListener('click', () => {
-      //   // console.log('bbbbbb');
-      //   $battleModal.classList.remove('active');
-      // });
-    </script>
   </body>
 </html>

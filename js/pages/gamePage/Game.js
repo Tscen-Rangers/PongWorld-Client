@@ -9,9 +9,6 @@ const competitior = {
   comment: '나는야 휘팍',
 };
 
-console.log(window.innerWidth);
-
-console.log();
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -75,8 +72,7 @@ export default class extends AbstractView {
     const pingpongTable = document.querySelector('.pingpongTable');
     const maxY = pingpongTable.clientHeight - myPingpongStick.clientHeight / 2;
     const gameOption = JSON.parse(localStorage.getItem('gameOption'));
-    // console.log(pingpongTable.style.width);
-    // console.log(gameOption);
+
     let topValue = null;
     if (gameOption.control === 'mouse') {
       document.addEventListener('mousemove', event => {
@@ -88,7 +84,6 @@ export default class extends AbstractView {
     if (gameOption.control === 'keyboard') {
       const style = window.getComputedStyle(myPingpongStick);
       document.addEventListener('keydown', e => {
-        // console.log(style.top);
         if (e.key === 'ArrowUp') {
           topValue = Math.max(parseInt(style.top) - 30, 50) + 'px';
           update();

@@ -1,0 +1,84 @@
+#signUpContainer {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  width: 30dvw;
+  height: 20dvw;
+  align-self: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+#signUpPhotoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+#signUpPhoto {
+  width: 15dvw;
+  height: 15dvw;
+  min-width: 10dvw;
+  border-radius: 50%;
+}
+
+#signUpInfoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 0.7rem;
+  color: rgb(159, 159, 159);
+}
+
+#signUpNickNameInput {
+  display: flex;
+  border: none;
+  background-color: transparent;
+  font-size: 2rem;
+  text-align: center;
+  width: 100%;
+  text-overflow: ellipsis;
+  color: white;
+  padding: 10px 0;
+  &::placeholder {
+    color: rgb(192, 192, 192);
+  }
+}
+
+#signUpPlayGameBtn {
+  position: absolute;
+  display: flex;
+  padding: 0 20px;
+  border-radius: 10px;
+  bottom: 40px;
+  right: 40px;
+  height: 62px;
+  justify-content: center;
+  align-items: center;
+  border: 0.2px solid white;
+  /* background-image: linear-gradient(
+    rgba(255, 255, 255, 0.535),
+    rgb(83, 83, 83),
+    rgba(255, 255, 255, 0.535)
+  ); */
+  /* backdrop-filter: blur(3px); */
+  color: white;
+  font-family: 'Kdam Thmor Pro', sans-serif;
+  font-style: italic;
+  font-size: 30px;
+  font-weight: bold;
+  transition: 0.5s;
+  text-decoration: none;
+  filter: blur(2px);
+
+  &:hover {
+    color: white;
+    box-shadow: 0 0 20px 3px white;
+    cursor: url(/public/mouseCursor.png) 8 8, auto;
+    filter: none;
+    cursor: url(/public/pointerCursor.png) 8 8, auto;
+  }
+}

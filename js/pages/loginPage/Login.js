@@ -14,7 +14,7 @@ export default class extends AbstractView {
 				<p>|  Welcome to the Pong World !</p>
 			</div>
 			<img id="stickImg" src="/public/stick3.png" />
-			<a id="loginBtn" href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-c63b5c4a6696ac3283b3ce23815d81eb8627df2b3e3ad479393791c7dbf5e55a&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Fhome&response_type=code">
+			<a id="loginBtn">
 				<div style="display: flex; align-items: center; justify-content: center;">
 					<span>Login&nbsp</span>
 					<span style="font-size:17px;">with&nbsp&nbsp</span>
@@ -23,5 +23,19 @@ export default class extends AbstractView {
 				</div>
 			</a>
 		`;
+  }
+
+  async afterRender() {
+    const $loginBtn = document.getElementById('loginBtn');
+
+    $loginBtn.addEventListener('click', async e => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/tcen-auth/42-login/');
+        const data = await res.json();
+        window.location.href = data.data.oauth_login_url;
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 }
