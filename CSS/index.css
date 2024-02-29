@@ -506,6 +506,12 @@ a {
   }
 }
 
+@media (max-width: 930px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 768px) {
   html {
     font-size: 13px;
