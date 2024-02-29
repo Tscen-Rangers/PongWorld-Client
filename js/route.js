@@ -107,11 +107,14 @@ const navigateTo = url => {
 };
 
 const router = async () => {
-  navBar.style.visibilty =
+  navBar.style.display =
     location.pathname === '/' || location.pathname === '/game'
-      ? 'hidden'
-      : 'visible';
-  mainTitle.style.display = location.pathname === '/' ? 'none' : 'block';
+      ? 'none'
+      : 'block';
+  mainTitle.style.display =
+    (location.pathname === '/') | (location.pathname === '/game')
+      ? 'none'
+      : 'block';
   headphone.style.display = location.pathname === '/' ? 'none' : 'block';
 
   const potentialMatches = routes.map(route => {
@@ -131,7 +134,7 @@ const router = async () => {
       result: [location.pathname],
     };
     headphone.style.display = 'none';
-    navBar.style.visibilty = 'hidden';
+    navBar.style.display = 'none';
   }
 
   seletedNavStyle(match.route.path);

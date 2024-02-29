@@ -40,13 +40,16 @@
   padding-right: 2%;
   display: flex;
   flex: 1;
+  /* width: 500px; */
+  /* background-color: blue; */
   align-items: center;
   justify-content: flex-end;
 }
 .searchBar {
   border-radius: 20px;
   height: 40%;
-  width: 50%;
+  /* width: 50%; */
+  min-height: 25px;
   border: solid 2px #a8a8a8;
   border-radius: 20px;
   display: flex;
@@ -98,6 +101,7 @@
 .friendList {
   display: flex;
   min-height: 55px;
+  /* min-width: 0px; */
   margin-bottom: 10px;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.38);
@@ -129,6 +133,7 @@
 }
 
 .friendname {
+  transition: 1s;
   display: flex;
   align-self: center;
   margin-left: 30px;
@@ -169,7 +174,7 @@
   font-weight: bold;
   border-radius: 5px;
   align-self: center;
-  margin: 0px 20px;
+  margin: 0px 1dvw;
   color: #636363;
   text-decoration: none;
 }
@@ -252,6 +257,7 @@
 
 .requestContainer {
   display: flex;
+  /* background-color: red; */
   flex: 1;
   position: relative;
   height: 100%;
@@ -260,10 +266,12 @@
 }
 
 .requestInnerContainer {
+  /* background-color: blue; */
   display: flex;
   flex: 1;
   border-radius: 20px;
-  padding: 10px;
+  /* padding: 4px; */
+  margin: 2px;
   flex-direction: column;
 }
 
@@ -387,4 +395,101 @@
 
 .requestBadge.active {
   visibility: visible;
+}
+
+@media (max-width: 1400px) {
+  .friendsHeader {
+    flex-direction: column;
+  }
+  .searchBarContainer {
+    justify-content: flex-start;
+    padding: 2%;
+    height: 15px;
+    /* background-color: red; */
+  }
+  .searchBar {
+    width: 50%;
+  }
+  .searchBar input {
+    width: 82%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .friendname {
+    margin-left: 10px;
+  }
+  .rejectRecievedIcon,
+  .acceptIcon,
+  .cancelSentIcon {
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+@media (max-width: 875px) {
+  .friendProfileImg {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .friends_nav__link {
+    padding: 4px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  #friendRequestBtn {
+    width: 120px;
+  }
+}
+
+@media (max-width: 560px) {
+  .friends_nav__link {
+    padding: 4px 3px;
+  }
+  .leftgloveImg {
+    display: none;
+  }
+  .rightgloveImg {
+    display: none;
+  }
+  .battlebutton {
+    width: 60px;
+  }
+  .chatbutton {
+    width: 50px;
+  }
+  .chatMsgImage {
+    display: none;
+  }
+  .requestContainer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 430px) {
+  .battlebutton,
+  .chatbutton,
+  .blockText,
+  .searchOptionRequestBtn,
+  .searchOptionBlockBtn {
+    font-size: 1rem;
+  }
+  .friendsThreedotsImg {
+    width: 20px;
+  }
+  .battlebutton {
+    width: 50px;
+  }
+  .chatbutton {
+    width: 34px;
+  }
+  #friendRequestBtn {
+    width: 55px;
+  }
+  .friends_nav__link {
+    font-size: 1.2rem;
+  }
 }
