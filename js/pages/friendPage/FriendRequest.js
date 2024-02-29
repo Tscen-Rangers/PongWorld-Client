@@ -239,8 +239,6 @@ export default class extends AbstractView {
         const index = e.currentTarget.dataset.key;
         console.log(index);
         const user = sent[index].name;
-        // sent.splice(index, 1);
-        // this.updateSentUserList();
         cancelRequestModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
         cancelRequestModal.classList.add('active');
         cancelRequestModal.setAttribute('data-key', index);

@@ -1,26 +1,26 @@
 import AbstractView from '../../AbstractView.js';
 
 //ws://127.0.0.1:8000/ws/game/?player_id=1
-let tournamentSocket = null;
+// let tournamentSocket = null;
 
-function connectWebSocket(player_id) {
-  tournamentSocket = new WebSocket(
-    'ws://' +
-      '127.0.0.1:8000' +
-      '/ws/tournament/' +
-      '?player_id=' +
-      `${player_id}`,
-  );
-  tournamentSocket.onopen = function () {
-    console.log('성공');
-    // tournamentSocket.send(
-    //   JSON.stringify({
-    //     match_mode: 'random',
-    //     game_speed: 0,
-    //   }),
-    // );
-  };
-}
+// function connectWebSocket(player_id) {
+//   tournamentSocket = new WebSocket(
+//     'ws://' +
+//       '127.0.0.1:8000' +
+//       '/ws/tournament/' +
+//       '?player_id=' +
+//       `${player_id}`,
+//   );
+//   tournamentSocket.onopen = function () {
+//     console.log('성공');
+//     // tournamentSocket.send(
+//     //   JSON.stringify({
+//     //     match_mode: 'random',
+//     //     game_speed: 0,
+//     //   }),
+//     // );
+//   };
+// }
 const histories = [
   {
     player1: 'jimpark',
@@ -300,21 +300,22 @@ export default class extends AbstractView {
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
     const $matchingText = document.querySelector('.matchingText');
     const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
+    const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
     console.log(authorizationCode);
     $tournamentBtn.addEventListener('click', () => {
       $battleMsg.innerHTML =
         'Waiting for all <br /> players to join the tournament...';
-      connectWebSocket(1);
-      tournamentSocket.onmessage = e => {
-        const data = JSON.parse(e.data);
+      // connectWebSocket(1);
+      // tournamentSocket.onmessage = e => {
+      //   const data = JSON.parse(e.data);
 
-        console.log(data.participants_num);
-        if (data.participants_num)
-          $currentStaff.innerText = `${data.participants_num}/4`;
-        if (data.data) {
-          $currentStaff.innerText = ``;
-        }
-      };
+      //   console.log(data.participants_num);
+      //   if (data.participants_num)
+      //     $currentStaff.innerText = `${data.participants_num}/4`;
+      //   if (data.data) {
+      //     $currentStaff.innerText = ``;
+      //   }
+      // };
       $battleModalContainer.classList.add('active');
     });
     $quickMatchBtn.addEventListener('click', () => {
@@ -322,41 +323,19 @@ export default class extends AbstractView {
       $gameOptionModalContainer.classList.add('show');
     });
 
+    $gameOptionNextBtn.addEventListener('click', () => {
+      if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch')
+        $quickMatchModal.classList.add('active');
+    });
+    $matchingCancelBtn.addEventListener('click', () => {
+      $quickMatchModal.classList.remove('active');
+    });
     $battleCancelBtn.addEventListener('click', () => {
-      tournamentSocket.close();
-      tournamentSocket.onclose = () => {
-        console.log('소켓닫기용');
-      };
+      // tournamentSocket.close();
+      // tournamentSocket.onclose = () => {
+      //   console.log('소켓닫기용');
+      // };
       $battleModalContainer.classList.remove('active');
     });
-    // $matchingCancelBtn.addEventListener('click', () => {
-    //   $quickMatchModal.classList.remove('active');
-    // });
   }
 }
-
-// data
-// :
-// id
-// :
-// 3
-// players
-// :
-// (2) [{…}, {…}]
-// speed
-// :
-// 0
-// status
-// :
-// 0
-// [[Prototype]]
-// :
-// Object
-// [[Prototype]]
-// :
-// Object
-// Home.js:313
-// {message: '매칭이 완료되었습니다. 곧 게임이 시작됩니다!'}
-// message
-// :
-// "매칭이 완료되었습니다. 곧 게임이 시작됩니다!
