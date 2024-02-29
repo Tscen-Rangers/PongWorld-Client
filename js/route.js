@@ -131,6 +131,7 @@ const router = async () => {
     };
     headphone.style.display = 'none';
     navBar.style.display = 'none';
+    mainTitle.style.display = 'none';
   }
 
   seletedNavStyle(match.route.path);

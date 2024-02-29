@@ -31,21 +31,100 @@ function connectWebSocket() {
 
 connectWebSocket();
 
-const users = [];
+const users = [
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jimpark',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'huipark',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'hwankim',
+    state: true,
+    image: '/public/huipark.jpg',
+  },
+  {
+    name: 'jihyeole',
+    state: false,
+    image: '/public/huipark.jpg',
+  },
+];
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('PongWorldㅣChat');
   }
-
-  // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
     return `
     <div class="contentsContainer">
   <div class="chatContainer">
     <div style="flex:0.35;">
-      <div style="height:25%">
+      <div id="chatHeader">
         <div style="height:32px">
           <h1 class="chatTitle">Chat</h1>
         </div>
@@ -83,7 +162,7 @@ export default class extends AbstractView {
           </svg>
         </div>
       </div>
-      <div class="chatLeftContainer" style="height: 75%;">
+      <div class="chatLeftContainer">
         <div class="chatUserInner">
           ${users
             .map(user => {
