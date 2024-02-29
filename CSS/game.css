@@ -1,8 +1,8 @@
-.gameContainer {
+/* .gameContainer {
   display: flex;
   flex: 1;
   flex-direction: column;
-}
+} */
 
 .gameScore {
   display: flex;
@@ -21,7 +21,8 @@
 
 .gameBody {
   display: flex;
-  flex: 10;
+  flex: 1;
+  background-color: red;
 }
 
 .pingpongBody {
