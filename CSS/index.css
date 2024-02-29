@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Orbit-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/Orbit-Regular.woff2')
+    format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   margin: 0;
   /* font-family: 'Kdam Thmor Pro', sans-serif; */
@@ -68,7 +76,6 @@ a {
 
 #headerConatainer {
   display: flex;
-  align-items: center;
   justify-content: space-between;
 }
 
@@ -78,6 +85,11 @@ a {
   justify-content: space-around;
   width: 30px;
   height: 30px;
+}
+
+#ko_header {
+  letter-spacing: 3px;
+  font-family: 'Orbit-Regular';
 }
 
 #f,
@@ -103,6 +115,9 @@ a {
   flex-direction: row;
   padding: 20px;
   box-sizing: border-box;
+}
+#navBar {
+  display: none;
 }
 .nav {
   flex-direction: column;

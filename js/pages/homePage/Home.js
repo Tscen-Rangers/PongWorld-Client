@@ -1,4 +1,5 @@
 import AbstractView from '../../AbstractView.js';
+import {getToken, setToken} from '../../tokenManager.js';
 
 //ws://127.0.0.1:8000/ws/game/?player_id=1
 let tournamentSocket = null;
@@ -229,7 +230,7 @@ export default class extends AbstractView {
                 <div class="recentPlayersImg">
                      <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
                     <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-                </div> 
+                </div>
                 <div class="versus">
                   ${history.player1} VS ${history.player2}
                 </div>
@@ -248,7 +249,7 @@ export default class extends AbstractView {
                <div class="gameDate">${history.date}</div>
                </div>
                ${index === 9 ? '' : '<div class="line"></div>'}
-            
+
       `,
         )
         .join('')}
@@ -277,21 +278,9 @@ export default class extends AbstractView {
 		`;
   }
 
-  getAuthorizationCode() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    console.log(urlParams);
-    const error = urlParams.get('error');
-    if (error) {
-      return (window.location.href = '/');
-    }
-
-    const code = urlParams.get('code');
-    return code;
-  }
-
   afterRender() {
-    const authorizationCode = this.getAuthorizationCode();
+    console.log(getToken());
+    console.log(sessionStorage.getItem('refresh_token'));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(
@@ -300,7 +289,6 @@ export default class extends AbstractView {
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
     const $matchingText = document.querySelector('.matchingText');
     const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
-    console.log(authorizationCode);
     $tournamentBtn.addEventListener('click', () => {
       $battleMsg.innerHTML =
         'Waiting for all <br /> players to join the tournament...';

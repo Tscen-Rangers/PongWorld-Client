@@ -10,6 +10,8 @@ import Blocked from './pages/friendPage/Blocked.js';
 import FriendRequest from './pages/friendPage/FriendRequest.js';
 import Game from './pages/gamePage/Game.js';
 import NotFound from './pages/notFoundPage/notFound.js';
+import SignUp from './pages/signUp/SignUp.js';
+import LoginLoading from './pages/loginPage/LoginLoading.js';
 
 const navBar = document.querySelector('#navBar');
 const mainTitle = document.querySelector('#main_title');
@@ -65,6 +67,14 @@ const routes = [
     path: '/mypage',
     view: Mypage,
   },
+  {
+    path: '/signup',
+    view: SignUp,
+  },
+  {
+    path: '/loginloading',
+    view: LoginLoading,
+  },
   // {
   //   path: '/post',
   //   view: Post,
@@ -106,12 +116,20 @@ const navigateTo = url => {
   router();
 };
 
-const router = async () => {
+export const router = async () => {
   navBar.style.display =
-    location.pathname === '/' || location.pathname === '/game'
+    location.pathname === '/' ||
+    location.pathname === '/game' ||
+    location.pathname === '/signup' ||
+    location.pathname === '/loginloading'
       ? 'none'
       : 'block';
-  headphone.style.display = location.pathname === '/' ? 'none' : 'block';
+  headphone.style.display =
+    location.pathname === '/' ||
+    location.pathname === '/signup' ||
+    location.pathname === '/loginloading'
+      ? 'none'
+      : 'block';
 
   const potentialMatches = routes.map(route => {
     return {
