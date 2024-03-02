@@ -29,13 +29,9 @@ export default class extends AbstractView {
     const $loginBtn = document.getElementById('loginBtn');
 
     $loginBtn.addEventListener('click', async e => {
-      console.log(e.currentTarget);
       try {
         const res = await fetch('http://127.0.0.1:8000/tcen-auth/42-login/');
         const data = await res.json();
-        console.log(data);
-        console.log(data.data);
-
         window.location.href = data.data.oauth_login_url;
       } catch (error) {
         console.log(error);
