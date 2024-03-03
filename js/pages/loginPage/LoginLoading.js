@@ -1,6 +1,7 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken} from '../../tokenManager.js';
+import {getToken, setToken, setRefreshToken} from '../../tokenManager.js';
 import {router} from '../../route.js';
+import {setSignUpCompleted} from '../../signUpCompleted.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -46,7 +47,7 @@ export default class extends AbstractView {
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // 이 부분이 중요해!
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             code: authCode,
@@ -55,8 +56,7 @@ export default class extends AbstractView {
       );
       const userData = await res.json();
       setToken(userData.data.access_token);
-      sessionStorage.setItem('refresh_token', userData.data.refresh_token);
-      console.log(getToken());
+      setRefreshToken(userData.data.refresh_token);
       return userData.data;
     } catch (error) {
       console.log(error);
@@ -64,8 +64,11 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    setSignUpCompleted(false);
+
     const userData = await this.getUserData();
-    window.sessionStorage.setItem('user', JSON.stringify(userData.user));
+    console.log(userData);
+    sessionStorage.setItem('user', JSON.stringify(userData.user));
     if (userData.is_new_user) window.history.pushState(null, null, '/signup');
     else window.history.pushState(null, null, '/home');
     router();

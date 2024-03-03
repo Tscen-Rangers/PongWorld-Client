@@ -82,3 +82,9 @@
     cursor: url(/public/pointerCursor.png) 8 8, auto;
   }
 }
+
+#errorMsg {
+  margin-top: 20px;
+  color: rgb(181, 0, 0);
+  text-align: center;
+}

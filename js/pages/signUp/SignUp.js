@@ -1,5 +1,17 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken} from '../../tokenManager.js';
+import {
+  getToken,
+  setToken,
+  getRefreshToken,
+  refreshAccessToken,
+} from '../../tokenManager.js';
+import {router} from '../../route.js';
+import {setSignUpCompleted, isSignUpCompleted} from '../../signUpCompleted.js';
+
+function locationHrefToHome() {
+  window.history.pushState(null, null, '/home');
+  router();
+}
 
 export default class extends AbstractView {
   constructor(params) {
@@ -12,23 +24,80 @@ export default class extends AbstractView {
     return `
 			<div id="signUpContainer">
         <div id="signUpPhotoContainer">
-          <img id="signUpPhoto" src=${this.user.profile_img}>
+          <img id="signUpPhoto" src=${`http://127.0.0.1:8000${this.user.profile_img}`}>
           <input id="signUpImageInput" type="file" accept = "image/*" hidden>
         </div >
         <div id="signUpInfoContainer">
           <input id="signUpNickNameInput" placeholder=${this.user.nickname}>
           You can change your nickname and profile picture.
         </div>
+        <div id="errorMsg"></div>
       </div>
-      <a id="signUpPlayGameBtn" href="/home" data-spa>Play Game</a>
+      <a id="signUpPlayGameBtn">Play Game</a>
 		`;
   }
 
   async afterRender() {
-    // headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': `Bearer ${accessToken}` // 여기에 액세스 토큰 포함
-    // }
+    const $playGameBtn = document.getElementById('signUpPlayGameBtn');
+    const $nickNameInput = document.getElementById('signUpNickNameInput');
+    const $imageInput = document.getElementById('signUpImageInput');
+    const $errorMsg = document.getElementById('errorMsg');
+
+    const patchUserData = async formData => {
+      try {
+        const res = await fetch('http://localhost:8000/player/', {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: formData,
+        });
+        const data = await res.json();
+        if (res.ok) {
+          sessionStorage.setItem('user', JSON.stringify(data.data));
+          setSignUpCompleted(true);
+          locationHrefToHome();
+        } else {
+          console.log(data);
+          if (data.status === 401) {
+            await refreshAccessToken();
+            patchUserData(formData);
+          } else $errorMsg.innerText = data.data.nickname[0];
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // 회원가입 절차를 이미 완료했는지 확인
+    if (isSignUpCompleted()) {
+      if (
+        window.confirm(
+          'You have already completed the registration process. Would you like to stay on this page?',
+        )
+      ) {
+        locationHrefToHome();
+      } else {
+        window.history.pushState(null, null, '/');
+        router();
+      }
+    }
+    console.log(getRefreshToken());
+
+    $playGameBtn.addEventListener('click', async e => {
+      if (!$nickNameInput.value.length && !$imageInput.files[0]) {
+        setSignUpCompleted(true);
+        locationHrefToHome();
+      }
+
+      const formData = new FormData();
+      if ($imageInput.files[0])
+        formData.append('profile_img', $imageInput.files[0]);
+      if ($nickNameInput.value.length)
+        formData.append('nickname', $nickNameInput.value);
+      await patchUserData(formData);
+    });
+
     document.getElementById('signUpPhoto').addEventListener('click', () => {
       document.getElementById('signUpImageInput').click();
     });
