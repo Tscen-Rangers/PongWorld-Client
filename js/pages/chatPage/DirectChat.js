@@ -1,4 +1,5 @@
 import AbstractView from '../../AbstractView.js';
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
 
 function findUser(userName, rooms) {
   for (let i = 0; i < rooms.length; i++) {
@@ -16,6 +17,7 @@ export default class extends AbstractView {
     super(params);
     this.setTitle('PongWorldㅣDirectChat');
     this.target = null;
+    this.user = JSON.parse(sessionStorage.getItem('user'));
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -68,19 +70,21 @@ export default class extends AbstractView {
 		`;
   }
 
-  updateUserList(chattingRooms, user_id) {
+  updateUserList(chattingRooms) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
     chatUserInner.innerHTML = `${chattingRooms.data
       .map(room => {
         return `<div class="chatUserProfile" data-userid="${
-          room.user1 === user_id ? room.user2 : room.user1
+          room.user1 === this.user.id ? room.user2 : room.user1
         }">
         <div class="chatUserProfileBlur"></div>
           <div class="chatUserInfo">
           <img class="chatUserImage" src="/public/huipark.jpg"/>
           <p class="chatUserName">${
-            room.user1 === user_id ? room.user2_nickname : room.user1_nickname
+            room.user1 === this.user.id
+              ? room.user2_nickname
+              : room.user1_nickname
           }</p>
         </div>
           <div class="outDirectChatRoomContainer">
@@ -92,10 +96,10 @@ export default class extends AbstractView {
       })
       .join('')}`;
 
-    this.bindUserListEvents(chattingRooms, user_id);
+    this.bindUserListEvents(chattingRooms);
   }
 
-  bindUserListEvents(chattingRooms, user_id) {
+  bindUserListEvents(chattingRooms) {
     const outDirectChatRoomContainer = document.querySelectorAll(
       '.outDirectChatRoomContainer',
     );
@@ -107,14 +111,60 @@ export default class extends AbstractView {
     let directSocket = null;
     let chatRoomID = null;
     let msgTarget = null;
+    let TargetNickName = null;
+    let nextChattingLog = null;
 
-    function reconnectWebSocket() {
+    $chatRoom.addEventListener('scroll', async () => {
+      if ($chatRoom.scrollTop === 0 && nextChattingLog) {
+        const res = await fetch(nextChattingLog, {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        const data = await res.json();
+        nextChattingLog = data.data.next;
+        console.log(data);
+
+        const prevChat = data.data.results;
+
+        prevChat.forEach(e => {
+          renderChat(e, TargetNickName, true);
+        });
+      }
+    });
+
+    const renderChat = (data, targetNickName, moreChatLog) => {
+      const opponentName = document.createElement('div');
+      const newMsg = document.createElement('div');
+      newMsg.style.color = 'black';
+
+      if ((data.sender ? data.sender : data.user_id) === this.user.id) {
+        newMsg.textContent = data.message;
+        newMsg.setAttribute('class', 'myChat');
+        moreChatLog ? $chatRoom.prepend(newMsg) : $chatRoom.appendChild(newMsg);
+        $chatRoom.scrollTop = $chatRoom.scrollHeight;
+        $chattingSubmitImage.setAttribute('fill', '#ddd');
+      } else {
+        opponentName.textContent = targetNickName;
+        opponentName.style.color = 'black';
+        opponentName.style.marginBottom = '-10px';
+        newMsg.textContent = data.message;
+        newMsg.setAttribute('class', 'friendChat');
+        moreChatLog
+          ? $chatRoom.prepend(opponentName)
+          : $chatRoom.appendChild(opponentName);
+        moreChatLog ? $chatRoom.prepend(newMsg) : $chatRoom.appendChild(newMsg);
+        $chatRoom.scrollTop = $chatRoom.scrollHeight;
+      }
+    };
+
+    const connectWebSocket = () => {
       if (directSocket) {
         directSocket.close();
         console.log('DirectSocket is Close!!! Trying to reconnect...');
       }
       directSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/chat/private/${user_id}/${msgTarget}/`,
+        `ws://127.0.0.1:8000/ws/chat/private/${this.user.id}/${msgTarget}/`,
       );
       directSocket.onopen = () => {
         console.log('DirectSocket is Connected!!!');
@@ -124,46 +174,41 @@ export default class extends AbstractView {
       };
       directSocket.onmessage = async e => {
         const data = JSON.parse(e.data);
-        const opponentName = document.createElement('div');
-        const newMsg = document.createElement('div');
-        newMsg.style.color = 'black';
-        console.log(data);
 
         if (data.chatroom_id) {
           chatRoomID = data.chatroom_id;
           try {
             const res = await fetch(
               `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
+              {
+                headers: {
+                  Authorization: `Bearer ${getToken()}`,
+                },
+              },
             );
+            const data = await res.json();
             if (!res.ok) {
-              throw new Error('Network response was not ok');
+              if (data.status === 401) {
+                await refreshAccessToken();
+                return connectWebSocket();
+              } else {
+                throw new Error('Network response was not ok');
+              }
             }
-            const prevChat = await res.json();
+            nextChattingLog = data.data.next;
+            const prevChat = data.data.results;
+
             console.log(prevChat);
+
+            prevChat.forEach(e => {
+              renderChat(e, TargetNickName);
+            });
           } catch (error) {
-            console.error('Fetch error:', error);
+            console.error(error);
           }
-        } else {
-          console.log(data.user_id, user_id);
-          if (Number(data.user_id) === user_id) {
-            newMsg.textContent = data.message;
-            newMsg.setAttribute('class', 'myChat');
-            $chatRoom.appendChild(newMsg);
-            $chatRoom.scrollTop = $chatRoom.scrollHeight;
-            $chattingSubmitImage.setAttribute('fill', '#ddd');
-          } else {
-            opponentName.textContent = data.user_name;
-            opponentName.style.color = 'black';
-            opponentName.style.marginBottom = '-10px';
-            newMsg.textContent = data.message;
-            newMsg.setAttribute('class', 'friendChat');
-            $chatRoom.appendChild(opponentName);
-            $chatRoom.appendChild(newMsg);
-            $chatRoom.scrollTop = $chatRoom.scrollHeight;
-          }
-        }
+        } else renderChat(data, data.nickname);
       };
-    }
+    };
 
     $chattingInput.addEventListener('input', e => {
       if (e.target.value.length)
@@ -184,7 +229,7 @@ export default class extends AbstractView {
       if (directSocket && directSocket.readyState === WebSocket.OPEN) {
         directSocket.send(
           JSON.stringify({
-            user_id: Number(user_id),
+            user_id: this.user.id,
             chatroom_id: Number(chatRoomID),
             message: $chattingInput.value,
           }),
@@ -205,7 +250,9 @@ export default class extends AbstractView {
         e.currentTarget.classList.add('active');
 
         msgTarget = e.currentTarget.dataset.userid; //타겟 아이디
-        reconnectWebSocket();
+        TargetNickName = e.currentTarget.innerText;
+        $chatRoom.innerHTML = '';
+        connectWebSocket();
       });
     });
 
@@ -220,12 +267,22 @@ export default class extends AbstractView {
     }
   }
 
-  async getChattingRoom(user_id) {
+  async getChattingRoom() {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/chat/${user_id}/rooms`);
-      const chattingRooms = await res.json();
+      const res = await fetch(`http://127.0.0.1:8000/chat/rooms`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      // console.log(await chattingRooms.json());
+      if (res.ok) {
+        const chattingRooms = await res.json();
+        return chattingRooms;
+      } else {
+        await refreshAccessToken();
+        return this.getChattingRoom();
+      }
       // console.log(chattingRooms);
-      return chattingRooms;
     } catch (error) {
       console.error('Error fetching chatting rooms:', error);
     }
@@ -234,19 +291,13 @@ export default class extends AbstractView {
   async afterRender() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const user_id = Number(urlParams.get('user_id'));
 
     // const chattingForm = document.querySelector('#chattingForm');
     // const chattingInput = document.querySelector('#chattingInput');
     // const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
     // const chatRoom = document.querySelector('.chatRoom');
 
-    const chattingRooms = await this.getChattingRoom(user_id);
-    this.updateUserList(chattingRooms, user_id);
+    const chattingRooms = await this.getChattingRoom();
+    this.updateUserList(chattingRooms);
   }
 }
-// ${
-//   room.state
-//     ? `<img class="directOnlineUserImage" src="/public/online.png"/>`
-//     : ``
-// }

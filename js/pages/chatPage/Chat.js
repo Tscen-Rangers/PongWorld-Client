@@ -118,6 +118,7 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('PongWorldㅣChat');
+    this.user = JSON.parse(sessionStorage.getItem('user'));
   }
   async getHtml() {
     return `
@@ -220,9 +221,6 @@ export default class extends AbstractView {
     const $chattingForm = document.querySelector('#chattingForm');
     const $chatRoom = document.querySelector('.chatRoom');
     const $chattingInput = document.querySelector('#chattingInput');
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const senderID = urlParams.get('user_id');
 
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
@@ -230,7 +228,7 @@ export default class extends AbstractView {
 
       chatSocket.send(
         JSON.stringify({
-          user_id: senderID,
+          user_id: this.user.id,
           message: $chattingInput.value,
         }),
       );
@@ -242,7 +240,9 @@ export default class extends AbstractView {
       const newMsg = document.createElement('div');
       newMsg.style.color = 'black';
 
-      if (Number(data.user_id) === Number(senderID)) {
+      console.log(data, this.user.id);
+
+      if (Number(data.user_id) === this.user.id) {
         newMsg.textContent = data.message;
         newMsg.setAttribute('class', 'myChat');
         $chatRoom.appendChild(newMsg);

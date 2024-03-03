@@ -123,6 +123,7 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Game');
+    this.user = JSON.parse(sessionStorage.getItem('user'));
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -290,6 +291,8 @@ export default class extends AbstractView {
     const $matchingText = document.querySelector('.matchingText');
     const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
     const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
+
+    console.log(this.user);
 
     $tournamentBtn.addEventListener('click', () => {
       $battleMsg.innerHTML =
