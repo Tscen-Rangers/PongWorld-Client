@@ -1,7 +1,7 @@
-import BaseWebSocket from "./BaseWebSocket.js";
+import BaseWebSocket from './BaseWebSocket.js';
 
 class QuickMatchSocket extends BaseWebSocket {
-    static instance = null;
+  static instance = null;
 
   constructor() {
     super();
@@ -11,6 +11,11 @@ class QuickMatchSocket extends BaseWebSocket {
       QuickMatchSocket.instance = new QuickMatchSocket();
     }
     return QuickMatchSocket.instance;
+  }
+  send(message) {
+    this.ws.onopen = () => {
+      super.send(message);
+    };
   }
 }
 

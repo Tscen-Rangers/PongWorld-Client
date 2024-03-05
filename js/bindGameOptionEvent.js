@@ -6,23 +6,6 @@ const option = {
   level: null,
 };
 
-// let gameSocket = null;
-
-// function connectWebSocket(player_id) {
-//   gameSocket = new WebSocket(
-//     'ws://' + '127.0.0.1:8000' + '/ws/game/' + '?player_id=' + `${player_id}`,
-//   );
-//   gameSocket.onopen = function () {
-//     console.log('성공');
-//     gameSocket.send(
-//       JSON.stringify({
-//         match_mode: 'random',
-//         game_speed: 0,
-//       }),
-//     );
-//   };
-// }
-
 //매칭 완료시 2초 후에 게임 화면으로 이동
 function onMatchComplete() {
   // 2초 후에 실행될 함수
@@ -55,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  $gameOptionNextBtn.addEventListener('click', () => {
+  $gameOptionNextBtn.addEventListener('click', async () => {
     // const $as = document.querySelector('.quickMatchModalContainer');
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
@@ -77,10 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         $quickMatchModal.classList.add('active');
         rws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        rws.ws.onerror = async error => {
-          await refreshAccessToken();
-          rws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        };
+        rws.send({speed: 1});
+        rws.onMessage(async message => console.log(message));
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');
