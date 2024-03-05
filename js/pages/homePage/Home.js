@@ -22,6 +22,7 @@ import {getToken, setToken} from '../../tokenManager.js';
 //     // );
 //   };
 // }
+
 const histories = [
   {
     player1: 'jimpark',

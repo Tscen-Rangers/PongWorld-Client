@@ -76,6 +76,7 @@ export default class extends AbstractView {
     <div class="friendList" key=${index}>
       <div class="friendProfile">
         <div class="friendProfileImg">
+        <img class="profileImg" src="/public/huipark.jpg"/>
         ${user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''}
         </div>
         <div class="friendname">${user.name}</div>
