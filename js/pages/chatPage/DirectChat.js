@@ -1,5 +1,6 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import dws from '../../WebSocket/DirectChatSocket.js';
 
 function findUser(userName, rooms) {
   for (let i = 0; i < rooms.length; i++) {
@@ -108,7 +109,6 @@ export default class extends AbstractView {
     const $chattingInput = document.querySelector('#chattingInput');
     const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
     const $chatRoom = document.querySelector('.chatRoom');
-    let directSocket = null;
     let chatRoomID = null;
     let msgTarget = null;
     let TargetNickName = null;
@@ -132,6 +132,34 @@ export default class extends AbstractView {
         });
       }
     });
+
+    const renderPrevChat = async () => {
+      const res = await fetch(
+        `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.status === 401) {
+          await refreshAccessToken();
+          return connectWebSocket();
+        } else {
+          throw new Error('Network response was not ok');
+        }
+      }
+      nextChattingLog = data.data.next;
+      const prevChat = data.data.results;
+
+      console.log(prevChat);
+
+      prevChat.forEach(e => {
+        renderChat(e, TargetNickName);
+      });
+    };
 
     const renderChat = (data, targetNickName, moreChatLog) => {
       const opponentName = document.createElement('div');
@@ -159,55 +187,20 @@ export default class extends AbstractView {
     };
 
     const connectWebSocket = () => {
-      if (directSocket) {
-        directSocket.close();
-        console.log('DirectSocket is Close!!! Trying to reconnect...');
-      }
-      directSocket = new WebSocket(
+      dws.connect(
         `ws://127.0.0.1:8000/ws/chat/private/${this.user.id}/${msgTarget}/`,
       );
-      directSocket.onopen = () => {
-        console.log('DirectSocket is Connected!!!');
-      };
-      directSocket.onerror = error => {
-        console.error('WebSocket error:', error);
-      };
-      directSocket.onmessage = async e => {
-        const data = JSON.parse(e.data);
 
-        if (data.chatroom_id) {
-          chatRoomID = data.chatroom_id;
+      dws.onMessage(async message => {
+        if (message.chatroom_id) {
+          chatRoomID = message.chatroom_id;
+          renderPrevChat();
           try {
-            const res = await fetch(
-              `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
-              {
-                headers: {
-                  Authorization: `Bearer ${getToken()}`,
-                },
-              },
-            );
-            const data = await res.json();
-            if (!res.ok) {
-              if (data.status === 401) {
-                await refreshAccessToken();
-                return connectWebSocket();
-              } else {
-                throw new Error('Network response was not ok');
-              }
-            }
-            nextChattingLog = data.data.next;
-            const prevChat = data.data.results;
-
-            console.log(prevChat);
-
-            prevChat.forEach(e => {
-              renderChat(e, TargetNickName);
-            });
           } catch (error) {
             console.error(error);
           }
-        } else renderChat(data, data.nickname);
-      };
+        } else renderChat(message, message.nickname);
+      });
     };
 
     $chattingInput.addEventListener('input', e => {
@@ -226,17 +219,11 @@ export default class extends AbstractView {
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
-      if (directSocket && directSocket.readyState === WebSocket.OPEN) {
-        directSocket.send(
-          JSON.stringify({
-            user_id: this.user.id,
-            chatroom_id: Number(chatRoomID),
-            message: $chattingInput.value,
-          }),
-        );
-      } else {
-        console.error('WebSocket 연결이 닫혔거나 닫히는 중입니다.');
-      }
+      dws.send({
+        user_id: this.user.id,
+        chatroom_id: Number(chatRoomID),
+        message: $chattingInput.value,
+      });
       $chattingInput.value = '';
     });
 
