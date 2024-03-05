@@ -17,11 +17,11 @@ export default class BaseWebSocket {
     };
 
     this.ws.onerror = async error => {
-      console.error('WebSocket 에러 발생:', error);
       if (!getToken().length) {
         await refreshAccessToken();
-        this.ws = new WebSocket(`${url}?token=${getToken()}`);
+        this.connect(url);
       }
+      console.error('WebSocket 에러 발생:', error);
     };
   }
 
