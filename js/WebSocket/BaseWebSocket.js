@@ -1,10 +1,12 @@
+import {getToken, refreshAccessToken} from '../tokenManager.js';
+
 export default class BaseWebSocket {
   constructor() {
     this.ws = null;
   }
 
   connect(url) {
-    this.ws = new WebSocket(url);
+    this.ws = new WebSocket(`${url}?token=${getToken()}`);
 
     this.ws.onopen = () => {
       console.log('WebSocket 연결 성공');
@@ -14,8 +16,12 @@ export default class BaseWebSocket {
       console.log('WebSocket 연결 해제');
     };
 
-    this.ws.onerror = error => {
+    this.ws.onerror = async error => {
       console.error('WebSocket 에러 발생:', error);
+      if (!getToken().length) {
+        await refreshAccessToken();
+        this.ws = new WebSocket(`${url}?token=${getToken()}`);
+      }
     };
   }
 

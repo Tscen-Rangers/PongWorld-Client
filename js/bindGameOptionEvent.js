@@ -1,5 +1,5 @@
-import rws from "../js/WebSocket/QuickMatchSocket.js"
-import { getToken, refreshAccessToken } from "./tokenManager.js";
+import rws from '../js/WebSocket/QuickMatchSocket.js';
+import {getToken, refreshAccessToken} from './tokenManager.js';
 
 const option = {
   control: null,
@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-
-  $gameOptionNextBtn.addEventListener('click',  () => {
+  $gameOptionNextBtn.addEventListener('click', () => {
     // const $as = document.querySelector('.quickMatchModalContainer');
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
@@ -73,13 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const $opponentMatchingImg = document.querySelector(
           '.opponentMatchingImg',
         );
-        const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
+        const $quickMatchModal = document.querySelector(
+          '.quickMatchModalContainer',
+        );
         $quickMatchModal.classList.add('active');
-        rws.connect(`ws://127.0.0.1:8000/ws/random/?token=${getToken()}`);
+        rws.connect(`ws://127.0.0.1:8000/ws/random/`);
         rws.ws.onerror = async error => {
           await refreshAccessToken();
-          rws.connect(`ws://127.0.0.1:8000/ws/random/?token=${getToken()}`);
-        }
+          rws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        };
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');
