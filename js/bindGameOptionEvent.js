@@ -1,3 +1,6 @@
+import rws from "../js/WebSocket/QuickMatchSocket.js"
+import { getToken, refreshAccessToken } from "./tokenManager.js";
+
 const option = {
   control: null,
   level: null,
@@ -52,17 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  //socket 여기서 연결하는거 아니면 home.js에서
-  // $matchingCancelBtn.addEventListener('click', () => {
-  //   $quickMatchModal.classList.remove('active');
-  //   console.log(gameSocket);
-  //   gameSocket.close();
-  //   gameSocket.onclose = () => {
-  //     console.log('소켓 닫기 성공핑!');
-  //   };
-  // });
 
-  $gameOptionNextBtn.addEventListener('click', () => {
+  $gameOptionNextBtn.addEventListener('click',  () => {
     // const $as = document.querySelector('.quickMatchModalContainer');
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
@@ -70,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log($gameOptionModalContainer.dataset.modaloption);
       console.log(option);
       localStorage.setItem('gameOption', JSON.stringify(option));
+      console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -78,19 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const $opponentMatchingImg = document.querySelector(
           '.opponentMatchingImg',
         );
-        // connectWebSocket(1);
-        // gameSocket.onmessage = e => {
-        //   const data = JSON.parse(e.data);
-        //   if (data.message) {
-        //     $matchingText.innerHTML = data.message;
-        //     $matchingCancelBtn.style.display = 'none';
-        //     onMatchComplete();
-        //   }
-        //   if (data.data.players[1].profile_img) {
-        //     $opponentMatchingImg.src = '/public/stick1.png';
-        //   }
-        // };
-        // $as.classList.add('active');
+        const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
+        $quickMatchModal.classList.add('active');
+        rws.connect(`ws://127.0.0.1:8000/ws/random/?token=${getToken()}`);
+        rws.ws.onerror = async error => {
+          await refreshAccessToken();
+          rws.connect(`ws://127.0.0.1:8000/ws/random/?token=${getToken()}`);
+        }
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');

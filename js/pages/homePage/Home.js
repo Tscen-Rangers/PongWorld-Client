@@ -1,6 +1,5 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, setToken} from '../../tokenManager.js';
-
 //ws://127.0.0.1:8000/ws/game/?player_id=1
 // let tournamentSocket = null;
 
@@ -281,8 +280,8 @@ export default class extends AbstractView {
   }
 
   afterRender() {
-    console.log(getToken());
-    console.log(sessionStorage.getItem('refresh_token'));
+    // console.log(getToken());
+    // console.log(sessionStorage.getItem('refresh_token'));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(
@@ -293,7 +292,7 @@ export default class extends AbstractView {
     const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
     const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
 
-    console.log(this.user);
+    // console.log(this.user);
 
     $tournamentBtn.addEventListener('click', () => {
       $battleMsg.innerHTML =
@@ -309,6 +308,7 @@ export default class extends AbstractView {
       //     $currentStaff.innerText = ``;
       //   }
       // };
+
       $battleModalContainer.classList.add('active');
     });
     $quickMatchBtn.addEventListener('click', () => {
@@ -316,10 +316,6 @@ export default class extends AbstractView {
       $gameOptionModalContainer.classList.add('show');
     });
 
-    $gameOptionNextBtn.addEventListener('click', () => {
-      if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch')
-        $quickMatchModal.classList.add('active');
-    });
     $matchingCancelBtn.addEventListener('click', () => {
       $quickMatchModal.classList.remove('active');
     });
