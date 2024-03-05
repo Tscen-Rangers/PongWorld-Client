@@ -1,4 +1,5 @@
 import AbstractView from '../../AbstractView.js';
+import cws from '../../WebSocket/ChatSocket.js';
 
 let retryCount = 0;
 const maxRetry = 5;
@@ -29,7 +30,9 @@ function connectWebSocket() {
   };
 }
 
-connectWebSocket();
+cws.connect(`ws://127.0.0.1:8000/ws/chat/public/`);
+
+// connectWebSocket();
 
 const users = [
   {
@@ -226,39 +229,36 @@ export default class extends AbstractView {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
 
-      chatSocket.send(
-        JSON.stringify({
-          user_id: this.user.id,
-          message: $chattingInput.value,
-        }),
-      );
+      cws.send({
+        user_id: this.user.id,
+        message: $chattingInput.value,
+      });
       $chattingInput.value = '';
     });
-    chatSocket.onmessage = e => {
-      const data = JSON.parse(e.data);
+    cws.onMessage(message => {
       const opponentName = document.createElement('div');
       const newMsg = document.createElement('div');
       newMsg.style.color = 'black';
 
-      console.log(data, this.user.id);
+      console.log(message);
 
-      if (Number(data.user_id) === this.user.id) {
-        newMsg.textContent = data.message;
+      if (Number(message.user_id) === this.user.id) {
+        newMsg.textContent = message.message;
         newMsg.setAttribute('class', 'myChat');
         $chatRoom.appendChild(newMsg);
         $chatRoom.scrollTop = $chatRoom.scrollHeight;
         chattingSubmitImage.setAttribute('fill', '#ddd');
       } else {
-        opponentName.textContent = data.user_name;
+        opponentName.textContent = message.user_name;
         opponentName.style.color = 'black';
         opponentName.style.marginBottom = '-10px';
-        newMsg.textContent = data.message;
+        newMsg.textContent = message.message;
         newMsg.setAttribute('class', 'friendChat');
         $chatRoom.appendChild(opponentName);
         $chatRoom.appendChild(newMsg);
         $chatRoom.scrollTop = $chatRoom.scrollHeight;
       }
-    };
+    });
   }
 
   afterRender() {

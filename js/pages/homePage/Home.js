@@ -281,8 +281,6 @@ export default class extends AbstractView {
   }
 
   afterRender() {
-    console.log(getToken());
-    console.log(sessionStorage.getItem('refresh_token'));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(
@@ -294,6 +292,8 @@ export default class extends AbstractView {
     const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
 
     console.log(this.user);
+    console.log('ACCESS = ', getToken());
+    console.log('SESSION = ', sessionStorage.getItem('refresh_token'));
 
     $tournamentBtn.addEventListener('click', () => {
       $battleMsg.innerHTML =
