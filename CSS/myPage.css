@@ -1,0 +1,232 @@
+/* styles.css */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #2c2c2c;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+.contentsContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* 전체적인 내부 간격 조절 */
+  align-items: center;
+  position: relative;
+}
+
+.contentsContainer, .contentsContainer * {
+  font-family: 'Lexend Exa', sans-serif;
+  font-size: 12px; 
+}
+
+
+@media (max-width: 768px) {
+  .profile-container, .stats, .match-history {
+    width: 90%; 
+    padding: 10px;
+    margin: 10px 0;
+  }
+}
+
+
+
+.sidebar {
+  padding: 1rem;
+  width: 200px;
+  position: fixed;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+
+.sidebar div {
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+  color: #a1a1a1;
+  font-size: 1.25rem;
+}
+
+
+.sidebar div:hover, .sidebar .active {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+}
+
+
+.profile-container {
+  margin: 15 auto;
+  padding: 20px;
+  width: 90%;
+  display: flex; /* 컨테이너 내의 아이템들을 가로로 정렬합니다. */
+  align-items: center; /* 아이템들을 세로 방향으로 중앙에 위치시킵니다. */
+}
+
+
+.profile-string{
+  display: flex; /* 내부 요소들을 유연하게 배치 */
+  flex-direction: column; /* 요소들을 세로로 배치 */
+  width: 100%; /* 부모 요소의 전체 너비 사용 */
+  padding: 20px;
+  margin: 15px;
+  box-sizing: border-box; /* 패딩과 보더가 너비 계산에 포함되도록 설정 */
+}
+
+
+
+.main-player-image{
+  margin-left: 30px;
+  width: 15%;
+  height: 15%px;
+  object-fit: cover; 
+
+}
+
+.profile-name{
+    
+    margin-bottom: 10px;
+    margin-left: 20px;
+    font-size: 30px;
+}
+
+
+.profile-card {
+  background-color: rgba(255, 255, 255, 0.38);
+  padding: 20px;
+  border-radius: 20px;
+  align-items: center;
+  width: 99%;
+  margin-left: 20px;
+  color: hsla(0, 0%, 47%, 1);
+}
+
+.profile-card img {
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.profile-card h2 {
+  margin: 5px 0;
+}
+
+.profile-card p {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+
+.stats {
+    background-color: rgba(255, 255, 255, 0.3); /* 배경색 추가 */
+    border-radius: 20px; /* 모서리 둥글게 */
+    display: flex;
+    flex: 0.8; /* 내부 요소들을 가로로 배치 */
+    flex-wrap: wrap; /* 내용이 많을 경우 다음 줄로 넘김 */
+    justify-content: space-around; /* 내부 요소들 사이의 간격 조정 */
+    width: 90%; /* 부모 요소의 전체 너비 사용 */
+    padding: 20px;
+    margin: 15px auto;
+  }
+
+  
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 방향으로 중앙 정렬 */
+  margin: 10px; /* 필요에 따라 조정 */
+  padding: 10px;     
+
+  }
+
+
+.stat-title {
+  font-weight: bold;
+  color: hsla(0, 0%, 100%, 1);
+  text-align: center; /* 텍스트도 중앙 정렬 */
+  width: 100%;
+  margin-bottom: 5px
+
+}
+
+
+.stat-value {
+  font-size: 1.5rem;
+  color: white;
+  text-align: center; /* 텍스트도 중앙 정렬 */
+  width: 100%;
+}
+
+.match-history {
+    display: flex;
+    flex: 1.5;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.38);
+    width: 90%; /* 부모 요소의 전체 너비 사용 */
+    padding: 20px;
+    margin: 15px auto;
+  }
+
+
+.player-image {
+    width: 39px; /* 이미지의 너비를 69px로 설정합니다. */
+    height: 31px; /* 이미지의 높이를 61px로 설정합니다. */
+    object-fit: cover; /* 이미지가 적절히 자리를 차지하도록 설정합니다. */
+    border-radius: 40px; /* 이미지의 모서리를 둥글게 처리합니다. */
+    position: relative; /* position 속성을 relative로 설정하여 위치를 조정할 수 있도록 합니다. */
+    margin-right: 10px; /* 첫 번째 이미지와 두 번째 이미지 사이의 간격을 10px로 설정합니다. */
+}
+
+.match {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.match .player-image:first-child {
+    z-index: 1; /* 첫 번째 이미지가 위로 오도록 z-index 값을 높입니다. */
+}
+
+.match .player-image:last-child {
+    margin-left: -20px; /* 두 번째 이미지가 첫 번째 이미지와 겹치도록 음수 마진을 설정합니다. */
+    z-index: 0; /* 두 번째 이미지가 아래로 오도록 z-index 값을 낮춥니다. */
+}
+
+
+.players, .score, .result {
+    margin-right: 150px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
+}
+
+.score-first {
+  color: hsla(0, 0%, 27%, 1);/* 빨간색으로 설정 */
+}
+
+.players {
+    margin-left: 30px; /* 두 번째 이미지와 텍스트 사이의 간격을 80px로 설정합니다. */
+}
+
+.match .time-ago {
+  margin-left: auto;
+  color: hsl(0, 100%, 99%, 1);
+}
+
+
+.settings-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10; /* 다른 요소 위에 표시 */
+  color: white; /* 아이콘 색상을 흰색으로 설정 */
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000; /* 검은색 윤곽선 추가 */
+}
+  

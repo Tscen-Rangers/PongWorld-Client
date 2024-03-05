@@ -221,6 +221,42 @@
       </div>
     </div>
     <!-- -------------                      ------------- -->
+
+    <!-- -------------                      ------------- -->
+    <!-- 새로운 설정 모달 추가 -->
+    <div class="modalContainer" id="settingsModal">
+      <div class="modal">
+        <img src="../public/hacho.png" class="player-image" alt="Player 1 Image">
+        <div class="profile-image-selection">
+          <p class="choose-profile">choose profile image..</p>
+          <img src="../public/choice_img.png" alt="Mountain and Sun" class="selection-icon">
+        </div>
+        <div id="settingsContent">
+          <!-- 설정 내용 -->
+          <div class="settings-item">
+            <p class="settings-title">사용자 이름</p>
+            <div class="hr-container">
+              <hr>
+              <i class="fas fa-pencil-alt edit-icon"></i> <!-- Font Awesome 아이콘 사용 -->
+            </div>
+          </div>
+          <div class="settings-item">
+            <p class="settings-title" id="introduce">안녕하세요!</p>
+            <div class="hr-container">
+              <hr>
+              <i class="fas fa-pencil-alt edit-icon"></i> <!-- Font Awesome 아이콘 사용 -->
+            </div>
+          </div>
+          <button class="settings-button" id="authenticationButton">
+            Two-factor authentication
+            <i class="fas fa-check-circle"></i> <!-- 체크 아이콘 추가 -->
+          </button>
+          <button class="settings-button" id="logoutButton">logout</button>
+          <button class="settings-button" id="deleteAccountButton">delete account</button>
+        </div>
+      </div>
+    </div>
+    <!-- -------------                      ------------- -->
     <svg id="headphoneImg" viewBox="0 0 24 24">
       <path
         fill="currentColor"
@@ -237,5 +273,6 @@
     <script type="module" src="/js/menuEvent.js"></script>
     <script type="module" src="/js/bindMusicEvent.js"></script>
     <script type="module" src="/js/bindGameOptionEvent.js"></script>
+    <script type="module" src="/js/pages/myPage/Mypage.js"></script>
   </body>
 </html>
