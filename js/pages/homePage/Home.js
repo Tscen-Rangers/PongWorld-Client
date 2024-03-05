@@ -1,6 +1,5 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, setToken} from '../../tokenManager.js';
-
 //ws://127.0.0.1:8000/ws/game/?player_id=1
 // let tournamentSocket = null;
 
@@ -309,6 +308,7 @@ export default class extends AbstractView {
       //     $currentStaff.innerText = ``;
       //   }
       // };
+
       $battleModalContainer.classList.add('active');
     });
     $quickMatchBtn.addEventListener('click', () => {
@@ -316,10 +316,6 @@ export default class extends AbstractView {
       $gameOptionModalContainer.classList.add('show');
     });
 
-    $gameOptionNextBtn.addEventListener('click', () => {
-      if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch')
-        $quickMatchModal.classList.add('active');
-    });
     $matchingCancelBtn.addEventListener('click', () => {
       $quickMatchModal.classList.remove('active');
     });
