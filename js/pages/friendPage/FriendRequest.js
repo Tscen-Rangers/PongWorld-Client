@@ -165,7 +165,9 @@ export default class extends AbstractView {
         (user, index) => `
         <div class="friendList" style="padding:0px 10px" key=${index}>
         <div class="friendProfile">
-          <div class="friendProfileImg"> ${
+          <div class="friendProfileImg">
+          <img class="profileImg" src="/public/huipark.jpg"/> 
+          ${
             user.state
               ? '<img class="onlineImg" src="/public/online.png"/>'
               : ''
@@ -211,7 +213,9 @@ export default class extends AbstractView {
         (user, index) => `
        <div class="friendList" style="padding:0% 4%" key=${index}>
        <div class="friendProfile">
-         <div class="friendProfileImg"> ${
+         <div class="friendProfileImg"> 
+         <img class="profileImg" src="/public/huipark.jpg"/>
+         ${
            user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''
          }</div> 
          <div class="friendname">${user.name}</div>
