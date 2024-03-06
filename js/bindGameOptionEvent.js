@@ -1,4 +1,4 @@
-import rws from '../js/WebSocket/QuickMatchSocket.js';
+import qws from '../js/WebSocket/QuickMatchSocket.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
 
 const option = {
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
-        rws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        // rws.ws.onopen = () => {
-        rws.send({speed: 1});
+        qws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        // qws.ws.onopen = () => {
+        qws.send({speed: 1});
         let cnt = 0;
-        rws.onMessage(msg => {
+        qws.onMessage(msg => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
             if (
