@@ -1,12 +1,12 @@
 import AbstractView from '../../AbstractView.js';
 import cws from '../../WebSocket/ChatSocket.js';
 
-let retryCount = 0;
-const maxRetry = 5;
-const retryDelay = 2000; // 2초
-let chatSocket = null;
+// let retryCount = 0;
+// const maxRetry = 5;
+// const retryDelay = 2000; // 2초
+// let chatSocket = null;
 
-cws.connect(`ws://127.0.0.1:8000/ws/chat/public/`);
+// cws.connect(`ws://127.0.0.1:8000/ws/chat/public/`);
 
 // connectWebSocket();
 
