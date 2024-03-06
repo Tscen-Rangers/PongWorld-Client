@@ -1,7 +1,7 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import tws from '../../WebSocket/TournamentSocket.js';
-
+import qws from '../../WebSocket/QuickMatchSocket.js';
 const histories = [
   {
     player1: 'jimpark',
@@ -282,6 +282,13 @@ export default class extends AbstractView {
       tws.onMessage(msg => {
         if (msg.participants_num)
           $currentStaff.innerText = `${msg.participants_num}/4`;
+        if (msg.data.players) {
+          $currentStaff.innerText = `4/4`;
+          $battleMsg.innerHTML =
+            'Tournament Ready<br />The game will start soon!';
+        } else if (msg.data) {
+          //session에 저장해두기?
+        }
       });
 
       $battleModalContainer.classList.add('active');
@@ -292,13 +299,11 @@ export default class extends AbstractView {
     });
 
     $matchingCancelBtn.addEventListener('click', () => {
+      qws.onclose();
       $quickMatchModal.classList.remove('active');
     });
     $battleCancelBtn.addEventListener('click', () => {
-      // tournamentSocket.close();
-      // tournamentSocket.onclose = () => {
-      //   console.log('소켓닫기용');
-      // };
+      // tws.onclose();
       $battleModalContainer.classList.remove('active');
     });
   }

@@ -20,5 +20,5 @@ class QuickMatchSocket extends BaseWebSocket {
   }
 }
 
-const rws = QuickMatchSocket.getInstance();
-export default rws;
+const qws = QuickMatchSocket.getInstance();
+export default qws;
