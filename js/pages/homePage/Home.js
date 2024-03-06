@@ -1,27 +1,6 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken} from '../../tokenManager.js';
-//ws://127.0.0.1:8000/ws/game/?player_id=1
-// let tournamentSocket = null;
-
-// function connectWebSocket(player_id) {
-//   tournamentSocket = new WebSocket(
-//     'ws://' +
-//       '127.0.0.1:8000' +
-//       '/ws/tournament/' +
-//       '?player_id=' +
-//       `${player_id}`,
-//   );
-//   tournamentSocket.onopen = function () {
-//     console.log('성공');
-//     // tournamentSocket.send(
-//     //   JSON.stringify({
-//     //     match_mode: 'random',
-//     //     game_speed: 0,
-//     //   }),
-//     // );
-//   };
-// }
-
+import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
+import tws from '../../WebSocket/TournamentSocket.js';
 const histories = [
   {
     player1: 'jimpark',
@@ -294,20 +273,15 @@ export default class extends AbstractView {
     console.log('ACCESS = ', getToken());
     console.log('SESSION = ', sessionStorage.getItem('refresh_token'));
 
-    $tournamentBtn.addEventListener('click', () => {
+    $tournamentBtn.addEventListener('click', async () => {
       $battleMsg.innerHTML =
         'Waiting for all <br /> players to join the tournament...';
-      // connectWebSocket(1);
-      // tournamentSocket.onmessage = e => {
-      //   const data = JSON.parse(e.data);
-
-      //   console.log(data.participants_num);
-      //   if (data.participants_num)
-      //     $currentStaff.innerText = `${data.participants_num}/4`;
-      //   if (data.data) {
-      //     $currentStaff.innerText = ``;
-      //   }
-      // };
+      if (!getToken().length) await refreshAccessToken();
+      tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+      tws.onMessage(msg => {
+        if (msg.participants_num)
+          $currentStaff.innerText = `${msg.participants_num}/4`;
+      });
 
       $battleModalContainer.classList.add('active');
     });
