@@ -14,6 +14,7 @@ class QuickMatchSocket extends BaseWebSocket {
   }
   send(message) {
     this.ws.onopen = () => {
+      //   console.log(123123123);
       super.send(message);
     };
   }

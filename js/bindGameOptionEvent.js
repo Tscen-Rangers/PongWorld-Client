@@ -59,9 +59,29 @@ document.addEventListener('DOMContentLoaded', () => {
           '.quickMatchModalContainer',
         );
         $quickMatchModal.classList.add('active');
+        if (!getToken().length) await refreshAccessToken();
         rws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        // rws.ws.onopen = () => {
         rws.send({speed: 1});
-        rws.onMessage(async message => console.log(message));
+        let cnt = 0;
+        rws.onMessage(msg => {
+          if (msg.message) {
+            $matchingText.innerHTML = msg.message;
+            if (
+              msg.data.player1.info.nickname ===
+              JSON.parse(sessionStorage.getItem('user')).nickname
+            ) {
+              sessionStorage.setItem('myPosition', 'player1');
+              sessionStorage.setItem('opponentsPosition', 'player2');
+              $opponentMatchingImg.src = msg.data.player2.info.profile_img;
+            } else {
+              sessionStorage.setItem('myPosition', 'player2');
+              sessionStorage.setItem('opponentsPosition', 'player1');
+              $opponentMatchingImg.src = msg.data.player1.info.profile_img;
+            }
+          }
+        });
+        // };
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');

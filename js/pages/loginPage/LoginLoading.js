@@ -1,7 +1,13 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken, setRefreshToken} from '../../tokenManager.js';
+import {
+  getToken,
+  setToken,
+  setRefreshToken,
+  refreshAccessToken,
+} from '../../tokenManager.js';
 import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -65,10 +71,12 @@ export default class extends AbstractView {
 
   async afterRender() {
     setSignUpCompleted(false);
-
     const userData = await this.getUserData();
     console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
+    if (!getToken().length) await refreshAccessToken();
+    await cws.connect('ws://127.0.0.1:8000/ws/connection/');
+    cws.onMessage(msg => console.log(msg));
     if (userData.is_new_user) window.history.pushState(null, null, '/signup');
     else window.history.pushState(null, null, '/home');
     router();
