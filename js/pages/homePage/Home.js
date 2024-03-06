@@ -1,6 +1,7 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken} from '../../tokenManager.js';
+import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import tws from '../../WebSocket/TournamentSocket.js';
+
 const histories = [
   {
     player1: 'jimpark',
@@ -272,8 +273,6 @@ export default class extends AbstractView {
     console.log(this.user);
     console.log('ACCESS = ', getToken());
     console.log('REFRESH', sessionStorage.getItem('refresh_token'));
-    await refreshAccessToken();
-    console.log('리프레쉬', getToken());
 
     $tournamentBtn.addEventListener('click', async () => {
       $battleMsg.innerHTML =
