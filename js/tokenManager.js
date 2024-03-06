@@ -20,17 +20,17 @@ export const getRefreshToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const refreshToken = getRefreshToken();
     const res = await fetch('http://127.0.0.1:8000/tcen-auth/refresh-token/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        refresh: refreshToken,
+        refresh: sessionStorage.getItem('refresh_token'),
       }),
     });
     const data = await res.json();
+    console.log(data);
     if (res.ok) {
       setToken(data.data.access);
     } else {

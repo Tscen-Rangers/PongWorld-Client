@@ -6,31 +6,7 @@ const maxRetry = 5;
 const retryDelay = 2000; // 2초
 let chatSocket = null;
 
-function connectWebSocket() {
-  chatSocket = new WebSocket(
-    'ws://' + '127.0.0.1:8000' + '/ws/chat/' + 'public' + '/',
-  );
-
-  chatSocket.onerror = function () {
-    if (retryCount < maxRetry) {
-      setTimeout(() => {
-        console.log(`연결 실패. ${retryCount + 1}번째 재연결 시도 중...`);
-        retryCount++;
-        connectWebSocket();
-      }, retryDelay);
-    } else {
-      console.log('WebSocket 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
-      // 사용자에게 연결 실패 알림
-    }
-  };
-
-  chatSocket.onopen = function () {
-    console.log('WebSocket 연결 성공');
-    retryCount = 0;
-  };
-}
-
-// cws.connect(`ws://127.0.0.1:8000/ws/chat/public/`);
+cws.connect(`ws://127.0.0.1:8000/ws/chat/public/`);
 
 // connectWebSocket();
 
