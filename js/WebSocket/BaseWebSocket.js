@@ -8,14 +8,6 @@ export default class BaseWebSocket {
   connect(url) {
     this.ws = new WebSocket(`${url}?token=${getToken()}`);
 
-    // this.ws.onopen = () => {
-    //   console.log('WebSocket 연결 성공');
-    // };
-
-    this.ws.onclose = () => {
-      console.log('WebSocket 연결 해제');
-    };
-
     this.ws.onerror = async error => {
       console.error('WebSocket 에러 발생:');
     };
@@ -40,5 +32,9 @@ export default class BaseWebSocket {
     if (this.ws) {
       this.ws.close();
     }
+  }
+
+  getWS() {
+    return this.ws;
   }
 }

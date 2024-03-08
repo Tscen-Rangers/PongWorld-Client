@@ -1,6 +1,8 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import tws from '../../WebSocket/TournamentSocket.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
 import {router} from '../../route.js';
 
@@ -100,6 +102,9 @@ const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleMsg = document.querySelector('.battleMsg');
 const $currentStaff = document.querySelector('.currentStaff');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+const $tournamentModal = document.getElementById(
+  'tournamentControlModalBackground',
+);
 
 function onMatchComplete() {
   // 2초 후에 실행될 함수
@@ -277,31 +282,33 @@ export default class extends AbstractView {
       '.quickMatchModalContainer',
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
-    const $matchingText = document.querySelector('.matchingText');
-    const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
-    const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
+
+    checkConnectionSocket();
 
     console.log(this.user);
     console.log('ACCESS = ', getToken());
     console.log('REFRESH', sessionStorage.getItem('refresh_token'));
 
     $tournamentBtn.addEventListener('click', async () => {
-      $battleMsg.innerHTML =
-        'Waiting for all <br /> players to join the tournament...';
-      if (!getToken().length) await refreshAccessToken();
-      tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-      tws.onMessage(msg => {
-        if (msg.participants_num)
-          $currentStaff.innerText = `${msg.participants_num}/4`;
-        else {
-          if (msg.data.id) {
-            sessionStorage.setItem('tournament_id', msg.data.id);
-          }
-          $currentStaff.innerText = `4/4`;
-          $battleMsg.innerHTML =
-            'Tournament Ready<br />The game will start soon!';
-          onMatchComplete();
-        }
+
+      $tournamentModal.classList.add('show');
+
+//       $battleMsg.innerHTML =
+//         'Waiting for all <br /> players to join the tournament...';
+//       if (!getToken().length) await refreshAccessToken();
+//       tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+//       tws.onMessage(msg => {
+//         if (msg.participants_num)
+//           $currentStaff.innerText = `${msg.participants_num}/4`;
+//         else {
+//           if (msg.data.id) {
+//             sessionStorage.setItem('tournament_id', msg.data.id);
+//           }
+//           $currentStaff.innerText = `4/4`;
+//           $battleMsg.innerHTML =
+//             'Tournament Ready<br />The game will start soon!';
+//           onMatchComplete();
+//         }
         // if (msg.data.players) {
         //   console.log(msg.data);
         //   // console.log(msg.data.players);
@@ -314,8 +321,9 @@ export default class extends AbstractView {
         // }
       });
 
-      $battleModalContainer.classList.add('active');
+//       $battleModalContainer.classList.add('active');
     });
+
     $quickMatchBtn.addEventListener('click', () => {
       $gameOptionModalContainer.setAttribute('data-modaloption', 'quickmatch');
       $gameOptionModalContainer.classList.add('show');

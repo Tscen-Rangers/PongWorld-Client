@@ -8,6 +8,8 @@ import {
 import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
+import chatws from '../../WebSocket/ChatSocket.js';
+import {connectionSocketConnect} from '../../webSocketManager.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -74,9 +76,7 @@ export default class extends AbstractView {
     const userData = await this.getUserData();
     console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
-    if (!getToken().length) await refreshAccessToken();
-    await cws.connect('ws://127.0.0.1:8000/ws/connection/');
-    cws.onMessage(msg => console.log(msg));
+    connectionSocketConnect();
     if (userData.is_new_user) window.history.pushState(null, null, '/signup');
     else window.history.pushState(null, null, '/home');
     router();
