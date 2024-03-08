@@ -1,6 +1,7 @@
 import qws from '../js/WebSocket/QuickMatchSocket.js';
 import {router} from './route.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
+import tws from './WebSocket/TournamentSocket.js';
 const option = {
   control: null,
   level: null,
@@ -25,15 +26,93 @@ document.addEventListener('DOMContentLoaded', () => {
   const $modes = document.querySelectorAll('.mode');
   const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
   const $battleModal = document.querySelector('.battleModalContainer');
+  const $battleMsg = document.querySelector('.battleMsg');
   const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
+  const $battleModalContainer = document.querySelector('.battleModalContainer');
+  const $currentStaff = document.querySelector('.currentStaff');
+  const $battleCancelBtn = document.querySelector('.battleCancelBtn');
   const $tournamentControlModal = document.getElementById(
     'tournamentControlModalBackground',
   );
-
+  const $tournamentControlKeyboard = document.querySelector(
+    '#tournamentControlKeyboard',
+  );
+  const $tournamentControlMouse = document.querySelector(
+    '#tournamentControlMouse',
+  );
   $tournamentControlModal.addEventListener('click', e => {
     if (e.target === e.currentTarget) {
       $tournamentControlModal.classList.remove('show');
     }
+  });
+  $tournamentControlKeyboard.addEventListener('click', async () => {
+    option.control = 'keyboard';
+    $battleMsg.innerHTML =
+      'Waiting for all <br /> players to join the tournament...';
+
+    // 토큰 갱신 확인
+    if (!getToken().length) await refreshAccessToken();
+
+    // WebSocket 연결
+    tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    $battleModalContainer.classList.add('active');
+    $tournamentControlModal.classList.remove('show');
+    // 메시지 수신 이벤트 핸들러
+    tws.onMessage(msg => {
+      // 참가자 수 업데이트
+      if (msg.participants_num) {
+        $currentStaff.innerText = `${msg.participants_num}/4`;
+      }
+
+      // 모든 참가자가 조인한 경우
+      if (msg.data) {
+        // 토너먼트 ID 처리
+        if (msg.data.id) {
+          sessionStorage.setItem('tournament_id', msg.data.id);
+        }
+        sessionStorage.setItem('gameOption', JSON.stringify(option));
+        $currentStaff.innerText = `4/4`;
+        $battleMsg.innerHTML =
+          'Tournament Ready<br />The game will start soon!';
+        $battleCancelBtn.style.display = 'none';
+        onMatchComplete();
+      }
+    });
+  });
+
+  $tournamentControlMouse.addEventListener('click', async () => {
+    option.control = 'mouse';
+    $battleMsg.innerHTML =
+      'Waiting for all <br /> players to join the tournament...';
+
+    // 토큰 갱신 확인
+    if (!getToken().length) await refreshAccessToken();
+
+    // WebSocket 연결
+    tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    $battleModalContainer.classList.add('active');
+    $tournamentControlModal.classList.remove('show');
+    // 메시지 수신 이벤트 핸들러
+    tws.onMessage(msg => {
+      // 참가자 수 업데이트
+      if (msg.participants_num) {
+        $currentStaff.innerText = `${msg.participants_num}/4`;
+      }
+
+      // 모든 참가자가 조인한 경우
+      if (msg.data) {
+        // 토너먼트 ID 처리
+        if (msg.data.id) {
+          sessionStorage.setItem('tournament_id', msg.data.id);
+        }
+        sessionStorage.setItem('gameOption', JSON.stringify(option));
+        $currentStaff.innerText = `4/4`;
+        $battleMsg.innerHTML =
+          'Tournament Ready<br />The game will start soon!';
+        $battleCancelBtn.style.display = 'none';
+        onMatchComplete();
+      }
+    });
   });
 
   const closeGameOptionModal = () => {
