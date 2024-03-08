@@ -1,12 +1,13 @@
 import AbstractView from '../../AbstractView.js';
+import tws from '../../WebSocket/TournamentSocket.js';
 
-const me = {
+const player1 = {
   name: 'jimpark',
-  comment: '나는야 짐팍',
+  totalScore: 0,
 };
-const competitior = {
+const player2 = {
   name: 'huipark',
-  comment: '나는야 휘팍',
+  totalScore: 0,
 };
 
 export default class extends AbstractView {
@@ -19,29 +20,29 @@ export default class extends AbstractView {
     <div class="gameBody">
     <div class="playingUserBody">
     <div class="playingUserInfo">
-    <div class="playingUserName">${competitior.name}</div>
-    <div class="playingUserImage"><img class="competitorsImg" src="/public/huipark.jpg"/></div>
+    <div class="playingUserName">${player1.name}</div>
+    <div class="playingUserImage"><img class="player1Img" src="/public/huipark.jpg"/></div>
     <div class="playingUserTotalScore">
     score
-    <div class="competitorsTotalScore">1231</div></div>
+    <div class="player1TotalScore">1231</div></div>
     </div>
     </div>
     <div class="pingpongBody">
-    <div class="gameScore"><text class="competitorsScore">2</text>:<text class="myScore">3</text></div>
+    <div class="gameScore"><text class="plsyer1Score">2</text>:<text class="player2Score">3</text></div>
     <div class="pingpongTable">
             <img class="pongworldImg" src="/public/pongworld.png"/>
-            <div class="pingpongStick"></div>
+            <div class="player1PingpongStick"></div>
             <div class="pingpongBall"></div>
-            <div class="myPingpongStick"></div>
+            <div class="player2PingpongStick"></div>
             </div>
           </div>
           <div class="playingUserBody">
             <div class="playingUserInfo">
-            <div class="playingUserName">${me.name}</div>
-              <div class="playingUserImage"><img class="myImg" src="/public/huipark.jpg"/></div>
+            <div class="playingUserName">${player2.name}</div>
+              <div class="playingUserImage"><img class="player2Img" src="/public/huipark.jpg"/></div>
               <div class="playingUserTotalScore">
                 score
-                <div class="myTotalScore">13000</div>
+                <div class="player2TotalScore">13000</div>
               </div>
             </div>
           </div>
@@ -68,10 +69,25 @@ export default class extends AbstractView {
             `;
   }
   afterRender() {
+    console.log(JSON.parse(sessionStorage.getItem('tournament_id')));
+    tws.send({
+      tournament_mode: 'semi_final',
+      tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
+    });
+    tws.onMessage(msg => {
+      console.log(msg);
+      // if (
+      //   msg.data.player1.info.nickname ===
+      //   JSON.parse(sessionStorage.getItem('user')).nickname
+      // ) {
+
+      // }
+      // els
+    });
     const myPingpongStick = document.querySelector('.myPingpongStick');
     const pingpongTable = document.querySelector('.pingpongTable');
     const maxY = pingpongTable.clientHeight - myPingpongStick.clientHeight / 2;
-    const gameOption = JSON.parse(localStorage.getItem('gameOption'));
+    const gameOption = JSON.parse(sessionStorage.getItem('gameOption'));
 
     let topValue = null;
     if (gameOption.control === 'mouse') {
