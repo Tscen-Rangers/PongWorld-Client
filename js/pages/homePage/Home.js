@@ -2,6 +2,8 @@ import AbstractView from '../../AbstractView.js';
 import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
+import {router} from '../../route.js';
+
 const histories = [
   {
     player1: 'jimpark',
@@ -98,6 +100,15 @@ const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleMsg = document.querySelector('.battleMsg');
 const $currentStaff = document.querySelector('.currentStaff');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+
+function onMatchComplete() {
+  // 2초 후에 실행될 함수
+  setTimeout(function () {
+    // 게임 화면으로 이동
+    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    router();
+  }, 3000); // 2000 밀리초 = 2초
+}
 
 export default class extends AbstractView {
   constructor(params) {
@@ -282,13 +293,25 @@ export default class extends AbstractView {
       tws.onMessage(msg => {
         if (msg.participants_num)
           $currentStaff.innerText = `${msg.participants_num}/4`;
-        if (msg.data.players) {
+        else {
+          if (msg.data.id) {
+            sessionStorage.setItem('tournament_id', msg.data.id);
+          }
           $currentStaff.innerText = `4/4`;
           $battleMsg.innerHTML =
             'Tournament Ready<br />The game will start soon!';
-        } else if (msg.data) {
-          //session에 저장해두기?
+          onMatchComplete();
         }
+        // if (msg.data.players) {
+        //   console.log(msg.data);
+        //   // console.log(msg.data.players);
+        //   $currentStaff.innerText = `4/4`;
+        //   $battleMsg.innerHTML =
+        //     'Tournament Ready<br />The game will start soon!';
+        // } else if (msg.data) {
+        //   console.log(msg.data);
+        //   //session에 저장해두기?
+        // }
       });
 
       $battleModalContainer.classList.add('active');
