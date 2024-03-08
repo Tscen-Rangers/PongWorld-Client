@@ -69,6 +69,10 @@ export default class extends AbstractView {
             `;
   }
   afterRender() {
+    const $battleModalContainer = document.querySelector(
+      '.battleModalContainer',
+    );
+    $battleModalContainer.classList.remove('active');
     console.log(JSON.parse(sessionStorage.getItem('tournament_id')));
     tws.send({
       tournament_mode: 'semi_final',
