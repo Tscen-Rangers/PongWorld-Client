@@ -558,14 +558,14 @@ a {
   align-items: center;
   width: 80%;
   border: 1px solid black;
-  padding: 20px 16px;
-  background-color: white;
+  padding: 10px 16px;
+  /* background-color: white; */
   justify-content: space-around;
 }
 
 .battleChallengerImg {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   border: 1px solid black;
 }
@@ -573,20 +573,23 @@ a {
   display: flex;
   font-weight: 500;
   font-size: 1.3rem;
-  width: 48%;
+  width: 52%;
+  /* align-items: center; */
   justify-content: space-around;
 }
 
 .battleAlertButtons {
   display: flex;
   /* background-color: red; */
-  width: 50%;
-  justify-content: space-between;
+  width: 100%;
+  justify-content: space-around;
 }
+
 .battleAcceptButton,
 .battleDeclineButton {
   font-size: 1rem;
 }
+
 
 #tournamentControlModal {
   display: grid;
@@ -645,6 +648,49 @@ a {
     transform: scale(100%);
     box-shadow: none;
   }
+
+.chooseControl {
+  display: flex;
+  /* background-color: pink; */
+  width: 40%;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.chooseControlTitle {
+  font-size: 1.1rem;
+  /* color: blue; */
+  /* text-decoration: underline; */
+}
+#chooseKeyboard,
+#chooseMouse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 35px;
+  /* padding: 5px 10px; */
+  border-radius: 10px;
+  transition: 0.2s;
+  &:hover {
+    background-color: rgb(184, 184, 184);
+  }
+
+  &:active {
+    background-color: rgb(60, 71, 74);
+  }
+}
+
+#chooseKeyboard.active {
+  background-color: rgb(184, 184, 184);
+}
+
+#chooseMouse.active {
+  background-color: rgb(184, 184, 184);
+}
+
+#chooseKeyboard:hover {
+  background-color: ;
 }
 
 /* -------------------------------- */

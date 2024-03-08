@@ -1,6 +1,6 @@
-import rws from '../js/WebSocket/QuickMatchSocket.js';
+import qws from '../js/WebSocket/QuickMatchSocket.js';
+import {router} from './route.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
-
 const option = {
   control: null,
   level: null,
@@ -8,11 +8,12 @@ const option = {
 
 //매칭 완료시 2초 후에 게임 화면으로 이동
 function onMatchComplete() {
-  // 2초 후에 실행될 함수
+  // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
-    window.location.href = '/game'; // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
-  }, 2000); // 2000 밀리초 = 2초
+    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    router();
+  }, 3000); // 2000 밀리초 = 2초
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const $modes = document.querySelectorAll('.mode');
   const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
   const $battleModal = document.querySelector('.battleModalContainer');
-  const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
   const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
   const $tournamentControlModal = document.getElementById(
     'tournamentControlModalBackground',
@@ -48,13 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   $gameOptionNextBtn.addEventListener('click', async () => {
-    // const $as = document.querySelector('.quickMatchModalContainer');
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
     else {
       console.log($gameOptionModalContainer.dataset.modaloption);
       console.log(option);
-      localStorage.setItem('gameOption', JSON.stringify(option));
+      sessionStorage.setItem('gameOption', JSON.stringify(option));
       console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
         const queryString = window.location.search;
@@ -64,30 +63,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const $opponentMatchingImg = document.querySelector(
           '.opponentMatchingImg',
         );
+        const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
+        console.log($matchingCancelBtn);
         const $quickMatchModal = document.querySelector(
           '.quickMatchModalContainer',
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
-        rws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        // rws.ws.onopen = () => {
-        rws.send({speed: 1});
+        qws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        qws.send({speed: 1});
         let cnt = 0;
-        rws.onMessage(msg => {
+        qws.onMessage(msg => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
+          }
+          if (msg.data) {
+            sessionStorage.setItem('gameData', JSON.stringify(msg.data));
             if (
-              msg.data.player1.info.nickname ===
+              msg.data.game_state.player1.info.nickname ===
               JSON.parse(sessionStorage.getItem('user')).nickname
             ) {
               sessionStorage.setItem('myPosition', 'player1');
               sessionStorage.setItem('opponentsPosition', 'player2');
-              $opponentMatchingImg.src = msg.data.player2.info.profile_img;
+              console.log(msg.data.game_state.player2.info.profile_img);
+              $opponentMatchingImg.src =
+                'http://127.0.0.1:8000' +
+                msg.data.game_state.player2.info.profile_img;
             } else {
               sessionStorage.setItem('myPosition', 'player2');
+              console.log(msg.data.game_state.player1.info.profile_img);
               sessionStorage.setItem('opponentsPosition', 'player1');
-              $opponentMatchingImg.src = msg.data.player1.info.profile_img;
+              $opponentMatchingImg.src =
+                'http://127.0.0.1:8000' +
+                msg.data.game_state.player1.info.profile_img;
             }
+            $matchingCancelBtn.style.display = 'none';
+            onMatchComplete();
           }
         });
         // };
