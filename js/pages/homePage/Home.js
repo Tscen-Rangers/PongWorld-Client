@@ -290,39 +290,37 @@ export default class extends AbstractView {
     console.log('REFRESH', sessionStorage.getItem('refresh_token'));
 
     $tournamentBtn.addEventListener('click', async () => {
-
       $tournamentModal.classList.add('show');
 
-//       $battleMsg.innerHTML =
-//         'Waiting for all <br /> players to join the tournament...';
-//       if (!getToken().length) await refreshAccessToken();
-//       tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-//       tws.onMessage(msg => {
-//         if (msg.participants_num)
-//           $currentStaff.innerText = `${msg.participants_num}/4`;
-//         else {
-//           if (msg.data.id) {
-//             sessionStorage.setItem('tournament_id', msg.data.id);
-//           }
-//           $currentStaff.innerText = `4/4`;
-//           $battleMsg.innerHTML =
-//             'Tournament Ready<br />The game will start soon!';
-//           onMatchComplete();
-//         }
-        // if (msg.data.players) {
-        //   console.log(msg.data);
-        //   // console.log(msg.data.players);
-        //   $currentStaff.innerText = `4/4`;
-        //   $battleMsg.innerHTML =
-        //     'Tournament Ready<br />The game will start soon!';
-        // } else if (msg.data) {
-        //   console.log(msg.data);
-        //   //session에 저장해두기?
-        // }
-      });
-
-//       $battleModalContainer.classList.add('active');
+      //       $battleMsg.innerHTML =
+      //         'Waiting for all <br /> players to join the tournament...';
+      //       if (!getToken().length) await refreshAccessToken();
+      //       tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+      //       tws.onMessage(msg => {
+      //         if (msg.participants_num)
+      //           $currentStaff.innerText = `${msg.participants_num}/4`;
+      //         else {
+      //           if (msg.data.id) {
+      //             sessionStorage.setItem('tournament_id', msg.data.id);
+      //           }
+      //           $currentStaff.innerText = `4/4`;
+      //           $battleMsg.innerHTML =
+      //             'Tournament Ready<br />The game will start soon!';
+      //           onMatchComplete();
+      //         }
+      // if (msg.data.players) {
+      //   console.log(msg.data);
+      //   // console.log(msg.data.players);
+      //   $currentStaff.innerText = `4/4`;
+      //   $battleMsg.innerHTML =
+      //     'Tournament Ready<br />The game will start soon!';
+      // } else if (msg.data) {
+      //   console.log(msg.data);
+      //   //session에 저장해두기?
+      // }
     });
+
+    //       $battleModalContainer.classList.add('active');
 
     $quickMatchBtn.addEventListener('click', () => {
       $gameOptionModalContainer.setAttribute('data-modaloption', 'quickmatch');
