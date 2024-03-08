@@ -73,22 +73,13 @@ export default class extends AbstractView {
       '.battleModalContainer',
     );
     $battleModalContainer.classList.remove('active');
-    console.log(JSON.parse(sessionStorage.getItem('tournament_id')));
-    tws.send({
-      tournament_mode: 'semi_final',
-      tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
-    });
-    tws.onMessage(msg => {
-      console.log(msg);
-      // if (
-      //   msg.data.player1.info.nickname ===
-      //   JSON.parse(sessionStorage.getItem('user')).nickname
-      // ) {
-
-      // }
-      // els
-    });
-    const myPingpongStick = document.querySelector('.myPingpongStick');
+    console.log(JSON.parse(sessionStorage.getItem('gameData')));
+    const myPingpongStick = document.querySelector(
+      `.${sessionStorage.getItem('myPosition')}PingpongStick`,
+    );
+    const opponentPingpongStick = document.querySelector(
+      `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
+    );
     const pingpongTable = document.querySelector('.pingpongTable');
     const maxY = pingpongTable.clientHeight - myPingpongStick.clientHeight / 2;
     const gameOption = JSON.parse(sessionStorage.getItem('gameOption'));
