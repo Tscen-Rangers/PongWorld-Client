@@ -75,6 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
         $battleMsg.innerHTML =
           'Tournament Ready<br />The game will start soon!';
         $battleCancelBtn.style.display = 'none';
+        tws.send({
+          tournament_mode: 'semi_final',
+          tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
+        });
+        tws.onMessage(msg => {
+          sessionStorage.setItem('gameData', JSON.stringify(msg.data));
+          if (
+            msg.data.game_state.player1.info.nickname ===
+            JSON.parse(sessionStorage.getItem('user')).nickname
+          ) {
+            sessionStorage.setItem('myPosition', 'player1');
+            sessionStorage.setItem('opponentsPosition', 'player2');
+          } else {
+            sessionStorage.setItem('myPosition', 'player2');
+            sessionStorage.setItem('opponentsPosition', 'player1');
+          }
+        });
         onMatchComplete();
       }
     });
@@ -110,6 +127,23 @@ document.addEventListener('DOMContentLoaded', () => {
         $battleMsg.innerHTML =
           'Tournament Ready<br />The game will start soon!';
         $battleCancelBtn.style.display = 'none';
+        tws.send({
+          tournament_mode: 'semi_final',
+          tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
+        });
+        tws.onMessage(msg => {
+          sessionStorage.setItem('gameData', JSON.stringify(msg.data));
+          if (
+            msg.data.game_state.player1.info.nickname ===
+            JSON.parse(sessionStorage.getItem('user')).nickname
+          ) {
+            sessionStorage.setItem('myPosition', 'player1');
+            sessionStorage.setItem('opponentsPosition', 'player2');
+          } else {
+            sessionStorage.setItem('myPosition', 'player2');
+            sessionStorage.setItem('opponentsPosition', 'player1');
+          }
+        });
         onMatchComplete();
       }
     });
@@ -185,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');
       closeGameOptionModal();
-      // window.location.href = '/game';
     }
   });
 
