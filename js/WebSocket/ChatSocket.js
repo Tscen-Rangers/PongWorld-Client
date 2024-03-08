@@ -20,5 +20,5 @@ class ChatSocket extends BaseWebSocket {
   }
 }
 
-const cws = ChatSocket.getInstance();
-export default cws;
+const chatws = ChatSocket.getInstance();
+export default chatws;

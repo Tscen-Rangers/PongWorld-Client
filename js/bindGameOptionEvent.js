@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const $battleModal = document.querySelector('.battleModalContainer');
   const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
   const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
+  const $tournamentControlModal = document.getElementById(
+    'tournamentControlModalBackground',
+  );
+
+  $tournamentControlModal.addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+      $tournamentControlModal.classList.remove('show');
+    }
+  });
 
   const closeGameOptionModal = () => {
     option.control = null;
