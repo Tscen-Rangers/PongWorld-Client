@@ -167,7 +167,8 @@
   display: flex;
   position: relative;
   margin: 2px 0;
-  padding: 10px 7px;
+  padding: 10px 0;
+  box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
   z-index: 1;
@@ -266,6 +267,7 @@
   display: flex;
   position: relative;
   align-items: center;
+  padding-left: 10px;
   z-index: 1;
 }
 
@@ -285,7 +287,7 @@
 
 .chatUserName {
   font-size: 1.3rem;
-  padding: 0 15px;
+  padding-left: 10px;
 }
 
 .chatRoom {
@@ -297,6 +299,20 @@
   min-width: 240px;
 }
 
+.myMsgBox {
+  display: flex;
+  align-self: flex-end;
+  align-items: flex-end;
+  max-width: 90%;
+}
+
+.opponentMsgBox {
+  display: flex;
+  align-self: flex-start;
+  align-items: flex-end;
+  max-width: 90%;
+}
+
 .friendChat,
 .myChat {
   position: relative;
@@ -306,14 +322,13 @@
   background-color: white;
   padding: 5px 10px;
   margin-top: 10px;
-  margin-left: 20px;
+  margin-left: 10px;
   border-radius: 5px;
   align-self: flex-start;
 }
 
 .myChat {
-  align-self: flex-end;
-  margin-right: 20px;
+  margin-right: 10px;
   margin-left: 0px;
 }
 

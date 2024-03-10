@@ -283,7 +283,7 @@ export default class extends AbstractView {
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
 
-    checkConnectionSocket();
+    await checkConnectionSocket();
 
     console.log(this.user);
     console.log('ACCESS = ', getToken());

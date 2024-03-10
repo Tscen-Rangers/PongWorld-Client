@@ -9,43 +9,29 @@ class ConnectionSocket extends BaseWebSocket {
     this.reconnectTimer = null;
   }
 
-  connect(url) {
+  async connect(url) {
     console.log('Connection WebSocket 연결 시도중');
     super.connect(url);
 
-    this.ws.onopen = () => {
-      console.log('Connection WebSocket 연결 성공!');
-    };
+    return new Promise(async (resolve, reject) => {
+      this.ws.onopen = () => {
+        console.log('Connection WebSocket 연결 성공!');
+        resolve();
+      };
 
-    this.ws.onclose = () => {
-      console.log('Connection WebSocket 닫힘');
-    };
-
-    // this.ws.onclose = async () => {
-    //   console.log(
-    //     'Connection WebSocket 연결이 끊어졌습니다. 재연결을 시도합니다.',
-    //   );
-    //   await refreshAccessToken();
-    //   this.reconnect(url);
-    // };
+      this.ws.onclose = () => {
+        console.log('Connection WebSocket 닫힘');
+      };
+    });
   }
 
-  // reconnect(url) {
-  //   this.reconnectTimer = setInterval(async () => {
-  //     console.log('Connection WebSocket 재연결 시도 중...');
-  //     if (this.ws.readyState === WebSocket.CLOSED) {
-  //       await super.connect(url);
-  //     }
-  //   }, 1000);
-
-  //   this.ws.onopen = () => {
-  //     console.log('Connection WebSocket 재연결 성공!');
-  //     if (this.reconnectTimer) {
-  //       clearInterval(this.reconnectTimer);
-  //       this.reconnectTimer = null;
-  //     }
-  //   };
-  // }
+  setEvent(handler) {
+    if (handler) {
+      this.ws.onmessage = e => {
+        handler(JSON.parse(e.data));
+      };
+    }
+  }
 
   static getInstance() {
     if (!ConnectionSocket.instance) {
