@@ -1,60 +1,7 @@
 import AbstractView from '../../AbstractView.js';
+import {block, deleteFriend} from '../../FriendsRestApi.js';
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
 
-const users = [
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'huipark',
-    state: true,
-  },
-  {
-    name: 'hwankim',
-    state: true,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'huipark',
-    state: true,
-  },
-  {
-    name: 'hwankim',
-    state: true,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'huipark',
-    state: true,
-  },
-  {
-    name: 'hwankim',
-    state: true,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-];
 const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
 const battleMsg = document.querySelector('.battleMsg');
@@ -66,12 +13,12 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Friends');
+    this.users = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
     //임시 데이터
-
     return `
     <div class="contentsContainer">
     <div class="friendContainer">
@@ -131,21 +78,25 @@ export default class extends AbstractView {
 
   updateFriendList(battleOptionModal) {
     const friendListContainer = document.querySelector('.friendListContainer');
-    friendListContainer.innerHTML = `  ${users
-      .map(
-        (user, index) => `
+    friendListContainer.innerHTML = `  ${
+      this.users
+        ? this.users
+            .map(
+              (user, index) => `
       <div class="friendList" key=${index}>
       <div class="friendProfile">
         <div class="friendProfileImg">
-        <img class="profileImg" src="/public/huipark.jpg"/>
+        <img class="profileImg" src=${user.user.profile_img}/>
          ${
-           user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''
+           user.user.is_online
+             ? '<img class="onlineImg" src="/public/online.png"/>'
+             : ''
          }</div>
-        <div class="friendname">${user.name}</div>
+        <div class="friendname">${user.user.nickname}</div>
       </div>
       ${
-        user.state
-          ? `<div class="battlebutton" data-user="${user.name}"/>
+        user.user.is_online
+          ? `<div class="battlebutton" data-user="${user.user.nickname}"/>
 battle
             <img class="leftgloveImg" src="/public/leftglove.png"/>
             <img class="rightgloveImg" src="/public/rightglove.png"/>
@@ -153,7 +104,7 @@ battle
           : ''
       }
       <a class="chatbutton" href='/chat/direct/${
-        user.name
+        user.user.nickname
       }' data-spa>chat<svg class="chatMsgImage" style="margin-left:5px;" width="0.9em" height="0.9em" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
       <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#636363"/>
       </svg></a>
@@ -166,8 +117,10 @@ battle
     </div>
   </div>
 `,
-      )
-      .join('')}`;
+            )
+            .join('')
+        : ''
+    }`;
     this.bindFriendListEvents(battleOptionModal);
   }
 
@@ -212,33 +165,92 @@ battle
     });
     const optionBtns = document.querySelectorAll('.optionBtn');
     optionBtns.forEach(optionBtn => {
-      optionBtn.addEventListener('click', e => {
+      optionBtn.addEventListener('click', async e => {
         const selected = e.target.innerText;
         const index = e.target.dataset.key;
         console.log(index);
         if (selected === 'delete') {
           //친구에서 삭제만
-          users.splice(index, 1);
-          this.updateFriendList();
+          if (await deleteFriend(this.users[index].user.id)) {
+            this.users.splice(index, 1);
+            this.updateFriendList();
+          }
         } else {
           //block하기
-          users.splice(index, 1);
-          this.updateFriendList();
+          if (await block(this.users[index].user.id)) {
+            this.users.splice(index, 1);
+            this.updateFriendList();
+          }
         }
       });
     });
   }
 
-  afterRender() {
+  async renderFriends() {
+    const getFriends = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/friends/', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await getFriends();
+          }
+          throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          console.log('data', data);
+          this.users = data.data;
+        }
+      } catch (error) {
+        console.log('get friends error', error);
+      }
+    };
+    return await getFriends();
+  }
+
+  async getNewRequest() {
+    const getNewRequestCount = async () => {
+      try {
+        const res = await fetch(
+          'http://127.0.0.1:8000/friends/followed/count',
+          {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          },
+        );
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await getNewRequestCount();
+          } else throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          // console.log(data);
+          sessionStorage.setItem('newRequest', data.data.request_cnt);
+        }
+      } catch (error) {
+        console.log('get new request error', error);
+      }
+    };
+    return await getNewRequestCount();
+  }
+
+  async afterRender() {
+    await this.renderFriends();
+    await this.getNewRequest();
     $battleCancelBtn.addEventListener('click', () => {
       $battleModalContainer.classList.remove('active');
     });
     $battleCancelBtn.addEventListener('click', {});
     this.updateFriendList();
-    localStorage.setItem('newRequest', 1);
     const requestBadge = document.querySelector('.requestBadge');
-    requestBadge.firstChild.innerText = localStorage.getItem('newRequest');
-    if (parseInt(localStorage.getItem('newRequest')))
+    requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
+    if (parseInt(sessionStorage.getItem('newRequest')))
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
   }
