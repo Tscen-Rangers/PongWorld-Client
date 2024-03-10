@@ -1,43 +1,12 @@
 import AbstractView from '../../AbstractView.js';
-
-const users = [
-  {
-    name: 'jimpark',
-    state: false,
-    request: true,
-    blocked: false,
-  },
-  {
-    name: 'huipark',
-    state: true,
-    request: false,
-    blocked: false,
-  },
-  {
-    name: 'hwankim',
-    state: true,
-    request: false,
-    blocked: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-    request: true,
-    blocked: false,
-  },
-  {
-    name: 'yubchoi',
-    state: true,
-    request: false,
-    blocked: false,
-  },
-];
-
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import {block, unblock} from '../../FriendsRestApi.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('SearchFriends');
     this.currentAction = '';
+    this.users = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -55,7 +24,7 @@ export default class extends AbstractView {
     </nav>
     <div class="searchBarContainer">
     <div class="searchBar">
-    <input type="text" name="search"/>
+    <input type="text" name="search" id="searchInput"/>
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="none" stroke="#979191" stroke-miterlimit="10" stroke-width="32" d="M221.09 64a157.09 157.09 0 1 0 157.09 157.09A157.1 157.1 0 0 0 221.09 64Z"/><path fill="none" stroke="#979191" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
     </div>
     </div>
@@ -78,39 +47,44 @@ export default class extends AbstractView {
 
   updateBlockedUserList() {
     const friendListContainer = document.querySelector('.friendListContainer');
-    friendListContainer.innerHTML = ` ${users
-      .map(
-        (user, index) => `
+    // console.log(this.users);
+    friendListContainer.innerHTML = ` ${
+      this.users
+        ? this.users
+            .map(
+              (user, index) => `
         <div class="friendList" key=${index}>
           <div class="friendProfile">
             <div class="friendProfileImg">
-            <img class="profileImg" src="/public/huipark.jpg"/>
+            <img class="profileImg" src=${user.profile_img}/>
             ${
-              user.state
+              user.is_online
                 ? '<img class="onlineImg" src="/public/online.png"/>'
                 : ''
             }
             </div>
-            <div class="friendname">${user.name}</div>
+            <div class="friendname">${user.nickname}</div>
           </div>
             <div class="searchOptionBtns">
             ${
-              user.blocked
+              user.is_blocking
                 ? ''
                 : `<div class="searchOptionRequestBtn" id="friendRequestBtn" style='color: ${
-                    user.request ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
+                    user.friend_status ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
                   };' data-key='${index}'>
-                    ${user.request ? 'request cancel' : 'friend request'}
+                    ${user.friend_status ? 'request cancel' : 'friend request'}
                   </div>`
             }     
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
-          user.blocked ? 'unblock' : 'block'
-        }</div>
+                user.is_blocking ? 'unblock' : 'block'
+              }</div>
             </div>
         </div>
       `,
-      )
-      .join('')}`;
+            )
+            .join('')
+        : ''
+    }`;
     this.bindBlockedUserListEvents();
   }
 
@@ -120,13 +94,18 @@ export default class extends AbstractView {
     const confirmModalMsg = document.querySelector('.confirmModalMsg');
     const blockBtns = document.querySelectorAll('.searchOptionBlockBtn');
     blockBtns.forEach(blockBtn => {
-      blockBtn.addEventListener('click', e => {
+      blockBtn.addEventListener('click', async e => {
         const index = e.target.dataset.key;
-        if (users[index].blocked === true) {
-          users[index].blocked = false;
-          users[index].request = false;
+        if (this.users[index].is_blocking === true) {
+          if (await unblock(this.users[index].id)) {
+            this.users[index].is_blocking = false;
+            this.users[index].friend_status = 0;
+          }
         } else {
-          users[index].blocked = true;
+          if (await block(this.users[index].id)) {
+            console.log(this.users[index].id);
+            this.users[index].is_blocking = true;
+          }
         }
         this.updateBlockedUserList();
       });
@@ -138,10 +117,10 @@ export default class extends AbstractView {
     searchOptionRequestBtns.forEach(searchOptionRequestBtn => {
       searchOptionRequestBtn.addEventListener('click', e => {
         const index = e.target.dataset.key;
-        const user = users[index].name;
-        if (users[index].request === false) {
+        const user = this.users[index].nickname;
+        if (this.users[index].friend_status === 0) {
           confirmModalMsg.innerHTML = `Would you like to send a friend request to ${user}?`;
-        } else if (users[index].request === true) {
+        } else if (this.users[index].friend_status === 1) {
           confirmModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
         }
         this.currentAction = 'request';
@@ -151,10 +130,84 @@ export default class extends AbstractView {
     });
   }
 
-  afterRender() {
+  //친구요청 보내기
+  async friendRequest(id) {
+    const sendRequest = async () => {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: JSON.stringify({
+            followed_id: id,
+          }),
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return sendRequest();
+          }
+          throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          console.log(data);
+          return 1;
+        }
+      } catch (error) {
+        console.log('post friend request error', error);
+        return 0;
+      }
+    };
+    return await sendRequest();
+  }
+
+  //모든 유저 렌더링 or 검색된 유저 렌더링
+  async searchPlayers(name) {
+    const url = name.length
+      ? `http://127.0.0.1:8000/players/search/${name}/`
+      : 'http://127.0.0.1:8000/players/search/';
+    const getPlayers = async () => {
+      try {
+        const res = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return getPlayers();
+          }
+        } else {
+          const data = await res.json();
+          this.users = data.data;
+          console.log(this.users);
+        }
+        // this.users = data;
+      } catch (error) {
+        console.log('get searchPlayers error', error);
+      }
+    };
+    await getPlayers();
+  }
+
+  async afterRender() {
+    await this.searchPlayers('');
     const confirmModal = document.querySelector('.confirmModalContainer');
     const confirmBtn = document.querySelector('.confirmBtn');
     const cancelBtn = document.querySelector('.cancelBtn');
+    const searchInput = document.querySelector('#searchInput');
+
+    searchInput.addEventListener('keydown', async e => {
+      if (e.keyCode === 13) {
+        const query = e.target.value;
+        console.log('asdasd');
+        await this.searchPlayers(query);
+        this.updateBlockedUserList();
+      }
+    });
     cancelBtn.addEventListener('click', () => {
       confirmModal.classList.remove('active');
     });
@@ -162,17 +215,19 @@ export default class extends AbstractView {
     confirmBtn.addEventListener('click', e => {
       const index = confirmModal.getAttribute('data-key');
 
-      if (this.currentAction === 'request')
-        users[index].request = !users[index].request;
+      // console.log(this.users[index].id);
+      if (this.friendRequest(this.users[index].id)) {
+        if (this.currentAction === 'request')
+          this.users[index].friend_status = !this.users[index].friend_status;
+      }
       this.updateBlockedUserList(); // UI 업데이트
       confirmModal.classList.remove('active');
     });
     const requestBadge = document.querySelector('.requestBadge');
-    requestBadge.firstChild.innerText = localStorage.getItem('newRequest');
-    if (parseInt(localStorage.getItem('newRequest')))
+    requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
+    if (parseInt(sessionStorage.getItem('newRequest')))
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
     this.updateBlockedUserList();
   }
 }
-3;
