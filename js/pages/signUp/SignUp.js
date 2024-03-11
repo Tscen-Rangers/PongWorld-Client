@@ -42,13 +42,16 @@ export default class extends AbstractView {
 
     const patchUserData = async formData => {
       try {
-        const res = await fetch('http://localhost:8000/players/', {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
+        const res = await fetch(
+          `http://localhost:8000/players/setting/${user.id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: formData,
           },
-          body: formData,
-        });
+        );
         const data = await res.json();
         if (res.ok) {
           sessionStorage.setItem('user', JSON.stringify(data.data));
