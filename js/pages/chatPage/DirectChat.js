@@ -80,9 +80,9 @@ export default class extends AbstractView {
       .map(room => {
         return `<div class="chatUserProfile" data-userid="${
           room.user1 === this.user.id ? room.user2 : room.user1
-        }">
-        <div class="chatUserProfileBlur"></div>
-          <div class="chatUserInfo">
+        }" data-chatroomid=${room.id}>
+      <div class="chatUserProfileBlur"></div>
+        <div class="chatUserInfo">
           <img class="chatUserImage" src=${
             room.user1 === this.user.id
               ? room.user2_profile_img
@@ -94,17 +94,26 @@ export default class extends AbstractView {
               : room.user1_nickname
           }</p>
         </div>
-          <div class="outDirectChatRoomContainer">
+        <div class="unReadCount">${room.unread_count}</div>
+        <div class="outDirectChatRoomContainer" data-chatroomid=${room.id}>
             <svg class="outDirectChatRoom" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M16.5 13.75V11H9.625V8.25H16.5V5.5L20.625 9.625L16.5 13.75ZM15.125 12.375V17.875H8.25V22L0 17.875V0H15.125V6.875H13.75V1.375H2.75L8.25 4.125V16.5H13.75V12.375H15.125Z"/>
             </svg>
-          </div>
-        </div>`;
+        </div>
+      </div>`;
       })
       .join('')}`;
 
+    const $unReadCount = document.querySelectorAll('.unReadCount');
     const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
+    this.$unReadCount = $unReadCount;
     this.$chatUserProfiles = $chatUserProfiles;
+
+    $unReadCount.forEach(e => {
+      if (!Number(e.textContent)) e.style.opacity = 0;
+    });
+
+    if (Number($unReadCount.textContent)) $unReadCount;
 
     if (this.params.user) {
       let idx = findUser(Number(this.params.user), chattingRooms.data);
@@ -219,11 +228,45 @@ export default class extends AbstractView {
     });
   }
 
+  async deleteChatRoom(chatRoomId, cnt) {
+    if (cnt) {
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:8000/chat/${chatRoomId}/leave/`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          },
+        );
+        const data = await res.json();
+        if (res.ok) {
+        } else {
+          if (data.status === 401) {
+            console.log('HLEOEOQWELQWLEQLWELQWELWQ');
+            await refreshAccessToken();
+            this.deleteChatRoom(chatRoomId, cnt - 1);
+          }
+        }
+      } catch (error) {
+        console.log('DeleteChatRoom REST API ERROR : ', error);
+      }
+    }
+  }
+
   sendWebSocket() {
     cws.send({
       type: 'private_chat',
       status: 'enter',
       receiver_id: Number(this.target),
+    });
+  }
+
+  leaveWebSocket() {
+    cws.send({
+      type: 'private_chat',
+      status: 'leave',
     });
   }
 
@@ -242,18 +285,6 @@ export default class extends AbstractView {
       else this.$chattingSubmitImage.setAttribute('fill', '#ddd');
     });
 
-    // 채팅룸 삭제 아직 미완성
-    outDirectChatRoomContainer.forEach((e, idx) =>
-      e.addEventListener('click', e => {
-        cws.send({
-          type: 'private_chat',
-          status: 'leave',
-        });
-        users.splice(idx, 1);
-        this.updateUserList();
-      }),
-    );
-
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
@@ -265,10 +296,27 @@ export default class extends AbstractView {
       $chattingInput.value = '';
     });
 
+    outDirectChatRoomContainer.forEach((e, idx) =>
+      e.addEventListener('click', e => {
+        e.stopPropagation();
+        this.leaveWebSocket();
+        this.deleteChatRoom(
+          Number(e.currentTarget.getAttribute('data-chatroomid')),
+          1,
+        );
+        const parentElement = e.currentTarget.parentNode;
+        if (parentElement.parentNode) {
+          parentElement.parentNode.removeChild(parentElement);
+        }
+      }),
+    );
+
     this.$chatUserProfiles.forEach(profile => {
       profile.addEventListener('click', async e => {
         this.nextChattingLog = null;
+        $chattingForm.style.display = 'flex';
         // 기존 active 클래스 삭제
+        this.leaveWebSocket();
         this.$chatUserProfiles.forEach(profile => {
           profile.classList.remove('active');
         });
@@ -292,8 +340,10 @@ export default class extends AbstractView {
         const chattingRooms = await res.json();
         return chattingRooms;
       } else {
-        await refreshAccessToken();
-        return this.getChattingRoom();
+        if (res.status === 401) {
+          await refreshAccessToken();
+          return this.getChattingRoom();
+        }
       }
     } catch (error) {
       console.error('Error fetching chatting rooms:', error);
@@ -309,15 +359,37 @@ export default class extends AbstractView {
       this.target = Number(this.params.user);
       this.sendWebSocket();
     }
+
+    document.querySelectorAll('a[data-spa]').forEach(link => {
+      link.addEventListener('click', event => {
+        // 웹소켓 나가기 메시지 전송
+        this.leaveWebSocket();
+        // 여기서 페이지 전환 로직을 구현하거나, 기존 로직을 호출
+      });
+    });
+
     const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
     const chattingRooms = await this.getChattingRoom();
+    console.log(chattingRooms);
     this.$chattingSubmitImage = $chattingSubmitImage;
 
     this.updateUserList(chattingRooms);
   }
 
   async socketEventHendler(message) {
-    if (message.chatroom_id) {
+    if (!message.type) {
+      if (message.is_new) {
+        const chattingRooms = await this.getChattingRoom();
+        this.updateUserList(chattingRooms);
+      }
+      this.$unReadCount.forEach(e => {
+        if (
+          message.chatroom_id ===
+          Number(e.parentNode.getAttribute('data-chatroomid'))
+        ) {
+          e.style.opacity = 0;
+        }
+      });
       this.$chatRoom.innerHTML = '';
       const chatRoomdID = await message.chatroom_id;
       this.renderPrevChat(chatRoomdID);
@@ -327,6 +399,17 @@ export default class extends AbstractView {
       }
     } else if (message.type === 'private_chat') {
       this.renderChat(message);
+    } else if (message.type === 'unread_count') {
+      this.$unReadCount.forEach(e => {
+        if (
+          message.chatroom_id ===
+            Number(e.parentNode.getAttribute('data-chatroomid')) &&
+          e.parentNode.classList.length === 1
+        ) {
+          e.style.opacity = 1;
+          e.innerHTML = message.unread_count;
+        }
+      });
     }
     console.log('onMessage : ', message);
   }
