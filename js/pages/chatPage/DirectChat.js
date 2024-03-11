@@ -1,13 +1,15 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
+import {
+  checkConnectionSocket,
+  connectionSocketConnect,
+} from '../../webSocketManager.js';
 
-function findUser(userName, rooms) {
+function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
-    if (
-      rooms[i].user1_nickname === userName ||
-      rooms[i].user2_nickname === userName
-    )
-      return i;
+    console.log(rooms[i]);
+    if (rooms[i].user1 === id || rooms[i].user2 === id) return i;
   }
   return -1;
 }
@@ -18,6 +20,7 @@ export default class extends AbstractView {
     this.setTitle('PongWorldㅣDirectChat');
     this.target = null;
     this.user = JSON.parse(sessionStorage.getItem('user'));
+    this.nextChattingLog = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -80,7 +83,11 @@ export default class extends AbstractView {
         }">
         <div class="chatUserProfileBlur"></div>
           <div class="chatUserInfo">
-          <img class="chatUserImage" src="/public/huipark.jpg"/>
+          <img class="chatUserImage" src=${
+            room.user1 === this.user.id
+              ? room.user2_profile_img
+              : room.user1_profile_img
+          }/>
           <p class="chatUserName">${
             room.user1 === this.user.id
               ? room.user2_nickname
@@ -96,128 +103,152 @@ export default class extends AbstractView {
       })
       .join('')}`;
 
+    const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
+    this.$chatUserProfiles = $chatUserProfiles;
+
+    if (this.params.user) {
+      let idx = findUser(Number(this.params.user), chattingRooms.data);
+      this.$chatUserProfiles[idx].classList.add('active');
+    }
     this.bindUserListEvents(chattingRooms);
   }
 
-  bindUserListEvents(chattingRooms) {
-    const outDirectChatRoomContainer = document.querySelectorAll(
-      '.outDirectChatRoomContainer',
-    );
-    const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
-    const $chattingForm = document.querySelector('#chattingForm');
-    const $chattingInput = document.querySelector('#chattingInput');
-    const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
-    const $chatRoom = document.querySelector('.chatRoom');
-    let directSocket = null;
-    let chatRoomID = null;
-    let msgTarget = null;
-    let TargetNickName = null;
-    let nextChattingLog = null;
+  async renderPrevChat(chatRoomID) {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.status === 401) {
+          await refreshAccessToken();
+          return this.sendWebSocket();
+        } else {
+          throw console.log('renderPrevChat Error : ', data);
+        }
+      }
+      if (data.data.next) this.nextChattingLog = data.data.next;
+      const prevChat = data.data.results;
+      prevChat.forEach(e => {
+        this.renderChat(e, true);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    $chatRoom.addEventListener('scroll', async () => {
-      if ($chatRoom.scrollTop === 0 && nextChattingLog) {
-        const res = await fetch(nextChattingLog, {
+  renderChat(data, moreChatLog) {
+    const myMsgBox = document.createElement('div');
+    const opponentMsgBox = document.createElement('div');
+    const opponentName = document.createElement('div');
+    const newMsg = document.createElement('div');
+    const timeStamp = document.createElement('div');
+    const date = new Date(data.created_at);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    myMsgBox.setAttribute('class', 'myMsgBox');
+    opponentMsgBox.setAttribute('class', 'opponentMsgBox');
+    newMsg.style.color = 'black';
+    timeStamp.style.margin = '0 5px';
+    timeStamp.textContent = `${hours}:${minutes}`;
+    timeStamp.style.fontSize = '0.8rem';
+
+    if ((data.sender ? data.sender : data.user_id) === this.user.id) {
+      newMsg.textContent = data.message;
+      newMsg.setAttribute('class', 'myChat');
+      myMsgBox.appendChild(timeStamp);
+      myMsgBox.appendChild(newMsg);
+      if (moreChatLog) {
+        this.$chatRoom.prepend(myMsgBox);
+      } else {
+        this.$chatRoom.appendChild(myMsgBox);
+      }
+      this.$chatRoom.scrollTop = this.$chatRoom.scrollHeight;
+      this.$chattingSubmitImage.setAttribute('fill', '#ddd');
+    } else {
+      opponentName.textContent = data.nickname;
+      opponentName.style.color = 'black';
+      opponentName.style.marginBottom = '-10px';
+      newMsg.textContent = data.message;
+      newMsg.setAttribute('class', 'friendChat');
+      opponentMsgBox.appendChild(newMsg);
+      opponentMsgBox.appendChild(timeStamp);
+      if (moreChatLog) {
+        this.$chatRoom.prepend(opponentMsgBox);
+        this.$chatRoom.prepend(opponentName);
+      } else {
+        this.$chatRoom.appendChild(opponentName);
+        this.$chatRoom.appendChild(opponentMsgBox);
+      }
+      this.$chatRoom.scrollTop = this.$chatRoom.scrollHeight;
+    }
+  }
+
+  loadPreviousMessagesOnScroll() {
+    this.$chatRoom.addEventListener('scroll', async () => {
+      if (this.$chatRoom.scrollTop === 0 && this.nextChattingLog) {
+        const currentScrollHeight = this.$chatRoom.scrollHeight;
+
+        const res = await fetch(this.nextChattingLog, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
         });
         const data = await res.json();
-        nextChattingLog = data.data.next;
-        console.log(data);
+        this.nextChattingLog = data.data.next;
 
         const prevChat = data.data.results;
 
         prevChat.forEach(e => {
-          renderChat(e, TargetNickName, true);
+          this.renderChat(e, true);
         });
+        const newScrollHeight = this.$chatRoom.scrollHeight;
+        const scrollOffset = newScrollHeight - currentScrollHeight;
+
+        // 스크롤 위치를 조정
+        this.$chatRoom.scrollTop = scrollOffset;
       }
     });
+  }
 
-    const renderChat = (data, targetNickName, moreChatLog) => {
-      const opponentName = document.createElement('div');
-      const newMsg = document.createElement('div');
-      newMsg.style.color = 'black';
+  sendWebSocket() {
+    cws.send({
+      type: 'private_chat',
+      status: 'enter',
+      receiver_id: Number(this.target),
+    });
+  }
 
-      if ((data.sender ? data.sender : data.user_id) === this.user.id) {
-        newMsg.textContent = data.message;
-        newMsg.setAttribute('class', 'myChat');
-        moreChatLog ? $chatRoom.prepend(newMsg) : $chatRoom.appendChild(newMsg);
-        $chatRoom.scrollTop = $chatRoom.scrollHeight;
-        $chattingSubmitImage.setAttribute('fill', '#ddd');
-      } else {
-        opponentName.textContent = targetNickName;
-        opponentName.style.color = 'black';
-        opponentName.style.marginBottom = '-10px';
-        newMsg.textContent = data.message;
-        newMsg.setAttribute('class', 'friendChat');
-        moreChatLog
-          ? $chatRoom.prepend(opponentName)
-          : $chatRoom.appendChild(opponentName);
-        moreChatLog ? $chatRoom.prepend(newMsg) : $chatRoom.appendChild(newMsg);
-        $chatRoom.scrollTop = $chatRoom.scrollHeight;
-      }
-    };
+  async bindUserListEvents(chattingRooms) {
+    const outDirectChatRoomContainer = document.querySelectorAll(
+      '.outDirectChatRoomContainer',
+    );
+    const $chattingForm = document.querySelector('#chattingForm');
+    const $chattingInput = document.querySelector('#chattingInput');
 
-    const connectWebSocket = () => {
-      if (directSocket) {
-        directSocket.close();
-        console.log('DirectSocket is Close!!! Trying to reconnect...');
-      }
-      directSocket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/chat/private/${this.user.id}/${msgTarget}/`,
-      );
-      directSocket.onopen = () => {
-        console.log('DirectSocket is Connected!!!');
-      };
-      directSocket.onerror = error => {
-        console.error('WebSocket error:', error);
-      };
-      directSocket.onmessage = async e => {
-        const data = JSON.parse(e.data);
-
-        if (data.chatroom_id) {
-          chatRoomID = data.chatroom_id;
-          try {
-            const res = await fetch(
-              `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
-              {
-                headers: {
-                  Authorization: `Bearer ${getToken()}`,
-                },
-              },
-            );
-            const data = await res.json();
-            if (!res.ok) {
-              if (data.status === 401) {
-                await refreshAccessToken();
-                return connectWebSocket();
-              } else {
-                throw new Error('Network response was not ok');
-              }
-            }
-            nextChattingLog = data.data.next;
-            const prevChat = data.data.results;
-
-            console.log(prevChat);
-
-            prevChat.forEach(e => {
-              renderChat(e, TargetNickName);
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        } else renderChat(data, data.nickname);
-      };
-    };
+    this.loadPreviousMessagesOnScroll();
 
     $chattingInput.addEventListener('input', e => {
       if (e.target.value.length)
-        $chattingSubmitImage.setAttribute('fill', 'black');
-      else $chattingSubmitImage.setAttribute('fill', '#ddd');
+        this.$chattingSubmitImage.setAttribute('fill', 'black');
+      else this.$chattingSubmitImage.setAttribute('fill', '#ddd');
     });
 
+    // 채팅룸 삭제 아직 미완성
     outDirectChatRoomContainer.forEach((e, idx) =>
       e.addEventListener('click', e => {
+        cws.send({
+          type: 'private_chat',
+          status: 'leave',
+        });
         users.splice(idx, 1);
         this.updateUserList();
       }),
@@ -226,45 +257,28 @@ export default class extends AbstractView {
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
-      if (directSocket && directSocket.readyState === WebSocket.OPEN) {
-        directSocket.send(
-          JSON.stringify({
-            user_id: this.user.id,
-            chatroom_id: Number(chatRoomID),
-            message: $chattingInput.value,
-          }),
-        );
-      } else {
-        console.error('WebSocket 연결이 닫혔거나 닫히는 중입니다.');
-      }
+      cws.send({
+        type: 'private_chat',
+        status: 'message',
+        message: $chattingInput.value,
+      });
       $chattingInput.value = '';
     });
 
-    $chatUserProfiles.forEach(profile => {
+    this.$chatUserProfiles.forEach(profile => {
       profile.addEventListener('click', async e => {
+        this.nextChattingLog = null;
         // 기존 active 클래스 삭제
-        $chatUserProfiles.forEach(profile => {
+        this.$chatUserProfiles.forEach(profile => {
           profile.classList.remove('active');
         });
 
         e.currentTarget.classList.add('active');
 
-        msgTarget = e.currentTarget.dataset.userid; //타겟 아이디
-        TargetNickName = e.currentTarget.innerText;
-        $chatRoom.innerHTML = '';
-        connectWebSocket();
+        this.target = e.currentTarget.dataset.userid; //타겟 아이디
+        this.sendWebSocket();
       });
     });
-
-    if (this.params.user) {
-      let idx = findUser(this.params.user, chattingRooms.data);
-      if (idx === -1) {
-        // 채팅방 목록에 없을떄!!
-      } else {
-        $chatUserProfiles[idx].classList.add('active');
-        this.target = this.params.user;
-      }
-    }
   }
 
   async getChattingRoom() {
@@ -274,7 +288,6 @@ export default class extends AbstractView {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      // console.log(await chattingRooms.json());
       if (res.ok) {
         const chattingRooms = await res.json();
         return chattingRooms;
@@ -282,22 +295,39 @@ export default class extends AbstractView {
         await refreshAccessToken();
         return this.getChattingRoom();
       }
-      // console.log(chattingRooms);
     } catch (error) {
       console.error('Error fetching chatting rooms:', error);
     }
   }
 
   async afterRender() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
+    await checkConnectionSocket(this.socketEventHendler.bind(this));
+    const $chatRoom = document.querySelector('.chatRoom');
+    this.$chatRoom = $chatRoom;
 
-    // const chattingForm = document.querySelector('#chattingForm');
-    // const chattingInput = document.querySelector('#chattingInput');
-    // const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
-    // const chatRoom = document.querySelector('.chatRoom');
-
+    if (this.params.user) {
+      this.target = Number(this.params.user);
+      this.sendWebSocket();
+    }
+    const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
     const chattingRooms = await this.getChattingRoom();
+    this.$chattingSubmitImage = $chattingSubmitImage;
+
     this.updateUserList(chattingRooms);
+  }
+
+  async socketEventHendler(message) {
+    if (message.chatroom_id) {
+      this.$chatRoom.innerHTML = '';
+      const chatRoomdID = await message.chatroom_id;
+      this.renderPrevChat(chatRoomdID);
+      try {
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (message.type === 'private_chat') {
+      this.renderChat(message);
+    }
+    console.log('onMessage : ', message);
   }
 }

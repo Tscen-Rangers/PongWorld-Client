@@ -1,27 +1,10 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken} from '../../tokenManager.js';
+import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+import qws from '../../WebSocket/QuickMatchSocket.js';
+import {router} from '../../route.js';
 
-//ws://127.0.0.1:8000/ws/game/?player_id=1
-// let tournamentSocket = null;
-
-// function connectWebSocket(player_id) {
-//   tournamentSocket = new WebSocket(
-//     'ws://' +
-//       '127.0.0.1:8000' +
-//       '/ws/tournament/' +
-//       '?player_id=' +
-//       `${player_id}`,
-//   );
-//   tournamentSocket.onopen = function () {
-//     console.log('성공');
-//     // tournamentSocket.send(
-//     //   JSON.stringify({
-//     //     match_mode: 'random',
-//     //     game_speed: 0,
-//     //   }),
-//     // );
-//   };
-// }
 const histories = [
   {
     player1: 'jimpark',
@@ -118,6 +101,18 @@ const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleMsg = document.querySelector('.battleMsg');
 const $currentStaff = document.querySelector('.currentStaff');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+const $tournamentModal = document.getElementById(
+  'tournamentControlModalBackground',
+);
+
+function onMatchComplete() {
+  // 2초 후에 실행될 함수
+  setTimeout(function () {
+    // 게임 화면으로 이동
+    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    router();
+  }, 3000); // 2000 밀리초 = 2초
+}
 
 export default class extends AbstractView {
   constructor(params) {
@@ -279,54 +274,35 @@ export default class extends AbstractView {
 		`;
   }
 
-  afterRender() {
-    console.log(getToken());
-    console.log(sessionStorage.getItem('refresh_token'));
+  async afterRender() {
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(
       '.quickMatchModalContainer',
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
-    const $matchingText = document.querySelector('.matchingText');
-    const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
-    const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
+
+    await checkConnectionSocket();
 
     console.log(this.user);
+    console.log('ACCESS = ', getToken());
+    console.log('REFRESH', sessionStorage.getItem('refresh_token'));
 
-    $tournamentBtn.addEventListener('click', () => {
-      $battleMsg.innerHTML =
-        'Waiting for all <br /> players to join the tournament...';
-      // connectWebSocket(1);
-      // tournamentSocket.onmessage = e => {
-      //   const data = JSON.parse(e.data);
-
-      //   console.log(data.participants_num);
-      //   if (data.participants_num)
-      //     $currentStaff.innerText = `${data.participants_num}/4`;
-      //   if (data.data) {
-      //     $currentStaff.innerText = ``;
-      //   }
-      // };
-      $battleModalContainer.classList.add('active');
+    $tournamentBtn.addEventListener('click', async () => {
+      $tournamentModal.classList.add('show');
     });
+
     $quickMatchBtn.addEventListener('click', () => {
       $gameOptionModalContainer.setAttribute('data-modaloption', 'quickmatch');
       $gameOptionModalContainer.classList.add('show');
     });
 
-    $gameOptionNextBtn.addEventListener('click', () => {
-      if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch')
-        $quickMatchModal.classList.add('active');
-    });
     $matchingCancelBtn.addEventListener('click', () => {
+      // qws.onclose();
       $quickMatchModal.classList.remove('active');
     });
     $battleCancelBtn.addEventListener('click', () => {
-      // tournamentSocket.close();
-      // tournamentSocket.onclose = () => {
-      //   console.log('소켓닫기용');
-      // };
+      // tws.onclose();
       $battleModalContainer.classList.remove('active');
     });
   }

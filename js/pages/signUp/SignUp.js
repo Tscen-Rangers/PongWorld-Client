@@ -1,10 +1,5 @@
 import AbstractView from '../../AbstractView.js';
-import {
-  getToken,
-  setToken,
-  getRefreshToken,
-  refreshAccessToken,
-} from '../../tokenManager.js';
+import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import {router} from '../../route.js';
 import {setSignUpCompleted, isSignUpCompleted} from '../../signUpCompleted.js';
 
@@ -82,7 +77,6 @@ export default class extends AbstractView {
         router();
       }
     }
-    console.log(getRefreshToken());
 
     $playGameBtn.addEventListener('click', async e => {
       if (!$nickNameInput.value.length && !$imageInput.files[0]) {

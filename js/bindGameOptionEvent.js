@@ -1,32 +1,20 @@
+import qws from '../js/WebSocket/QuickMatchSocket.js';
+import {router} from './route.js';
+import {getToken, refreshAccessToken} from './tokenManager.js';
+import tws from './WebSocket/TournamentSocket.js';
 const option = {
   control: null,
   level: null,
 };
 
-// let gameSocket = null;
-
-// function connectWebSocket(player_id) {
-//   gameSocket = new WebSocket(
-//     'ws://' + '127.0.0.1:8000' + '/ws/game/' + '?player_id=' + `${player_id}`,
-//   );
-//   gameSocket.onopen = function () {
-//     console.log('성공');
-//     gameSocket.send(
-//       JSON.stringify({
-//         match_mode: 'random',
-//         game_speed: 0,
-//       }),
-//     );
-//   };
-// }
-
 //매칭 완료시 2초 후에 게임 화면으로 이동
 function onMatchComplete() {
-  // 2초 후에 실행될 함수
+  // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
-    window.location.href = '/game'; // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
-  }, 2000); // 2000 밀리초 = 2초
+    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    router();
+  }, 3000); // 2000 밀리초 = 2초
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,8 +26,128 @@ document.addEventListener('DOMContentLoaded', () => {
   const $modes = document.querySelectorAll('.mode');
   const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
   const $battleModal = document.querySelector('.battleModalContainer');
-  const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
+  const $battleMsg = document.querySelector('.battleMsg');
   const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
+  const $battleModalContainer = document.querySelector('.battleModalContainer');
+  const $currentStaff = document.querySelector('.currentStaff');
+  const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+  const $tournamentControlModal = document.getElementById(
+    'tournamentControlModalBackground',
+  );
+  const $tournamentControlKeyboard = document.querySelector(
+    '#tournamentControlKeyboard',
+  );
+  const $tournamentControlMouse = document.querySelector(
+    '#tournamentControlMouse',
+  );
+  $tournamentControlModal.addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+      $tournamentControlModal.classList.remove('show');
+    }
+  });
+  $tournamentControlKeyboard.addEventListener('click', async () => {
+    option.control = 'keyboard';
+    $battleMsg.innerHTML =
+      'Waiting for all <br /> players to join the tournament...';
+
+    // 토큰 갱신 확인
+    if (!getToken().length) await refreshAccessToken();
+
+    // WebSocket 연결
+    tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    $battleModalContainer.classList.add('active');
+    $tournamentControlModal.classList.remove('show');
+    // 메시지 수신 이벤트 핸들러
+    tws.onMessage(msg => {
+      // 참가자 수 업데이트
+      if (msg.participants_num) {
+        $currentStaff.innerText = `${msg.participants_num}/4`;
+      }
+
+      // 모든 참가자가 조인한 경우
+      if (msg.data) {
+        // 토너먼트 ID 처리
+        if (msg.data.id) {
+          sessionStorage.setItem('tournament_id', msg.data.id);
+        }
+        sessionStorage.setItem('gameOption', JSON.stringify(option));
+        $currentStaff.innerText = `4/4`;
+        $battleMsg.innerHTML =
+          'Tournament Ready<br />The game will start soon!';
+        $battleCancelBtn.style.display = 'none';
+        tws.send({
+          tournament_mode: 'semi_final',
+          tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
+        });
+        tws.onMessage(msg => {
+          sessionStorage.setItem('gameData', JSON.stringify(msg.data));
+          if (
+            msg.data.game_state.player1.info.nickname ===
+            JSON.parse(sessionStorage.getItem('user')).nickname
+          ) {
+            sessionStorage.setItem('myPosition', 'player1');
+            sessionStorage.setItem('opponentsPosition', 'player2');
+          } else {
+            sessionStorage.setItem('myPosition', 'player2');
+            sessionStorage.setItem('opponentsPosition', 'player1');
+          }
+        });
+        onMatchComplete();
+      }
+    });
+  });
+
+  $tournamentControlMouse.addEventListener('click', async () => {
+    option.control = 'mouse';
+    $battleMsg.innerHTML =
+      'Waiting for all <br /> players to join the tournament...';
+
+    // 토큰 갱신 확인
+    if (!getToken().length) await refreshAccessToken();
+
+    // WebSocket 연결
+    tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    $battleModalContainer.classList.add('active');
+    $tournamentControlModal.classList.remove('show');
+    // 메시지 수신 이벤트 핸들러
+    tws.onMessage(msg => {
+      // 참가자 수 업데이트
+      if (msg.participants_num) {
+        $currentStaff.innerText = `${msg.participants_num}/4`;
+      }
+
+      // 모든 참가자가 조인한 경우
+      if (msg.data) {
+        // 토너먼트 ID 처리
+        if (msg.data.id) {
+          sessionStorage.setItem('tournament_id', msg.data.id);
+        }
+        sessionStorage.setItem('gameOption', JSON.stringify(option));
+        $currentStaff.innerText = `4/4`;
+        $battleMsg.innerHTML =
+          'Tournament Ready<br />The game will start soon!';
+        $battleCancelBtn.style.display = 'none';
+        tws.send({
+          tournament_mode: 'semi_final',
+          tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
+        });
+        tws.onMessage(msg => {
+          sessionStorage.setItem('gameData', JSON.stringify(msg.data));
+          if (
+            msg.data.game_state.player1.info.nickname ===
+            JSON.parse(sessionStorage.getItem('user')).nickname
+          ) {
+            sessionStorage.setItem('myPosition', 'player1');
+            sessionStorage.setItem('opponentsPosition', 'player2');
+          } else {
+            sessionStorage.setItem('myPosition', 'player2');
+            sessionStorage.setItem('opponentsPosition', 'player1');
+          }
+        });
+        onMatchComplete();
+      }
+    });
+  });
 
   const closeGameOptionModal = () => {
     option.control = null;
@@ -52,24 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  //socket 여기서 연결하는거 아니면 home.js에서
-  // $matchingCancelBtn.addEventListener('click', () => {
-  //   $quickMatchModal.classList.remove('active');
-  //   console.log(gameSocket);
-  //   gameSocket.close();
-  //   gameSocket.onclose = () => {
-  //     console.log('소켓 닫기 성공핑!');
-  //   };
-  // });
-
-  $gameOptionNextBtn.addEventListener('click', () => {
-    // const $as = document.querySelector('.quickMatchModalContainer');
+  $gameOptionNextBtn.addEventListener('click', async () => {
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
     else {
       console.log($gameOptionModalContainer.dataset.modaloption);
       console.log(option);
-      localStorage.setItem('gameOption', JSON.stringify(option));
+      sessionStorage.setItem('gameOption', JSON.stringify(option));
+      console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -78,24 +176,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const $opponentMatchingImg = document.querySelector(
           '.opponentMatchingImg',
         );
-        // connectWebSocket(1);
-        // gameSocket.onmessage = e => {
-        //   const data = JSON.parse(e.data);
-        //   if (data.message) {
-        //     $matchingText.innerHTML = data.message;
-        //     $matchingCancelBtn.style.display = 'none';
-        //     onMatchComplete();
-        //   }
-        //   if (data.data.players[1].profile_img) {
-        //     $opponentMatchingImg.src = '/public/stick1.png';
-        //   }
+        const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
+        console.log($matchingCancelBtn);
+        const $quickMatchModal = document.querySelector(
+          '.quickMatchModalContainer',
+        );
+        $quickMatchModal.classList.add('active');
+        if (!getToken().length) await refreshAccessToken();
+        qws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        qws.send({speed: 1});
+        let cnt = 0;
+        qws.onMessage(msg => {
+          if (msg.message) {
+            $matchingText.innerHTML = msg.message;
+          }
+          if (msg.data) {
+            sessionStorage.setItem('gameData', JSON.stringify(msg.data));
+            if (
+              msg.data.game_state.player1.info.nickname ===
+              JSON.parse(sessionStorage.getItem('user')).nickname
+            ) {
+              sessionStorage.setItem('myPosition', 'player1');
+              sessionStorage.setItem('opponentsPosition', 'player2');
+              console.log(msg.data.game_state.player2.info.profile_img);
+              $opponentMatchingImg.src =
+                'http://127.0.0.1:8000' +
+                msg.data.game_state.player2.info.profile_img;
+            } else {
+              sessionStorage.setItem('myPosition', 'player2');
+              console.log(msg.data.game_state.player1.info.profile_img);
+              sessionStorage.setItem('opponentsPosition', 'player1');
+              $opponentMatchingImg.src =
+                'http://127.0.0.1:8000' +
+                msg.data.game_state.player1.info.profile_img;
+            }
+            $matchingCancelBtn.style.display = 'none';
+            onMatchComplete();
+          }
+        });
         // };
-        // $as.classList.add('active');
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle')
         $battleModal.classList.add('active');
       closeGameOptionModal();
-      // window.location.href = '/game';
     }
   });
 

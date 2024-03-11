@@ -1,35 +1,7 @@
 import AbstractView from '../../AbstractView.js';
-
-let retryCount = 0;
-const maxRetry = 5;
-const retryDelay = 2000; // 2초
-let chatSocket = null;
-
-function connectWebSocket() {
-  chatSocket = new WebSocket(
-    'ws://' + '127.0.0.1:8000' + '/ws/chat/' + 'public' + '/',
-  );
-
-  chatSocket.onerror = function () {
-    if (retryCount < maxRetry) {
-      setTimeout(() => {
-        console.log(`연결 실패. ${retryCount + 1}번째 재연결 시도 중...`);
-        retryCount++;
-        connectWebSocket();
-      }, retryDelay);
-    } else {
-      console.log('WebSocket 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
-      // 사용자에게 연결 실패 알림
-    }
-  };
-
-  chatSocket.onopen = function () {
-    console.log('WebSocket 연결 성공');
-    retryCount = 0;
-  };
-}
-
-connectWebSocket();
+import cws from '../../WebSocket/ConnectionSocket.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
 
 const users = [
   {
@@ -119,6 +91,7 @@ export default class extends AbstractView {
     super(params);
     this.setTitle('PongWorldㅣChat');
     this.user = JSON.parse(sessionStorage.getItem('user'));
+    this.onlineUsers = null;
   }
   async getHtml() {
     return `
@@ -165,22 +138,6 @@ export default class extends AbstractView {
       </div>
       <div class="chatLeftContainer">
         <div class="chatUserInner">
-          ${users
-            .map(user => {
-              return `<div class="chatUserProfile">
-          <div class="chatUserProfileBlur"></div>
-          <div class="chatUserInfo">
-            <img class="chatUserImage" src="/public/huipark.jpg"/>
-            <p class="chatUserName">${user.name}</p>
-          </div>
-          <a class="directMsgImageContainer" href='/chat/direct/${user.name}' data-spa>
-            <svg class="directMsgImage" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
-            <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#858585"/>
-            </svg>
-          </a>
-          </div>`;
-            })
-            .join('')}
         </div>
       </div>
     </div>
@@ -203,8 +160,52 @@ export default class extends AbstractView {
     </div>
   </div>
 </div>
-
 		`;
+  }
+
+  async renderOnlineUsers() {
+    const $chatUserInner = document.querySelector('.chatUserInner');
+
+    const getOnlineUsers = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/players/online', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          this.onlineUsers = data.data.results;
+          console.log(this.onlineUsers);
+        } else {
+          if (data.status === 401) {
+            await refreshAccessToken();
+            return getOnlineUsers();
+          }
+        }
+      } catch (error) {
+        console.log('getOnlineUsers Error', error);
+      }
+    };
+    await getOnlineUsers();
+
+    $chatUserInner.innerHTML = ` ${this.onlineUsers
+      .map(user => {
+        return `<div class="chatUserProfile">
+    <div class="chatUserProfileBlur"></div>
+    <div class="chatUserInfo">
+      <img class="chatUserImage" src=${user.profile_img}/>
+      <p class="chatUserName">${user.nickname}</p>
+    </div>
+    <a class="directMsgImageContainer" href='/chat/direct/${user.id}' data-spa>
+      <svg class="directMsgImage" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
+      <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#858585"/>
+      </svg>
+    </a>
+    </div>`;
+      })
+      .join('')}
+    `;
   }
 
   bindSearchUserInputEvent() {
@@ -217,58 +218,73 @@ export default class extends AbstractView {
     chatSearchUserInput.addEventListener('input', e => {});
   }
 
-  connectionChatSocket() {
+  async connectionChatSocket() {
     const $chattingForm = document.querySelector('#chattingForm');
-    const $chatRoom = document.querySelector('.chatRoom');
     const $chattingInput = document.querySelector('#chattingInput');
 
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
 
-      chatSocket.send(
-        JSON.stringify({
-          user_id: this.user.id,
-          message: $chattingInput.value,
-        }),
-      );
+      cws.send({
+        type: 'public_chat',
+        message: $chattingInput.value,
+      });
       $chattingInput.value = '';
     });
-    chatSocket.onmessage = e => {
-      const data = JSON.parse(e.data);
-      const opponentName = document.createElement('div');
-      const newMsg = document.createElement('div');
-      newMsg.style.color = 'black';
-
-      console.log(data, this.user.id);
-
-      if (Number(data.user_id) === this.user.id) {
-        newMsg.textContent = data.message;
-        newMsg.setAttribute('class', 'myChat');
-        $chatRoom.appendChild(newMsg);
-        $chatRoom.scrollTop = $chatRoom.scrollHeight;
-        chattingSubmitImage.setAttribute('fill', '#ddd');
-      } else {
-        opponentName.textContent = data.user_name;
-        opponentName.style.color = 'black';
-        opponentName.style.marginBottom = '-10px';
-        newMsg.textContent = data.message;
-        newMsg.setAttribute('class', 'friendChat');
-        $chatRoom.appendChild(opponentName);
-        $chatRoom.appendChild(newMsg);
-        $chatRoom.scrollTop = $chatRoom.scrollHeight;
-      }
-    };
   }
 
-  afterRender() {
+  renderChatting(message) {
+    const myMsgBox = document.createElement('div');
+    const opponentMsgBox = document.createElement('div');
+    const opponentName = document.createElement('div');
+    const newMsg = document.createElement('div');
+    const timeStamp = document.createElement('div');
+    const date = new Date(message.created_at);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    newMsg.style.color = 'black';
+    myMsgBox.setAttribute('class', 'myMsgBox');
+    opponentMsgBox.setAttribute('class', 'opponentMsgBox');
+    newMsg.style.color = 'black';
+    timeStamp.style.margin = '0 5px';
+    timeStamp.textContent = `${hours}:${minutes}`;
+    timeStamp.style.fontSize = '0.8rem';
+
+    if (Number(message.user_id) === this.user.id) {
+      newMsg.textContent = message.message;
+      newMsg.setAttribute('class', 'myChat');
+      myMsgBox.appendChild(timeStamp);
+      myMsgBox.appendChild(newMsg);
+      this.$chatRoom.appendChild(myMsgBox);
+      this.$chatRoom.scrollTop = this.$chatRoom.scrollHeight;
+      chattingSubmitImage.setAttribute('fill', '#ddd');
+    } else {
+      opponentName.textContent = message.nickname;
+      opponentName.style.color = 'black';
+      opponentName.style.marginBottom = '-10px';
+      newMsg.textContent = message.message;
+      newMsg.setAttribute('class', 'friendChat');
+      opponentMsgBox.appendChild(newMsg);
+      opponentMsgBox.appendChild(timeStamp);
+      this.$chatRoom.appendChild(opponentMsgBox);
+      this.$chatRoom.scrollTop = this.$chatRoom.scrollHeight;
+    }
+  }
+
+  async afterRender() {
     const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
-    const directMsgImageContainer = document.querySelectorAll(
-      '.directMsgImageContainer',
-    );
+    const $chatRoom = document.querySelector('.chatRoom');
+    this.$chatRoom = $chatRoom;
+
+    await checkConnectionSocket(this.webSocketEventHandler.bind(this));
 
     this.bindSearchUserInputEvent();
-    this.connectionChatSocket();
+    await this.connectionChatSocket();
+    this.renderOnlineUsers();
 
     chattingInput.addEventListener('input', e => {
       if (e.target.value.length)
@@ -276,4 +292,28 @@ export default class extends AbstractView {
       else chattingSubmitImage.setAttribute('fill', '#ddd');
     });
   }
+
+  webSocketEventHandler(message) {
+    if (message.type === 'public_chat') {
+      this.renderChatting(message);
+    } else if (
+      message.type === 'user_offline' ||
+      message.type === 'user_online'
+    ) {
+      this.renderOnlineUsers();
+    }
+    console.log('onMessage : ', message);
+  }
 }
+
+// {
+//   "id": 51,
+//   "nickname": "huipark",
+//   "email": "huipark@student.42seoul.kr",
+//   "profile_img": "http://127.0.0.1:8000/media/profile_imgs/huipark_UIglHkq.jpg",
+//   "intro": "",
+//   "matches": 0,
+//   "wins": 0,
+//   "total_score": 0,
+//   "is_online": true
+// }

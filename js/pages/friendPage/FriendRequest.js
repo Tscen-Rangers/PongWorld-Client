@@ -1,105 +1,14 @@
 import AbstractView from '../../AbstractView.js';
-
+import {refreshAccessToken, getToken} from '../../tokenManager.js';
+import {deleteFriend} from '../../FriendsRestApi.js';
 let checkModalEvent = 0;
-const recieved = [
-  {
-    name: 'yubchoi',
-    state: false,
-  },
-  {
-    name: 'mher',
-    state: true,
-  },
-  {
-    name: 'hyunjki2',
-    state: true,
-  },
-];
-
-const sent = [
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-  {
-    name: 'jimpark',
-    state: false,
-  },
-  {
-    name: 'jihyeole',
-    state: false,
-  },
-];
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('FriendRequest');
+    this.recieved = null;
+    this.sent = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -160,17 +69,21 @@ export default class extends AbstractView {
     const recievedListContainer = document.querySelector(
       '.recievedListContainer',
     );
-    recievedListContainer.innerHTML = `${recieved
-      .map(
-        (user, index) => `
+    recievedListContainer.innerHTML = `${
+      this.recieved
+        ? this.recieved
+            .map(
+              (user, index) => `
         <div class="friendList" style="padding:0px 10px" key=${index}>
         <div class="friendProfile">
-          <div class="friendProfileImg"> ${
-            user.state
+          <div class="friendProfileImg">
+          <img class="profileImg" src=${user.user.profile_img}/> 
+          ${
+            user.user.is_online
               ? '<img class="onlineImg" src="/public/online.png"/>'
               : ''
           }</div> 
-          <div class="friendname">${user.name}</div>
+          <div class="friendname">${user.user.nickname}</div>
         </div>
         <div class="requestIcons">
         <svg class="rejectRecievedIcon" data-key='${index}' xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
@@ -178,18 +91,23 @@ export default class extends AbstractView {
         </div>
     </div>
   `,
-      )
-      .join('')}`;
+            )
+            .join('')
+        : ''
+    }`;
     this.bindRecievedUserListEvents();
   }
+
   bindRecievedUserListEvents() {
     const acceptIcons = document.querySelectorAll('.acceptIcon');
     acceptIcons.forEach(acceptIcon => {
-      acceptIcon.addEventListener('click', e => {
+      acceptIcon.addEventListener('click', async e => {
         //친구에 추가
         const index = e.target.dataset.key;
-        recieved.splice(index, 1);
-        this.updateReceivedUserList();
+        if (await this.acceptRequest(this.recieved[index].id)) {
+          this.recieved.splice(index, 1);
+          this.updateReceivedUserList();
+        }
       });
     });
     const rejectRecievedIcons = document.querySelectorAll(
@@ -198,31 +116,129 @@ export default class extends AbstractView {
     rejectRecievedIcons.forEach(rejectRecievedIcon => {
       rejectRecievedIcon.addEventListener('click', e => {
         const index = e.target.dataset.key;
-        recieved.splice(index, 1);
-        this.updateReceivedUserList();
+        // recieved.splice(index, 1);
+        // this.updateReceivedUserList();
       });
     });
   }
 
+  async recievedRequest() {
+    const getRecieved = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/friends/followed/', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await getRecieved();
+          }
+          throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          this.recieved = data.data;
+          console.log('recieved', this.recieved);
+        }
+      } catch (error) {
+        console.log('get Recieved Request error', error);
+      }
+    };
+    await getRecieved();
+  }
+
+  async acceptRequest(id) {
+    const patchAccept = async () => {
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:8000/friends/follow/accept/${id}/`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({
+              friend_id: id,
+            }),
+          },
+        );
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await patchAccept();
+          } else {
+            throw new Error(`Server responded with status: ${res.status}`);
+          }
+        } else {
+          const data = await res.json();
+          return 1;
+        }
+      } catch (error) {
+        console.log('get Recieved Request error', error);
+        return 0;
+      }
+    };
+    return await patchAccept();
+  }
+
+  async deleteRecievedRequest() {}
+
+  async sentRequest() {
+    const getSent = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/friends/following/', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await getSent();
+          } else {
+            throw new Error(`Server responded with status: ${res.status}`);
+          }
+        } else {
+          const data = await res.json();
+          this.sent = data.data;
+          console.log(this.sent);
+        }
+      } catch (error) {
+        console.log('get Sent Request error', error);
+      }
+    };
+    await getSent();
+  }
+
   updateSentUserList() {
     const sentListContainer = document.querySelector('.sentListContainer');
-    sentListContainer.innerHTML = `${sent
-      .map(
-        (user, index) => `
+    sentListContainer.innerHTML = `${
+      this.sent
+        ? this.sent
+            .map(
+              (user, index) => `
        <div class="friendList" style="padding:0% 4%" key=${index}>
        <div class="friendProfile">
-         <div class="friendProfileImg"> ${
-           user.state ? '<img class="onlineImg" src="/public/online.png"/>' : ''
+         <div class="friendProfileImg"> 
+         <img class="profileImg" src=${user.user.profile_img}/>
+         ${
+           user.user.is_online
+             ? '<img class="onlineImg" src="/public/online.png"/>'
+             : ''
          }</div> 
-         <div class="friendname">${user.name}</div>
+         <div class="friendname">${user.user.nickname}</div>
        </div>
        <div class="requestIcons">
        <svg class="cancelSentIcon" data-key='${index}' xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
        </div> 
    </div>
  `,
-      )
-      .join('')}`;
+            )
+            .join('')
+        : ''
+    }`;
     this.bindSentUserListEvents();
   }
 
@@ -237,8 +253,7 @@ export default class extends AbstractView {
     cancelSentIcons.forEach(cancelSentIcon => {
       cancelSentIcon.addEventListener('click', e => {
         const index = e.currentTarget.dataset.key;
-        console.log(index);
-        const user = sent[index].name;
+        const user = this.sent[index].user.nickname;
         cancelRequestModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
         cancelRequestModal.classList.add('active');
         cancelRequestModal.setAttribute('data-key', index);
@@ -246,7 +261,9 @@ export default class extends AbstractView {
     });
   }
 
-  afterRender() {
+  async afterRender() {
+    await this.recievedRequest();
+    await this.sentRequest();
     const cancelRequestModal = document.querySelector(
       '.cancelRequestModalContainer',
     );
@@ -262,15 +279,18 @@ export default class extends AbstractView {
     });
 
     if (!checkModalEvent) {
-      cancelRequestModalBtn.addEventListener('click', e => {
+      cancelRequestModalBtn.addEventListener('click', async e => {
         const index = cancelRequestModal.getAttribute('data-key');
         //친구요청 취소
-        sent.splice(index, 1);
-        this.updateSentUserList();
+        // sent.splice(index, 1);
+        // console.log(this.sent[index].user);
+        if (await deleteFriend(this.sent[index].id)) {
+          this.sent.splice(index, 1);
+          this.updateSentUserList();
+        }
         cancelRequestModal.classList.remove('active');
       });
     }
-    localStorage.setItem('newRequest', 0);
     this.updateReceivedUserList();
     this.updateSentUserList();
   }
