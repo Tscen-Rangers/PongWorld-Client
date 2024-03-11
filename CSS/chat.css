@@ -148,6 +148,7 @@
   border-radius: 10px;
   background-color: white;
   border-color: #e1e1e1;
+  display: none;
 }
 
 #chattingInput {
@@ -351,6 +352,19 @@
   border-left: 20px solid white;
   border-top: 00px solid transparent;
   border-bottom: 10px solid transparent;
+}
+
+.unReadCount {
+  display: flex;
+  background-color: rgba(255, 0, 0, 0.581);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  z-index: 1;
 }
 
 @media (width < 1024px) {

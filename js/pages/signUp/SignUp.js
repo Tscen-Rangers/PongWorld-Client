@@ -54,7 +54,11 @@ export default class extends AbstractView {
         );
         const data = await res.json();
         if (res.ok) {
-          sessionStorage.setItem('user', JSON.stringify(data.data));
+          const user = JSON.parse(sessionStorage.getItem('user'));
+          user['intro'] = data.data.intro;
+          user['nickname'] = data.data.nickname;
+          user['profile_img'] = data.data.profile_img;
+          sessionStorage.setItem('user', JSON.stringify(user));
           setSignUpCompleted(true);
           locationHrefToHome();
         } else {
