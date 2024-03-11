@@ -114,10 +114,12 @@ export default class extends AbstractView {
       '.rejectRecievedIcon',
     );
     rejectRecievedIcons.forEach(rejectRecievedIcon => {
-      rejectRecievedIcon.addEventListener('click', e => {
+      rejectRecievedIcon.addEventListener('click', async e => {
         const index = e.target.dataset.key;
-        // recieved.splice(index, 1);
-        // this.updateReceivedUserList();
+        if (await this.deleteRecievedRequest(this.recieved[index].id)) {
+          this.recieved.splice(index, 1);
+          this.updateReceivedUserList();
+        }
       });
     });
   }
@@ -183,7 +185,41 @@ export default class extends AbstractView {
     return await patchAccept();
   }
 
-  async deleteRecievedRequest() {}
+  async deleteRecievedRequest(id) {
+    const deleteRequest = async () => {
+      try {
+        const res = await fetch(
+          `http://127.0.0.1:8000/friends/follow/delete/${id}/`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({
+              friend_id: id,
+            }),
+          },
+        );
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await deleteRequest();
+          } else {
+            throw new Error(`Server responded with status: ${res.status}`);
+          }
+        } else {
+          const data = await res.json();
+          console.log(data);
+          return 1;
+        }
+      } catch (error) {
+        console.log('deleteRequest error', error);
+        return 0;
+      }
+    };
+    return await deleteRequest();
+  }
 
   async sentRequest() {
     const getSent = async () => {
