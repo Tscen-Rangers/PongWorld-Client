@@ -19,7 +19,7 @@ export default class extends AbstractView {
     return `
 			<div id="signUpContainer">
         <div id="signUpPhotoContainer">
-          <img id="signUpPhoto" src=${`http://127.0.0.1:8000${this.user.profile_img}`}>
+          <img id="signUpPhoto" src=${this.user.profile_img}>
           <input id="signUpImageInput" type="file" accept = "image/*" hidden>
         </div >
         <div id="signUpInfoContainer">
@@ -38,9 +38,11 @@ export default class extends AbstractView {
     const $imageInput = document.getElementById('signUpImageInput');
     const $errorMsg = document.getElementById('errorMsg');
 
+    console.log(this.user);
+
     const patchUserData = async formData => {
       try {
-        const res = await fetch('http://localhost:8000/player/', {
+        const res = await fetch('http://localhost:8000/players/', {
           method: 'PATCH',
           headers: {
             Authorization: `Bearer ${getToken()}`,
