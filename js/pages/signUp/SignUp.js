@@ -43,7 +43,7 @@ export default class extends AbstractView {
     const patchUserData = async formData => {
       try {
         const res = await fetch(
-          `http://localhost:8000/players/setting/${this.user.id}`,
+          `http://localhost:8000/players/setting/${this.user.id}/`,
           {
             method: 'PATCH',
             headers: {
