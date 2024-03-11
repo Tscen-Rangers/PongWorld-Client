@@ -65,19 +65,18 @@ export default class extends AbstractView {
   initPage() {
     const settingsIcon = document.querySelector('.fas.fa-cog.settings-icon');
     const settingsModal = document.getElementById('settingsModal');
+    const modalContent = settingsModal.querySelector('.modal');
   
     settingsIcon.addEventListener('click', () => {
-      console.log('Settings icon clicked');
       settingsModal.style.display = 'block'; // 모달을 표시
     });
   
     // 모달 외부 클릭 시 모달 숨김
     window.addEventListener('click', (event) => {
-      if (event.target === settingsModal) {
+      if (settingsModal.contains(event.target) && !modalContent.contains(event.target)) {
         settingsModal.style.display = 'none';
       }
     });
   }
-
 }
 

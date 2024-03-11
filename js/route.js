@@ -160,7 +160,13 @@ export const router = async () => {
   const view = new match.route.view(getParams(match));
   document.querySelector('#app').innerHTML = await view.getHtml();
   view.afterRender();
+
+  if (view instanceof Mypage) {
+    view.initPage(); // 인스턴스를 통해 initPage 메서드 호출
+  }
+
 };
+
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', e => {

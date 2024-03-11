@@ -653,14 +653,25 @@ a {
 }
 
 #settingsModal .modal {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 내부 요소들을 가로 방향으로 중앙 정렬 */
   justify-content: center; /* 내부 요소들을 세로 방향으로 중앙 정렬 (필요한 경우) */
-  padding: 20px;
-  overflow: hidden;
-  max-height: 90vh;
   box-sizing: border-box;
+  position: absolute;
+  display: flex;
+  background-color: rgb(223, 223, 223);
+  color: rgb(61, 61, 61);
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 35dvw; /* 모달의 너비 조정 */
+  height: auto; /* 모달의 높이를 자동으로 설정하여 내용에 맞춤 */
+  max-height: 90vh; /* 최대 높이 설정, 필요에 따라 조정 */
+  overflow: hidden; /* 내용이 넘치지 않도록 설정 */
+  border-radius: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 20px; /* 내부 패딩 추가로 내용이 모달 안에 들어가도록 조정 */
 }
 
 #settingsModal .player-image {

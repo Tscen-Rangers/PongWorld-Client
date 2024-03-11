@@ -197,12 +197,13 @@ body {
 }
 
 
-.players, .score, .result {
-    margin-right: 150px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
+.players, .score, .result{
+  font-size: 13px;  
+  margin-right: 120px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
 }
 
 .score-first {
-  color: hsla(0, 0%, 27%, 1);/* 빨간색으로 설정 */
+  color: hsla(0, 0%, 27%, 1);
 }
 
 .players {
@@ -212,6 +213,7 @@ body {
 .match .time-ago {
   margin-left: auto;
   color: hsl(0, 100%, 99%, 1);
+  font-size: 13px; 
 }
 
 
