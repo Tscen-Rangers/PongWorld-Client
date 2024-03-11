@@ -1,5 +1,6 @@
 import BaseWebSocket from './BaseWebSocket.js';
 import {getToken, refreshAccessToken} from '../tokenManager.js';
+import {checkConnectionSocket} from '../webSocketManager.js';
 
 class ConnectionSocket extends BaseWebSocket {
   static instance = null;
@@ -19,8 +20,10 @@ class ConnectionSocket extends BaseWebSocket {
         resolve();
       };
 
-      this.ws.onclose = () => {
+      this.ws.onclose = async () => {
         console.log('Connection WebSocket 닫힘');
+        // this.connect(url);
+        await checkConnectionSocket();
       };
     });
   }
