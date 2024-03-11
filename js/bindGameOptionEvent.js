@@ -2,6 +2,7 @@ import qws from '../js/WebSocket/QuickMatchSocket.js';
 import {router} from './route.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
 import tws from './WebSocket/TournamentSocket.js';
+import cws from './WebSocket/ConnectionSocket.js';
 const option = {
   control: null,
   level: null,
@@ -214,10 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
             onMatchComplete();
           }
         });
-        // };
       }
-      if ($gameOptionModalContainer.dataset.modaloption === 'battle')
+      if ($gameOptionModalContainer.dataset.modaloption === 'battle') {
+        cws.send({
+          type: 'invite_game',
+          role: 'request',
+          player2_id: $gameOptionModalContainer.dataset.player2id,
+          speed: JSON.parse(sessionStorage.getItem('gameOption')).level - 1,
+        });
         $battleModal.classList.add('active');
+      }
       closeGameOptionModal();
     }
   });

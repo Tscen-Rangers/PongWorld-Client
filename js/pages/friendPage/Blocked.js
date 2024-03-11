@@ -23,7 +23,7 @@ export default class extends AbstractView {
     </nav>
     <div class="searchBarContainer">
     <div class="searchBar">
-    <input type="text" name="search"/>
+    <input type="text" id="searchBlockInput" name="search"/>
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="none" stroke="#979191" stroke-miterlimit="10" stroke-width="32" d="M221.09 64a157.09 157.09 0 1 0 157.09 157.09A157.1 157.1 0 0 0 221.09 64Z"/><path fill="none" stroke="#979191" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
     </div>
     </div>
@@ -64,10 +64,14 @@ export default class extends AbstractView {
     this.bindUserListEvents();
   }
 
-  async renderBlocked() {
+  async renderBlocked(name) {
+    const url =
+      name.length === 0
+        ? 'http://127.0.0.1:8000/block/search/'
+        : `http://127.0.0.1:8000/block/search/${name}/`;
     const getBlocked = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/block/list/', {
+        const res = await fetch(url, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -106,7 +110,16 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
-    await this.renderBlocked();
+    await this.renderBlocked('');
+    const searchBlockInput = document.querySelector('#searchBlockInput');
+
+    searchBlockInput.addEventListener('keydown', async e => {
+      if (e.keyCode === 13) {
+        const query = e.target.value;
+        await this.renderBlocked(query);
+        this.updateUserList();
+      }
+    });
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
     if (parseInt(sessionStorage.getItem('newRequest')))

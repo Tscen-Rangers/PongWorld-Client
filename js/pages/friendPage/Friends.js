@@ -1,6 +1,16 @@
 import AbstractView from '../../AbstractView.js';
 import {block, deleteFriend} from '../../FriendsRestApi.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+import {router} from '../../route.js';
+////////battle alert
+
+const $battleChallengerImg = document.querySelector('.battleChallengerImg');
+const $challengerName = document.querySelector('.challengerName');
+const $battleLevel = document.querySelector('.battleLevel');
+const $battleAlertModalContainer = document.querySelector(
+  '.battleAlertModalContainer',
+);
 
 const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
@@ -8,6 +18,15 @@ const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
+
+function onMatchComplete() {
+  // 3초 후에 실행될 함수
+  setTimeout(function () {
+    // 게임 화면으로 이동
+    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    router();
+  }, 2000); // 2000 밀리초 = 2초
+}
 
 export default class extends AbstractView {
   constructor(params) {
@@ -45,7 +64,7 @@ export default class extends AbstractView {
         </nav>
         <div class="searchBarContainer">
           <div class="searchBar">
-            <input type="text" name="search" />
+            <input type="text" id='searchFriendsInput' name="search" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="1em"
@@ -95,13 +114,13 @@ export default class extends AbstractView {
         <div class="friendname">${user.user.nickname}</div>
       </div>
       ${
-        user.user.is_online
-          ? `<div class="battlebutton" data-user="${user.user.nickname}"/>
+        // user.user.is_online
+        `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
 battle
             <img class="leftgloveImg" src="/public/leftglove.png"/>
             <img class="rightgloveImg" src="/public/rightglove.png"/>
           </div>`
-          : ''
+        // : ''
       }
       <a class="chatbutton" href='/chat/direct/${
         user.user.nickname
@@ -158,8 +177,11 @@ battle
     battleButtons.forEach(battleButton => {
       battleButton.addEventListener('click', e => {
         const user = e.currentTarget.dataset.user;
+        const id = e.currentTarget.dataset.id;
+        // console.log(user);
         battleMsg.innerText = `Waiting for a response from ${user}...`;
         $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
+        $gameOptionModalContainer.setAttribute('data-player2id', id);
         $gameOptionModalContainer.classList.add('show');
       });
     });
@@ -171,7 +193,7 @@ battle
         console.log(index);
         if (selected === 'delete') {
           //친구에서 삭제만
-          if (await deleteFriend(this.users[index].user.id)) {
+          if (await deleteFriend(this.users[index].id)) {
             this.users.splice(index, 1);
             this.updateFriendList();
           }
@@ -186,10 +208,14 @@ battle
     });
   }
 
-  async renderFriends() {
+  async renderFriends(name) {
+    const url =
+      name.length === 0
+        ? 'http://127.0.0.1:8000/friends/search/'
+        : `http://127.0.0.1:8000/friends/search/${name}/`;
     const getFriends = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/friends/', {
+        const res = await fetch(url, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -241,17 +267,50 @@ battle
   }
 
   async afterRender() {
-    await this.renderFriends();
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
+    await this.renderFriends('');
     await this.getNewRequest();
+
+    const searchFriendsInput = document.querySelector('#searchFriendsInput');
+
+    searchFriendsInput.addEventListener('keydown', async e => {
+      if (e.keyCode === 13) {
+        const query = e.target.value;
+        await this.renderFriends(query);
+        this.updateFriendList();
+      }
+    });
     $battleCancelBtn.addEventListener('click', () => {
       $battleModalContainer.classList.remove('active');
     });
-    $battleCancelBtn.addEventListener('click', {});
     this.updateFriendList();
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
     if (parseInt(sessionStorage.getItem('newRequest')))
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
+  }
+
+  async socketEventHandler(message) {
+    if (message.opponent_nickname) {
+      $battleChallengerImg.src = message.opponent_profile_img;
+      $challengerName.innerText = message.opponent_nickname;
+      $battleLevel.innerText =
+        message.mode === 0 ? 'easy' : message.mode === 1 ? 'normal' : 'hard';
+      //gameOption에 game 난이도 추가
+      const option = {
+        control: null,
+        level: message.mode, // 서버에서는 0,1,2 클라이언트에서는 1,2,3
+      };
+      sessionStorage.setItem('gameOption', JSON.stringify(option));
+      $battleAlertModalContainer.setAttribute('data-battleid', message.game_id);
+      $battleAlertModalContainer.classList.add('active');
+    } else if (message.message) {
+      console.log(message);
+      battleMsg.innerText = message.message;
+    } else if (message.data) {
+      sessionStorage.setItem('gameData', JSON.stringify(message.data));
+      onMatchComplete();
+    }
   }
 }

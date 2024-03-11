@@ -1,6 +1,7 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {block, unblock} from '../../FriendsRestApi.js';
+import {deleteFriend} from '../../FriendsRestApi.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -72,7 +73,13 @@ export default class extends AbstractView {
                 : `<div class="searchOptionRequestBtn" id="friendRequestBtn" style='color: ${
                     user.friend_status ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
                   };' data-key='${index}'>
-                    ${user.friend_status ? 'request cancel' : 'friend request'}
+                    ${
+                      user.friend_status === 1
+                        ? 'cancel request'
+                        : user.friend_status === 0
+                        ? 'friend request'
+                        : ''
+                    }
                   </div>`
             }     
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
@@ -120,16 +127,16 @@ export default class extends AbstractView {
         const user = this.users[index].nickname;
         if (this.users[index].friend_status === 0) {
           confirmModalMsg.innerHTML = `Would you like to send a friend request to ${user}?`;
+          this.currentAction = 'request';
         } else if (this.users[index].friend_status === 1) {
           confirmModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
+          this.currentAction = 'cancel';
         }
-        this.currentAction = 'request';
         confirmModal.classList.add('active');
         confirmModal.setAttribute('data-key', index);
       });
     });
   }
-
   //친구요청 보내기
   async friendRequest(id) {
     const sendRequest = async () => {
@@ -148,12 +155,14 @@ export default class extends AbstractView {
           if (res.status === 401) {
             await refreshAccessToken();
             return sendRequest();
+          } else {
+            console.log(await res.json());
+            throw new Error(`Server responded with status: ${res.status}`);
           }
-          throw new Error(`Server responded with status: ${res.status}`);
         } else {
           const data = await res.json();
           console.log(data);
-          return 1;
+          return data.data.id;
         }
       } catch (error) {
         console.log('post friend request error', error);
@@ -212,13 +221,19 @@ export default class extends AbstractView {
       confirmModal.classList.remove('active');
     });
 
-    confirmBtn.addEventListener('click', e => {
+    confirmBtn.addEventListener('click', async e => {
       const index = confirmModal.getAttribute('data-key');
 
-      // console.log(this.users[index].id);
-      if (this.friendRequest(this.users[index].id)) {
-        if (this.currentAction === 'request')
-          this.users[index].friend_status = !this.users[index].friend_status;
+      // 서버에서 friend_id 받아서 하기!
+      if (this.currentAction === 'cancel') {
+        if (await deleteFriend(this.users[index].friend_id))
+          this.users[index].friend_status = 0;
+      } else {
+        let id = await this.friendRequest(this.users[index].id);
+        if (id) {
+          this.users[index].friend_status = 1;
+          this.users[index].friend_id = id;
+        }
       }
       this.updateBlockedUserList(); // UI 업데이트
       confirmModal.classList.remove('active');

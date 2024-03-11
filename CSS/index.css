@@ -540,6 +540,11 @@ a {
   opacity: 0;
 }
 
+.battleAlertModalContainer.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 .battleAlertModal {
   display: flex;
   width: 400px;
