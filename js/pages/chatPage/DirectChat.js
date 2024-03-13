@@ -1,10 +1,7 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
-import {
-  checkConnectionSocket,
-  connectionSocketConnect,
-} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
 
 function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
@@ -83,6 +80,15 @@ export default class extends AbstractView {
         }" data-chatroomid=${room.id}>
       <div class="chatUserProfileBlur"></div>
         <div class="chatUserInfo">
+          <img class="directOnlineUserImage" src="/public/online.png" style="display : ${
+            room.user1 === this.user.id
+              ? room.user2_is_online
+                ? 'block'
+                : 'none'
+              : room.user1_is_online
+              ? 'block'
+              : 'none'
+          }"/>
           <img class="chatUserImage" src=${
             room.user1 === this.user.id
               ? room.user2_profile_img
@@ -412,6 +418,18 @@ export default class extends AbstractView {
           e.style.opacity = 1;
           e.innerHTML = message.unread_count;
         }
+      });
+    } else if (message.type === 'user_online') {
+      this.$chatUserProfiles.forEach(user => {
+        if (Number(user.getAttribute('data-userid')) === message.user_id) {
+          console.log(user);
+          user.querySelector('.directOnlineUserImage').style.display = 'block';
+        }
+      });
+    } else if (message.type === 'user_offline') {
+      this.$chatUserProfiles.forEach(user => {
+        if (Number(user.getAttribute('data-userid')) === message.user_id)
+          user.querySelector('.directOnlineUserImage').style.display = 'none';
       });
     }
     console.log('onMessage : ', message);
