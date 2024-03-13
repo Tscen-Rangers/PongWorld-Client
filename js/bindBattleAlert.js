@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
     control = 'keyboard';
   });
   $battleDeclineButton.addEventListener('click', () => {
-    console.log(+$battleAlertModalContainer.dataset.battleid);
+    console.log(+sessionStorage.getItem('battleId'));
     cws.send({
       type: 'invite_game',
-      role: 'response',
-      game_id: +$battleAlertModalContainer.dataset.battleid,
+      command: 'response',
+      game_id: +sessionStorage.getItem('battleId'),
       accepted: 0,
     });
     $battleAlertModalContainer.classList.remove('active');
@@ -41,10 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.setItem('gameOption', JSON.stringify(option));
     cws.send({
       type: 'invite_game',
-      role: 'response',
-      game_id: +$battleAlertModalContainer.dataset.battleid,
+      command: 'response',
+      game_id: +sessionStorage.getItem('battleId'),
       accepted: 1,
-    }); //battle 수락 소켓으로 message send
+    });
     $battleAlertModalContainer.classList.remove('active');
   });
 });

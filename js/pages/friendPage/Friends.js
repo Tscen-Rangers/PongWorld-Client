@@ -3,6 +3,7 @@ import {block, deleteFriend} from '../../FriendsRestApi.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {router} from '../../route.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
 ////////battle alert
 
 const $battleChallengerImg = document.querySelector('.battleChallengerImg');
@@ -13,6 +14,7 @@ const $battleAlertModalContainer = document.querySelector(
 );
 
 const $battleModalContainer = document.querySelector('.battleModalContainer');
+const $battleModal = document.querySelector('battleModal');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
 const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
@@ -28,6 +30,38 @@ function onMatchComplete() {
   }, 2000); // 2000 밀리초 = 2초
 }
 
+let timeoutId;
+function battleMatchRequestExpired() {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(function () {
+    cws.send({
+      type: 'invite_game',
+      command: 'quit',
+      game_id: +sessionStorage.getItem('battleId'),
+    });
+    battleMsg.innerText =
+      'No response from the opponent. Please try again later';
+    $battleCancelBtn.style.display = 'none';
+    closeModal();
+    timeoutId = 0;
+  }, 30000); // 2000 밀리초 = 2초
+}
+
+function closeModal() {
+  setTimeout(function () {
+    // 게임 화면으로 이동
+    $battleModalContainer.classList.remove('active');
+  }, 2000);
+}
+
+function onResponse() {
+  // 필요한 응답 처리 로직
+  console.log('응답 받음');
+  // 타이머 취소
+  clearTimeout(timeoutId);
+}
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -90,6 +124,13 @@ export default class extends AbstractView {
         </div>
       </div>
       <div class="friendListContainer"></div>
+    </div>
+    <div id='noticeModal'>
+    <div id="xSvgContainer">
+    <svg xmlns="http://www.w3.org/2000/svg" id="xSvg" width="2em" height="2em" viewBox="0 0 16 16"><path fill="currentColor" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8L4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
+    </div>
+    <div id="noticeContent">
+    </div>
     </div>
   </div>
 		`;
@@ -180,6 +221,7 @@ battle
         const id = e.currentTarget.dataset.id;
         // console.log(user);
         battleMsg.innerText = `Waiting for a response from ${user}...`;
+        $battleCancelBtn.style.display = 'block';
         $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
         $gameOptionModalContainer.setAttribute('data-player2id', id);
         $gameOptionModalContainer.classList.add('show');
@@ -272,7 +314,8 @@ battle
     await this.getNewRequest();
 
     const searchFriendsInput = document.querySelector('#searchFriendsInput');
-
+    const xSvg = document.querySelector('#xSvg');
+    const $noticeModal = document.querySelector('#noticeModal');
     searchFriendsInput.addEventListener('keydown', async e => {
       if (e.keyCode === 13) {
         const query = e.target.value;
@@ -280,7 +323,14 @@ battle
         this.updateFriendList();
       }
     });
+
     $battleCancelBtn.addEventListener('click', () => {
+      console.log(+sessionStorage.getItem('battleId'));
+      cws.send({
+        type: 'invite_game',
+        command: 'quit',
+        game_id: +sessionStorage.getItem('battleId'),
+      });
       $battleModalContainer.classList.remove('active');
     });
     this.updateFriendList();
@@ -289,12 +339,15 @@ battle
     if (parseInt(sessionStorage.getItem('newRequest')))
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
+    xSvg.addEventListener('click', () => {
+      $noticeModal.classList.remove('active');
+    });
   }
-
   async socketEventHandler(message) {
-    if (message.opponent_nickname) {
+    if (message.type === 'REQUEST_MATCHING') {
       $battleChallengerImg.src = message.opponent_profile_img;
       $challengerName.innerText = message.opponent_nickname;
+      sessionStorage.setItem('opponentName', message.opponent_nickname);
       $battleLevel.innerText =
         message.mode === 0 ? 'easy' : message.mode === 1 ? 'normal' : 'hard';
       //gameOption에 game 난이도 추가
@@ -303,14 +356,32 @@ battle
         level: message.mode, // 서버에서는 0,1,2 클라이언트에서는 1,2,3
       };
       sessionStorage.setItem('gameOption', JSON.stringify(option));
-      $battleAlertModalContainer.setAttribute('data-battleid', message.game_id);
+      sessionStorage.setItem('battleId', message.game_id);
       $battleAlertModalContainer.classList.add('active');
-    } else if (message.message) {
-      console.log(message);
-      battleMsg.innerText = message.message;
-    } else if (message.data) {
+    } else if (message.type === 'INVITE_GAME') {
+      sessionStorage.setItem('battleId', message.data.id);
+      battleMatchRequestExpired();
+    } else if (message.type === 'START_FRIEND_GAME') {
       sessionStorage.setItem('gameData', JSON.stringify(message.data));
       onMatchComplete();
+    } else if (message.type === 'SUCCESS_FRIEND_GAME') {
+      battleMsg.innerText = message.message;
+      $battleCancelBtn.style.display = 'none';
+      onResponse();
+    } else if (message.type === 'REJECTED_FRIEND_GAME') {
+      battleMsg.innerText = message.message;
+      $battleCancelBtn.style.display = 'none';
+      onResponse();
+      closeModal();
+    } else if (message.type === 'QUIT_FRIEND_GAME') {
+      console.log(message);
+    } else if (message.type === 'INVALID_GAME') {
+      const $noticeModal = document.querySelector('#noticeModal');
+      const $noticeContent = document.querySelector('#noticeContent');
+      $noticeContent.innerText = `Battle request from ${sessionStorage.getItem(
+        'opponentName',
+      )} has been cancelled`;
+      $noticeModal.classList.add('active');
     }
   }
 }
