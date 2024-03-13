@@ -13,9 +13,10 @@ function onMatchComplete() {
   // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
+
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
-  }, 3000); // 2000 밀리초 = 2초
+  }, 3000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -217,10 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle') {
+        console.log(+$gameOptionModalContainer.dataset.player2id);
+        console.log(JSON.parse(sessionStorage.getItem('gameOption')).level - 1);
         cws.send({
           type: 'invite_game',
-          role: 'request',
-          player2_id: $gameOptionModalContainer.dataset.player2id,
+          command: 'request',
+          player2_id: +$gameOptionModalContainer.dataset.player2id,
           speed: JSON.parse(sessionStorage.getItem('gameOption')).level - 1,
         });
         $battleModal.classList.add('active');
