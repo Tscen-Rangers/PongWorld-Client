@@ -222,6 +222,8 @@ export default class extends AbstractView {
     const $chattingForm = document.querySelector('#chattingForm');
     const $chattingInput = document.querySelector('#chattingInput');
 
+    $chattingForm.style.display = 'flex';
+
     $chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
@@ -270,6 +272,7 @@ export default class extends AbstractView {
       newMsg.setAttribute('class', 'friendChat');
       opponentMsgBox.appendChild(newMsg);
       opponentMsgBox.appendChild(timeStamp);
+      this.$chatRoom.appendChild(opponentName);
       this.$chatRoom.appendChild(opponentMsgBox);
       this.$chatRoom.scrollTop = this.$chatRoom.scrollHeight;
     }
@@ -305,15 +308,3 @@ export default class extends AbstractView {
     console.log('onMessage : ', message);
   }
 }
-
-// {
-//   "id": 51,
-//   "nickname": "huipark",
-//   "email": "huipark@student.42seoul.kr",
-//   "profile_img": "http://127.0.0.1:8000/media/profile_imgs/huipark_UIglHkq.jpg",
-//   "intro": "",
-//   "matches": 0,
-//   "wins": 0,
-//   "total_score": 0,
-//   "is_online": true
-// }
