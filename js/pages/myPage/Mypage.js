@@ -1,10 +1,13 @@
 import AbstractView from '../../AbstractView.js';
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('PongWorldㅣMypage');
     this.user = JSON.parse(sessionStorage.getItem('user'));
+    this.$myPageSettingIntro = null;
+    this.$myPageSettingNickName = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -13,7 +16,7 @@ export default class extends AbstractView {
     <div class="contentsContainer">
     <div id="myPageConatiner">
       <svg
-      id="myPageSetting"
+      id="myPageSettingBtn"
       viewBox="0 0 1024 1024">
       <path
         fill="black"
@@ -21,13 +24,15 @@ export default class extends AbstractView {
       />
       </svg>
       <div class="profile-container">
-        <img src=${this.user.profile_img} class="main-player-image" alt="Player 1 Image">
+        <img src=${
+          this.user.profile_img
+        } class="myPageProfileImg" alt="Player 1 Image">
         <div  class="profile-string">
           <div class="profile-name">
             ${this.user.nickname}
           </div>
           <div class="profile-card">
-            <p>${this.user.intro}</p>
+            <p id="myPageIntro">${this.user.intro}</p>
           </div>
         </div>
       </div>
@@ -63,31 +68,161 @@ export default class extends AbstractView {
           <span class="time-ago">4 days ago</span>
         </div>
       </div>
-      <i class="fas fa-cog settings-icon"></i>
     </div>
+    </div>
+    <div id="myPageSettingModalContainer">
+      <div id="myPageSettingModal">
+        <div id="myPageInfoSection">
+          <form id="myPageSettingForm">
+            <input class="myPageSettingInputs" id="myPageSettingProfileImage" type="image" id="profileImg" src=${
+              this.user.profile_img
+            } />
+            <input id="myPageSettingFileInput" type="file" accept="image/*"  hidden/>
+            <span>choose profile image</span>
+            <input class="myPageSettingInputs" id="myPageSettingNickName" placeholder=${
+              this.user.nickname
+            } />
+            <input class="myPageSettingInputs" id="myPageSettingIntro" placeholder=${
+              this.user.intro.length ? this.user.intro : 'intro...'
+            } />
+          </form>
+        </div>
+        <div id="myPageBtnsSection">
+          <button class="myPageSettingBtns">Two-factor authentication</button>
+          <button class="myPageSettingBtns">logout</button>
+          <button class="myPageSettingBtns">delete account</button>
+        </div>
+        <button id="myPageSettingUpdateBtn">update</button>
+      </div>
     </div>
   `;
   }
 
-  afterRender() {
-    const settingsIcon = document.querySelector('.fas.fa-cog.settings-icon');
-    const settingsModal = document.getElementById('settingsModal');
-    const modalContent = settingsModal.querySelector('.modal');
-    console.log(this.user);
+  async update(formData) {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/players/setting/${this.user.id}/`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+          body: formData,
+        },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        user['intro'] = data.data.intro;
+        user['nickname'] = data.data.nickname;
+        user['profile_img'] = data.data.profile_img;
+        this.user = user;
+        sessionStorage.setItem('user', JSON.stringify(user));
+        this.updateUI(user);
+        this.$myPageSettingNickName.value = '';
+        this.$myPageSettingIntro.value = '';
+        document
+          .getElementById('myPageSettingModalContainer')
+          .classList.remove('active');
+      } else {
+        if (res.status === 401) {
+          await refreshAccessToken();
+          return this.update(formData);
+        } else {
+          console.log('MyPage Setting Update Error : ', await res.json());
+        }
+      }
+    } catch (error) {
+      console.log('MyPage Setting Update Error : ', error);
+    }
+  }
 
-    settingsIcon.addEventListener('click', () => {
-      settingsModal.style.display = 'block'; // 모달을 표시
+  updateUI(user) {
+    const $myPageNickName = document.querySelector('.profile-name');
+    const $myPageIntro = document.querySelector('#myPageIntro');
+    const $myPageProfileImg = document.querySelector('.myPageProfileImg');
+    const $myPageSettingNickName = document.getElementById(
+      'myPageSettingNickName',
+    );
+    const $myPageSettingIntro = document.getElementById('myPageSettingIntro');
+
+    $myPageNickName.textContent = user.nickname;
+    $myPageIntro.textContent = user.intro;
+    $myPageProfileImg.src = user.profile_img;
+    $myPageSettingNickName.placeholder = user.nickname;
+    $myPageSettingIntro.placeholder = user.intro;
+  }
+
+  async onClickUpdate($fileInput) {
+    const formData = new FormData();
+
+    if (this.$myPageSettingNickName.value.length)
+      formData.append('nickname', this.$myPageSettingNickName.value);
+    if ($fileInput.files[0])
+      formData.append('profile_img', $fileInput.files[0]);
+    if (this.$myPageSettingIntro.value.length)
+      formData.append('intro', this.$myPageSettingIntro.value);
+
+    await this.update(formData);
+  }
+
+  onClickSettingBtn() {
+    const $myPageSettingBtn = document.getElementById('myPageSettingBtn');
+    const $myPageSettingModalContainer = document.getElementById(
+      'myPageSettingModalContainer',
+    );
+
+    $myPageSettingBtn.addEventListener('click', () => {
+      $myPageSettingModalContainer.classList.add('active');
+      console.log(123123);
     });
 
-    // 모달 외부 클릭 시 모달 숨김
-    window.addEventListener('click', event => {
-      if (
-        settingsModal.contains(event.target) &&
-        !modalContent.contains(event.target)
-      ) {
-        settingsModal.style.display = 'none';
-      }
+    $myPageSettingModalContainer.addEventListener('click', e => {
+      if (e.target === $myPageSettingModalContainer)
+        $myPageSettingModalContainer.classList.remove('active');
     });
   }
-  afterRender() {}
+
+  afterRender() {
+    const $myPageSettingInputs = document.querySelectorAll(
+      '.myPageSettingInputs',
+    );
+    const $myPageSettingFileInput = document.getElementById(
+      'myPageSettingFileInput',
+    );
+    const $myPageSettingUpdateBtn = document.getElementById(
+      'myPageSettingUpdateBtn',
+    );
+    const $myPageSettingNickName = document.getElementById(
+      'myPageSettingNickName',
+    );
+    const $myPageSettingIntro = document.getElementById('myPageSettingIntro');
+    this.$myPageSettingNickName = $myPageSettingNickName;
+    this.$myPageSettingIntro = $myPageSettingIntro;
+
+    $myPageSettingUpdateBtn.addEventListener('click', () => {
+      this.onClickUpdate($myPageSettingFileInput);
+    });
+
+    $myPageSettingInputs.forEach((input, idx) => {
+      input.addEventListener('click', e => {
+        e.preventDefault();
+        if (idx === 0) $myPageSettingFileInput.click();
+      });
+    });
+
+    $myPageSettingFileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('myPageSettingProfileImage').src =
+            e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    this.onClickSettingBtn();
+  }
 }

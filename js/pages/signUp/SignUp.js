@@ -38,8 +38,6 @@ export default class extends AbstractView {
     const $imageInput = document.getElementById('signUpImageInput');
     const $errorMsg = document.getElementById('errorMsg');
 
-    console.log(this.user);
-
     const patchUserData = async formData => {
       try {
         const res = await fetch(
