@@ -173,6 +173,7 @@ a {
 
 .contentsContainer {
   display: flex;
+  position: relative;
   flex-direction: column;
   background: linear-gradient(
     to top,

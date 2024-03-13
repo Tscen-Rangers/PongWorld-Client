@@ -276,8 +276,8 @@
   position: absolute;
   width: 10.34px;
   z-index: 2;
-  bottom: -5px;
-  left: -5px;
+  bottom: -1px;
+  left: -1px;
 }
 
 .chatUserImage {
