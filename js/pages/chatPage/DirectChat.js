@@ -117,9 +117,11 @@ export default class extends AbstractView {
 
     if (this.params.user) {
       let idx = findUser(Number(this.params.user), chattingRooms.data);
+      this.$chattingForm.style.display = 'flex';
       this.$chatUserProfiles[idx].classList.add('active');
+      // this.$chatUserProfiles[idx].click();
     }
-    this.bindUserListEvents(chattingRooms);
+    this.bindUserListEvents();
   }
 
   async renderPrevChat(chatRoomID) {
@@ -270,11 +272,10 @@ export default class extends AbstractView {
     });
   }
 
-  async bindUserListEvents(chattingRooms) {
+  async bindUserListEvents() {
     const outDirectChatRoomContainer = document.querySelectorAll(
       '.outDirectChatRoomContainer',
     );
-    const $chattingForm = document.querySelector('#chattingForm');
     const $chattingInput = document.querySelector('#chattingInput');
 
     this.loadPreviousMessagesOnScroll();
@@ -285,7 +286,7 @@ export default class extends AbstractView {
       else this.$chattingSubmitImage.setAttribute('fill', '#ddd');
     });
 
-    $chattingForm.addEventListener('submit', e => {
+    this.$chattingForm.addEventListener('submit', e => {
       e.preventDefault();
       if (!$chattingInput.value.length) return;
       cws.send({
@@ -314,7 +315,7 @@ export default class extends AbstractView {
     this.$chatUserProfiles.forEach(profile => {
       profile.addEventListener('click', async e => {
         this.nextChattingLog = null;
-        $chattingForm.style.display = 'flex';
+        this.$chattingForm.style.display = 'flex';
         // 기존 active 클래스 삭제
         this.leaveWebSocket();
         this.$chatUserProfiles.forEach(profile => {
@@ -369,6 +370,8 @@ export default class extends AbstractView {
     });
 
     const $chattingSubmitImage = document.querySelector('#chattingSubmitImage');
+    const $chattingForm = document.querySelector('#chattingForm');
+    this.$chattingForm = $chattingForm;
     const chattingRooms = await this.getChattingRoom();
     console.log(chattingRooms);
     this.$chattingSubmitImage = $chattingSubmitImage;
