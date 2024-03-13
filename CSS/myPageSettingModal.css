@@ -1,0 +1,94 @@
+#myPageSettingProfileImage,
+#myPageSettingBtns {
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
+}
+
+#myPageSettingModalContainer {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.592);
+  width: 100dvw;
+  height: 100dvh;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s;
+}
+#myPageSettingModalContainer.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+#myPageSettingModal {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: rgb(223, 223, 223);
+  color: rgb(61, 61, 61);
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+  height: 500px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px;
+}
+
+#myPageBtnsSection,
+#myPageInfoSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#myPageSettingForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#myPageSettingProfileImage {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 5px;
+  transition: 0.3s;
+  cursor: url(/public/pointerCursor.png) 8 8, auto;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.myPageSettingInputs {
+  background-color: transparent;
+  text-align: center;
+  border-bottom: 1px solid black;
+  margin: 10px 0;
+  font-size: 1.5rem;
+}
+
+.myPageSettingBtns {
+  /* border: none; */
+  padding: 5px;
+  margin: 5px 0;
+  font-size: 1.5rem;
+}
+
+#myPageSettingUpdateBtn {
+  border: none;
+  background-color: transparent;
+  padding: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  align-self: flex-end;
+}
