@@ -1,6 +1,9 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {unblock} from '../../FriendsRestApi.js';
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -46,11 +49,6 @@ export default class extends AbstractView {
       <div class="friendProfile">
         <div class="friendProfileImg">
         <img class="profileImg" src=${user.blocked.profile_img}/>
-        ${
-          user.blocked.is_online
-            ? '<img class="onlineImg" src="/public/online.png"/>'
-            : ''
-        }
         </div>
         <div class="friendname">${user.blocked.nickname}</div>
       </div>
@@ -110,6 +108,7 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.renderBlocked('');
     const searchBlockInput = document.querySelector('#searchBlockInput');
 
@@ -126,5 +125,8 @@ export default class extends AbstractView {
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
     this.updateUserList();
+  }
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }

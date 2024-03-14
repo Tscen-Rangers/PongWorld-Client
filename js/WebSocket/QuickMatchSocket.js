@@ -6,6 +6,12 @@ class QuickMatchSocket extends BaseWebSocket {
   constructor() {
     super();
   }
+  async connect(url) {
+    super.connect(url);
+    this.ws.onclose = async () => {
+      console.log('quickmatch WebSocket 닫힘');
+    };
+  }
   static getInstance() {
     if (!QuickMatchSocket.instance) {
       QuickMatchSocket.instance = new QuickMatchSocket();
@@ -14,7 +20,6 @@ class QuickMatchSocket extends BaseWebSocket {
   }
   send(message) {
     this.ws.onopen = () => {
-      //   console.log(123123123);
       super.send(message);
     };
   }

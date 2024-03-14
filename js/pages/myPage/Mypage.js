@@ -1,6 +1,7 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
-
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -183,7 +184,8 @@ export default class extends AbstractView {
     });
   }
 
-  afterRender() {
+  async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $myPageSettingInputs = document.querySelectorAll(
       '.myPageSettingInputs',
     );
@@ -224,5 +226,8 @@ export default class extends AbstractView {
     });
 
     this.onClickSettingBtn();
+  }
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }

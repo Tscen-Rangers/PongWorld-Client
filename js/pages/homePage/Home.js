@@ -4,6 +4,8 @@ import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
 import {router} from '../../route.js';
+import tws from '../../WebSocket/TournamentSocket.js';
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 
 const histories = [
   {
@@ -103,6 +105,10 @@ const $currentStaff = document.querySelector('.currentStaff');
 const $battleCancelBtn = document.querySelector('.battleCancelBtn');
 const $tournamentModal = document.getElementById(
   'tournamentControlModalBackground',
+);
+const $tournamentCancelBtn = document.querySelector('.tournamentCancelBtn');
+const $tournamentModalContainer = document.querySelector(
+  '.tournamentModalContainer',
 );
 
 function onMatchComplete() {
@@ -260,7 +266,9 @@ export default class extends AbstractView {
         <div class="matchingText">Waiting for a match to be found</div>
         <div class="matchingOpponent">
           <div class="myMatching">
-          <img class="myMatchingImg" src="/public/huipark.jpg"/>
+          <img class="myMatchingImg" src=${
+            JSON.parse(sessionStorage.getItem('user')).profile_img
+          }/>
           </div>
           vs
           <div class="opponentMatching">
@@ -275,13 +283,13 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(
       '.quickMatchModalContainer',
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
-
     await checkConnectionSocket();
 
     console.log(this.user);
@@ -298,12 +306,18 @@ export default class extends AbstractView {
     });
 
     $matchingCancelBtn.addEventListener('click', () => {
-      // qws.onclose();
+      qws.close();
       $quickMatchModal.classList.remove('active');
     });
     $battleCancelBtn.addEventListener('click', () => {
-      // tws.onclose();
       $battleModalContainer.classList.remove('active');
     });
+    $tournamentCancelBtn.addEventListener('click', () => {
+      tws.close();
+      $tournamentModalContainer.classList.remove('active');
+    });
+  }
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }
