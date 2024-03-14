@@ -2,7 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
-
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
     console.log(rooms[i]);
@@ -432,6 +432,7 @@ export default class extends AbstractView {
           user.querySelector('.directOnlineUserImage').style.display = 'none';
       });
     }
+    responseBattleRequest(message);
     console.log('onMessage : ', message);
   }
 }

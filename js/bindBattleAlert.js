@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     control = 'keyboard';
   });
   $battleDeclineButton.addEventListener('click', () => {
+    sessionStorage.setItem('battleResponse', 'decline');
     console.log(+sessionStorage.getItem('battleId'));
     cws.send({
       type: 'invite_game',
@@ -33,9 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
       game_id: +sessionStorage.getItem('battleId'),
       accepted: 0,
     });
+    $chooseMouse.classList.remove('active');
+    $chooseKeyboard.classList.remove('active');
+    $battleAcceptButton.disabled = true;
     $battleAlertModalContainer.classList.remove('active');
   });
   $battleAcceptButton.addEventListener('click', () => {
+    sessionStorage.setItem('battleResponse', 'accept');
     let option = JSON.parse(sessionStorage.getItem('gameOption'));
     option.control = control;
     sessionStorage.setItem('gameOption', JSON.stringify(option));
@@ -45,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
       game_id: +sessionStorage.getItem('battleId'),
       accepted: 1,
     });
+    $chooseMouse.classList.remove('active');
+    $chooseKeyboard.classList.remove('active');
+    $battleAcceptButton.disabled = true;
     $battleAlertModalContainer.classList.remove('active');
   });
 });

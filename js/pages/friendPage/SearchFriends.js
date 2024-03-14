@@ -2,6 +2,10 @@ import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {block, unblock} from '../../FriendsRestApi.js';
 import {deleteFriend} from '../../FriendsRestApi.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+import {router} from '../../route.js';
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -110,7 +114,6 @@ export default class extends AbstractView {
           }
         } else {
           if (await block(this.users[index].id)) {
-            console.log(this.users[index].id);
             this.users[index].is_blocking = true;
           }
         }
@@ -156,12 +159,10 @@ export default class extends AbstractView {
             await refreshAccessToken();
             return sendRequest();
           } else {
-            console.log(await res.json());
             throw new Error(`Server responded with status: ${res.status}`);
           }
         } else {
           const data = await res.json();
-          console.log(data);
           return data.data.id;
         }
       } catch (error) {
@@ -192,7 +193,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.users = data.data;
-          console.log(this.users);
         }
         // this.users = data;
       } catch (error) {
@@ -203,6 +203,7 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.searchPlayers('');
     const confirmModal = document.querySelector('.confirmModalContainer');
     const confirmBtn = document.querySelector('.confirmBtn');
@@ -212,7 +213,6 @@ export default class extends AbstractView {
     searchInput.addEventListener('keydown', async e => {
       if (e.keyCode === 13) {
         const query = e.target.value;
-        console.log('asdasd');
         await this.searchPlayers(query);
         this.updateBlockedUserList();
       }
@@ -244,5 +244,9 @@ export default class extends AbstractView {
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
     this.updateBlockedUserList();
+  }
+
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }

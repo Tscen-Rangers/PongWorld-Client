@@ -2,8 +2,9 @@ import AbstractView from '../../AbstractView.js';
 import {block, deleteFriend} from '../../FriendsRestApi.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
-import {router} from '../../route.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
+import {getNewRequest} from '../../FriendsRestApi.js';
+import {onMatchComplete} from '../../battleResponseEventHandler.js';
 ////////battle alert
 
 const $battleChallengerImg = document.querySelector('.battleChallengerImg');
@@ -20,15 +21,6 @@ const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
-
-function onMatchComplete() {
-  // 3초 후에 실행될 함수
-  setTimeout(function () {
-    // 게임 화면으로 이동
-    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
-    router();
-  }, 2000); // 2000 밀리초 = 2초
-}
 
 let timeoutId;
 function battleMatchRequestExpired() {
@@ -51,7 +43,6 @@ function battleMatchRequestExpired() {
 
 function closeModal() {
   setTimeout(function () {
-    // 게임 화면으로 이동
     $battleModalContainer.classList.remove('active');
   }, 2000);
 }
@@ -125,13 +116,6 @@ export default class extends AbstractView {
       </div>
       <div class="friendListContainer"></div>
     </div>
-    <div id='noticeModal'>
-    <div id="xSvgContainer">
-    <svg xmlns="http://www.w3.org/2000/svg" id="xSvg" width="2em" height="2em" viewBox="0 0 16 16"><path fill="currentColor" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8L4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
-    </div>
-    <div id="noticeContent">
-    </div>
-    </div>
   </div>
 		`;
   }
@@ -164,7 +148,7 @@ battle
         // : ''
       }
       <a class="chatbutton" href='/chat/direct/${
-        user.user.nickname
+        user.user.id
       }' data-spa>chat<svg class="chatMsgImage" style="margin-left:5px;" width="0.9em" height="0.9em" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
       <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#636363"/>
       </svg></a>
@@ -219,7 +203,6 @@ battle
       battleButton.addEventListener('click', e => {
         const user = e.currentTarget.dataset.user;
         const id = e.currentTarget.dataset.id;
-        // console.log(user);
         battleMsg.innerText = `Waiting for a response from ${user}...`;
         $battleCancelBtn.style.display = 'block';
         $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
@@ -232,7 +215,6 @@ battle
       optionBtn.addEventListener('click', async e => {
         const selected = e.target.innerText;
         const index = e.target.dataset.key;
-        console.log(index);
         if (selected === 'delete') {
           //친구에서 삭제만
           if (await deleteFriend(this.users[index].id)) {
@@ -270,7 +252,6 @@ battle
           throw new Error(`Server responded with status: ${res.status}`);
         } else {
           const data = await res.json();
-          console.log('data', data);
           this.users = data.data;
         }
       } catch (error) {
@@ -280,38 +261,10 @@ battle
     return await getFriends();
   }
 
-  async getNewRequest() {
-    const getNewRequestCount = async () => {
-      try {
-        const res = await fetch(
-          'http://127.0.0.1:8000/friends/followed/count',
-          {
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          },
-        );
-        if (!res.ok) {
-          if (res.status === 401) {
-            await refreshAccessToken();
-            return await getNewRequestCount();
-          } else throw new Error(`Server responded with status: ${res.status}`);
-        } else {
-          const data = await res.json();
-          // console.log(data);
-          sessionStorage.setItem('newRequest', data.data.request_cnt);
-        }
-      } catch (error) {
-        console.log('get new request error', error);
-      }
-    };
-    return await getNewRequestCount();
-  }
-
   async afterRender() {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.renderFriends('');
-    await this.getNewRequest();
+    await getNewRequest();
 
     const searchFriendsInput = document.querySelector('#searchFriendsInput');
     const xSvg = document.querySelector('#xSvg');
@@ -325,7 +278,6 @@ battle
     });
 
     $battleCancelBtn.addEventListener('click', () => {
-      console.log(+sessionStorage.getItem('battleId'));
       cws.send({
         type: 'invite_game',
         command: 'quit',
@@ -339,9 +291,6 @@ battle
     if (parseInt(sessionStorage.getItem('newRequest')))
       requestBadge.classList.add('active');
     else requestBadge.classList.remove('active');
-    xSvg.addEventListener('click', () => {
-      $noticeModal.classList.remove('active');
-    });
   }
   async socketEventHandler(message) {
     if (message.type === 'REQUEST_MATCHING') {

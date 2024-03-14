@@ -1,6 +1,9 @@
 import AbstractView from '../../AbstractView.js';
 import {refreshAccessToken, getToken} from '../../tokenManager.js';
-import {deleteFriend} from '../../FriendsRestApi.js';
+import {deleteFriend, getNewRequest} from '../../FriendsRestApi.js';
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
+
 let checkModalEvent = 0;
 
 export default class extends AbstractView {
@@ -106,6 +109,7 @@ export default class extends AbstractView {
         const index = e.target.dataset.key;
         if (await this.acceptRequest(this.recieved[index].id)) {
           this.recieved.splice(index, 1);
+          getNewRequest();
           this.updateReceivedUserList();
         }
       });
@@ -116,8 +120,10 @@ export default class extends AbstractView {
     rejectRecievedIcons.forEach(rejectRecievedIcon => {
       rejectRecievedIcon.addEventListener('click', async e => {
         const index = e.target.dataset.key;
+        console.log(index, this.recieved[index].id);
         if (await this.deleteRecievedRequest(this.recieved[index].id)) {
           this.recieved.splice(index, 1);
+          getNewRequest();
           this.updateReceivedUserList();
         }
       });
@@ -141,7 +147,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.recieved = data.data;
-          console.log('recieved', this.recieved);
         }
       } catch (error) {
         console.log('get Recieved Request error', error);
@@ -174,7 +179,6 @@ export default class extends AbstractView {
             throw new Error(`Server responded with status: ${res.status}`);
           }
         } else {
-          const data = await res.json();
           return 1;
         }
       } catch (error) {
@@ -209,8 +213,7 @@ export default class extends AbstractView {
             throw new Error(`Server responded with status: ${res.status}`);
           }
         } else {
-          const data = await res.json();
-          console.log(data);
+          // const data = await res.json();
           return 1;
         }
       } catch (error) {
@@ -239,7 +242,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.sent = data.data;
-          console.log(this.sent);
         }
       } catch (error) {
         console.log('get Sent Request error', error);
@@ -298,6 +300,7 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.recievedRequest();
     await this.sentRequest();
     const cancelRequestModal = document.querySelector(
@@ -318,8 +321,6 @@ export default class extends AbstractView {
       cancelRequestModalBtn.addEventListener('click', async e => {
         const index = cancelRequestModal.getAttribute('data-key');
         //친구요청 취소
-        // sent.splice(index, 1);
-        // console.log(this.sent[index].user);
         if (await deleteFriend(this.sent[index].id)) {
           this.sent.splice(index, 1);
           this.updateSentUserList();
@@ -329,5 +330,8 @@ export default class extends AbstractView {
     }
     this.updateReceivedUserList();
     this.updateSentUserList();
+  }
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }

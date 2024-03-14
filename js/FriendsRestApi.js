@@ -17,10 +17,10 @@ export const unblock = async id => {
         if (res.status === 401) {
           await refreshAccessToken();
           return await deleteBlocked();
-        } else throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          throw new Error(`Server responded with status: ${res.status}`);
+        }
       } else {
-        const data = await res.json();
-        console.log(data);
         return 1;
       }
     } catch (error) {
@@ -54,8 +54,8 @@ export const block = async id => {
           throw new Error(`Server responded with status: ${res.status}`);
         }
       } else {
-        const data = await res.json();
-        console.log(data);
+        // const data = await res.json();
+        // console.log(data);
         return 1;
       }
       //해당 id의 user block 상태로 바꿔주기
@@ -89,8 +89,8 @@ export const deleteFriend = async id => {
           throw new Error(`Server responded with status: ${res.status}`);
         }
       } else {
-        const data = await res.json();
-        console.log(data);
+        // const data = await res.json();
+        // console.log(data);
         return 1;
       }
     } catch (error) {
@@ -99,4 +99,29 @@ export const deleteFriend = async id => {
     }
   };
   return await deleteRequest();
+};
+
+export const getNewRequest = async () => {
+  const getNewRequestCount = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/friends/followed/count', {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          await refreshAccessToken();
+          return await getNewRequestCount();
+        } else throw new Error(`Server responded with status: ${res.status}`);
+      } else {
+        const data = await res.json();
+        // console.log(data);
+        sessionStorage.setItem('newRequest', data.data.request_cnt);
+      }
+    } catch (error) {
+      console.log('get new request error', error);
+    }
+  };
+  return await getNewRequestCount();
 };
