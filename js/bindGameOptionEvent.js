@@ -27,8 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const $keyboard = document.getElementById('keyboard');
   const $modes = document.querySelectorAll('.mode');
   const $gameOptionNextBtn = document.getElementById('gameOptionNextBtn');
+
+  const $tournamentModalContainer = document.querySelector(
+    '.tournamentModalContainer',
+  );
+  const $tournamentMsg = document.querySelector('.tournamentMsg');
+  const $tournamentCancelBtn = document.querySelector('tournamentCancelBtn');
   const $battleModal = document.querySelector('.battleModalContainer');
   const $battleMsg = document.querySelector('.battleMsg');
+  const $noticeModal = document.querySelector('#noticeModal');
+  const xSvg = document.querySelector('#xSvg');
+  const noticeModal = document.querySelector('#noticeModal');
   const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
   const $battleModalContainer = document.querySelector('.battleModalContainer');
   const $currentStaff = document.querySelector('.currentStaff');
@@ -49,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   $tournamentControlKeyboard.addEventListener('click', async () => {
     option.control = 'keyboard';
-    $battleMsg.innerHTML =
+    $tournamentMsg.innerHTML =
       'Waiting for all <br /> players to join the tournament...';
 
     // 토큰 갱신 확인
@@ -57,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // WebSocket 연결
     tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-    $battleModalContainer.classList.add('active');
+    $tournamentModalContainer.classList.add('active');
     $tournamentControlModal.classList.remove('show');
     // 메시지 수신 이벤트 핸들러
     tws.onMessage(msg => {
@@ -84,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tws.onMessage(msg => {
           sessionStorage.setItem('gameData', JSON.stringify(msg.data));
           if (
-            msg.data.game_state.player1.info.nickname ===
+            msg.data.player1.info.nickname ===
             JSON.parse(sessionStorage.getItem('user')).nickname
           ) {
             sessionStorage.setItem('myPosition', 'player1');
@@ -101,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $tournamentControlMouse.addEventListener('click', async () => {
     option.control = 'mouse';
-    $battleMsg.innerHTML =
+    $tournamentMsg.innerHTML =
       'Waiting for all <br /> players to join the tournament...';
 
     // 토큰 갱신 확인
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // WebSocket 연결
     tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-    $battleModalContainer.classList.add('active');
+    $tournamentModalContainer.classList.add('active');
     $tournamentControlModal.classList.remove('show');
     // 메시지 수신 이벤트 핸들러
     tws.onMessage(msg => {
@@ -136,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tws.onMessage(msg => {
           sessionStorage.setItem('gameData', JSON.stringify(msg.data));
           if (
-            msg.data.game_state.player1.info.nickname ===
+            msg.data.player1.info.nickname ===
             JSON.parse(sessionStorage.getItem('user')).nickname
           ) {
             sessionStorage.setItem('myPosition', 'player1');
@@ -171,46 +180,42 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('gameOption', JSON.stringify(option));
       console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const playerID = urlParams.get('player_id');
+        // const queryString = window.location.search;
+        // const urlParams = new URLSearchParams(queryString);
+        // const playerID = urlParams.get('player_id');
         const $matchingText = document.querySelector('.matchingText');
         const $opponentMatchingImg = document.querySelector(
           '.opponentMatchingImg',
         );
         const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
-        console.log($matchingCancelBtn);
         const $quickMatchModal = document.querySelector(
           '.quickMatchModalContainer',
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
         qws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        qws.send({speed: 1});
-        let cnt = 0;
+        qws.send({speed: option.level});
+        // let cnt = 0;
         qws.onMessage(msg => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
           }
           if (msg.data) {
+            console.log(msg.data);
             sessionStorage.setItem('gameData', JSON.stringify(msg.data));
             if (
-              msg.data.game_state.player1.info.nickname ===
+              msg.data.player1.info.nickname ===
               JSON.parse(sessionStorage.getItem('user')).nickname
             ) {
               sessionStorage.setItem('myPosition', 'player1');
               sessionStorage.setItem('opponentsPosition', 'player2');
-              console.log(msg.data.game_state.player2.info.profile_img);
               $opponentMatchingImg.src =
-                'http://127.0.0.1:8000' +
-                msg.data.game_state.player2.info.profile_img;
+                msg.data.player2.info.player_profile_img;
             } else {
               sessionStorage.setItem('myPosition', 'player2');
-              console.log(msg.data.game_state.player1.info.profile_img);
               sessionStorage.setItem('opponentsPosition', 'player1');
               $opponentMatchingImg.src =
-                'http://127.0.0.1:8000' +
-                msg.data.game_state.player1.info.profile_img;
+                msg.data.player1.info.player_profile_img;
             }
             $matchingCancelBtn.style.display = 'none';
             onMatchComplete();
@@ -219,12 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle') {
         console.log(+$gameOptionModalContainer.dataset.player2id);
-        console.log(JSON.parse(sessionStorage.getItem('gameOption')).level - 1);
+        console.log(JSON.parse(sessionStorage.getItem('gameOption')).level);
         cws.send({
           type: 'invite_game',
           command: 'request',
           player2_id: +$gameOptionModalContainer.dataset.player2id,
-          speed: JSON.parse(sessionStorage.getItem('gameOption')).level - 1,
+          speed: JSON.parse(sessionStorage.getItem('gameOption')).level,
         });
         $battleModal.classList.add('active');
       }
@@ -232,6 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  xSvg.addEventListener('click', () => {
+    $noticeModal.classList.remove('active');
+  });
   $gameOptionModalContainer.addEventListener('click', e => {
     if ($gameOptionModalContainer === e.target) {
       closeGameOptionModal();

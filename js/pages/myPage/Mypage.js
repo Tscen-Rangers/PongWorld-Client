@@ -1,6 +1,8 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
+
 
 export default class extends AbstractView {
   constructor(params) {
@@ -298,9 +300,13 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
-    await checkConnectionSocket();
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     this.updateUserProfile();
     this.myPageSettingModalEvent();
+  }
+  
+  async socketEventHandler(message) {
+    responseBattleRequest(message);
   }
 }
 

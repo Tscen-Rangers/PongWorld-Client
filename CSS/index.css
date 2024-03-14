@@ -294,7 +294,8 @@ a {
 .battleModalContainer,
 .confirmModalContainer,
 .cancelRequestModalContainer,
-#tournamentControlModalBackground {
+#tournamentControlModalBackground,
+.tournamentModalContainer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -310,7 +311,8 @@ a {
   opacity: 0;
 }
 
-.battleModal {
+.battleModal,
+.tournamentModal {
   display: flex;
   flex-direction: column;
   top: 50%;
@@ -323,12 +325,14 @@ a {
   z-index: 8;
 }
 
-.battleModalContainer.active {
+.battleModalContainer.active,
+.tournamentModalContainer.active {
   visibility: visible;
   opacity: 1;
 }
 
-.battleMsg {
+.battleMsg,
+.tournamentMsg {
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -344,7 +348,8 @@ a {
   margin-top: 10px;
 }
 
-.battleCancelBtn {
+.battleCancelBtn,
+.tournamentCancelBtn {
   border: solid 1px grey;
   padding: 10px;
   font-weight: 500;
@@ -535,7 +540,7 @@ a {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.592);
-  z-index: 7;
+  z-index: 200;
   visibility: hidden;
   transition: 0.5s;
   opacity: 0;
@@ -693,6 +698,281 @@ a {
 
 #chooseMouse.active {
   background-color: rgb(184, 184, 184);
+}
+
+#noticeModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  align-self: center;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 200px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  z-index: 210;
+  flex-direction: column;
+  visibility: hidden;
+  transition: 0.5s;
+  opacity: 0;
+}
+
+#noticeModal.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+#xSvgContainer {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  /* background-color: pink; */
+}
+#xSvg {
+  color: black;
+  padding: 4px;
+}
+#noticeContent {
+  display: flex;
+  padding: 30px 20px;
+  color: black;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+/* userProfileModal */
+.userProfileModalContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.592);
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  visibility: hidden;
+  opacity: 0;
+  transition: 2s;
+}
+.userProfileModalContainer.active {
+  visibility: visible;
+  opacity: 1;
+}
+.userProfileModal {
+  /* position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+  position: relative;
+  padding: 10px;
+  box-sizing: border-box;
+  width: 60%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  background-color: rgba(224, 224, 224, 0.95);
+  display: flex;
+  align-items: center;
+}
+
+#userProfileCloseBtn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #606060;
+  /* align-self: flex-end; */
+}
+.userProfileName {
+  display: flex;
+  padding-top: 25px;
+  font-size: 2.2rem;
+  align-self: center;
+  color: #9a9a9a;
+  font-weight: bold;
+}
+.userProfileContainer {
+  margin: 15 auto;
+  padding: 20px;
+  width: 90%;
+  display: flex;
+  align-items: flex-end;
+}
+.userProfileImg {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userProfile-card {
+  position: relative;
+  padding: 15px;
+  height: 40px;
+  border-radius: 10px;
+  align-items: center;
+  width: 90%;
+  margin-left: 20px;
+  color: rgb(0, 0, 0);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    filter: blur(3px);
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.6); /* 배경색 추가 */
+  }
+}
+
+.userProfileStats {
+  border-radius: 20px; /* 모서리 둥글게 */
+  display: flex;
+  justify-content: space-around; /* 내부 요소들 사이의 간격 조정 */
+  width: 90%; /* 부모 요소의 전체 너비 사용 */
+  padding: 20px;
+  margin: 15px auto;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    filter: blur(3px);
+    z-index: 0;
+    background-color: rgba(190, 190, 190, 0.6);
+  }
+}
+.userProfile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  color: white;
+}
+.userProfile-stat-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 2px 3px grey;
+}
+.userProfile-stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 1px 2px 3px grey;
+}
+.historyBtn {
+  font-weight: 500;
+  align-self: flex-end;
+  margin-right: 4%;
+  word-spacing: 2px;
+}
+.allHistoryBtn {
+  color: black;
+}
+.userProfile-match-history {
+  display: flex;
+  position: relative;
+  flex: 1.5;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 20px;
+  width: 90%;
+  height: 100%;
+  padding: 20px;
+  margin: 15px auto;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    filter: blur(3px);
+    z-index: 1;
+    background-color: rgba(190, 190, 190, 0.6);
+  }
+}
+
+.userProfileBtns {
+  display: flex;
+  width: 90%;
+  justify-content: flex-end;
+  /* justify-content: space-between; */
+}
+.userProfile-friendRequestBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #aeaeae;
+  /* width: 150px; */
+  padding: 0px 10px;
+  height: 35px;
+  border-radius: 5px;
+  align-self: center;
+  color: #636363;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.userProfile-player-image {
+  width: 39px; /* 이미지의 너비를 69px로 설정합니다. */
+  height: 31px; /* 이미지의 높이를 61px로 설정합니다. */
+  object-fit: cover; /* 이미지가 적절히 자리를 차지하도록 설정합니다. */
+  border-radius: 40px; /* 이미지의 모서리를 둥글게 처리합니다. */
+  position: relative; /* position 속성을 relative로 설정하여 위치를 조정할 수 있도록 합니다. */
+  margin-right: 10px; /* 첫 번째 이미지와 두 번째 이미지 사이의 간격을 10px로 설정합니다. */
+}
+
+.userProfile-match {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  z-index: 3;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.userProfile-match .userProfile-player-image:first-child {
+  z-index: 1; /* 첫 번째 이미지가 위로 오도록 z-index 값을 높입니다. */
+}
+
+.userProfile-match .userProfile-player-image:last-child {
+  margin-left: -20px; /* 두 번째 이미지가 첫 번째 이미지와 겹치도록 음수 마진을 설정합니다. */
+  z-index: 0; /* 두 번째 이미지가 아래로 오도록 z-index 값을 낮춥니다. */
+}
+
+.userProfile-players,
+.userProfile-score,
+.userProfile-result {
+  font-size: 13px;
+  margin-right: 120px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
+}
+
+.userProfile-score-first {
+  color: hsla(0, 0%, 27%, 1);
+}
+
+.userProfile-players {
+  margin-left: 30px; /* 두 번째 이미지와 텍스트 사이의 간격을 80px로 설정합니다. */
+}
+
+.userProfile-match .userProfile-time-ago {
+  margin-left: auto;
+  color: hsl(0, 100%, 99%, 1);
+  font-size: 13px;
 }
 
 @media (width < 930px) {

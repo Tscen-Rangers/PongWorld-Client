@@ -2,7 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
-
+import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 const users = [
   {
     name: 'jimpark',
@@ -310,6 +310,6 @@ export default class extends AbstractView {
     ) {
       this.renderOnlineUsers();
     }
-    console.log('onMessage : ', message);
+    responseBattleRequest(message);
   }
 }
