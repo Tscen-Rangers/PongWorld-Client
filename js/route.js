@@ -75,14 +75,6 @@ const routes = [
     path: '/loginloading',
     view: LoginLoading,
   },
-  // {
-  //   path: '/post',
-  //   view: Post,
-  // },
-  // {
-  //   path: '/post/:id',
-  //   view: PostView,
-  // },
   {
     path: '/setting',
     view: Setting,
@@ -112,6 +104,8 @@ const getParams = match => {
 };
 
 const navigateTo = url => {
+  if (url === location.href) return;
+
   history.pushState(null, null, url);
   router();
 };
@@ -153,8 +147,6 @@ export const router = async () => {
   }
 
   seletedNavStyle(match.route.path);
-
-  // const a = '/chat/direct/hello'.match(pathToRegex('/chat/direct/:hello'));
 
   // 일치하는 route에서 인스턴스 생성
   const view = new match.route.view(getParams(match));
