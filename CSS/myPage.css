@@ -1,8 +1,9 @@
 #myPageConatiner {
   display: flex;
+  align-items: center;
   flex-direction: column;
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
   text-shadow: 1px 2.3px 2px grey;
 }
 
@@ -11,16 +12,6 @@
   right: 10px;
   width: 30px;
   height: 30px;
-}
-
-@media (max-width: 768px) {
-  .profile-container,
-  .stats,
-  .match-history {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-  }
 }
 
 .sidebar {
@@ -64,6 +55,13 @@
   box-sizing: border-box;
 }
 
+.myPageProfileImgContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: white;
+}
+
 .myPageProfileImg {
   width: 120px;
   height: 120px;
@@ -71,10 +69,15 @@
   object-fit: cover;
 }
 
+#myPageIntro {
+  margin: 0;
+}
+
 .profile-name {
   margin-bottom: 10px;
   margin-left: 20px;
   font-size: 30px;
+  white-space: nowrap;
 }
 
 .profile-card {
@@ -84,6 +87,7 @@
   align-items: center;
   width: 90%;
   margin-left: 20px;
+  min-height: 55px;
   color: rgb(0, 0, 0);
 
   &::before {
@@ -109,10 +113,8 @@
 
 .stats {
   border-radius: 20px; /* 모서리 둥글게 */
-  display: flex;
-  flex: 0.8; /* 내부 요소들을 가로로 배치 */
-  flex-wrap: wrap; /* 내용이 많을 경우 다음 줄로 넘김 */
-  justify-content: space-around; /* 내부 요소들 사이의 간격 조정 */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   width: 90%; /* 부모 요소의 전체 너비 사용 */
   padding: 20px;
   margin: 15px auto;
@@ -157,11 +159,9 @@
 }
 
 .match-history {
-  display: flex;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
   position: relative;
-  flex: 1.5;
-  flex-direction: column;
-  justify-content: space-between;
   border-radius: 20px;
   width: 90%; /* 부모 요소의 전체 너비 사용 */
   height: 100%;
@@ -182,20 +182,32 @@
   }
 }
 
+.match {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+#myPageMatchImg {
+  display: flex;
+  flex-direction: row;
+}
+
+#myPageMatchResult {
+  justify-self: center;
+}
+
+#myPageMatchTime {
+  justify-self: flex-end;
+}
+
 .player-image {
   width: 39px; /* 이미지의 너비를 69px로 설정합니다. */
   height: 31px; /* 이미지의 높이를 61px로 설정합니다. */
   object-fit: cover; /* 이미지가 적절히 자리를 차지하도록 설정합니다. */
   border-radius: 40px; /* 이미지의 모서리를 둥글게 처리합니다. */
   position: relative; /* position 속성을 relative로 설정하여 위치를 조정할 수 있도록 합니다. */
-  margin-right: 10px; /* 첫 번째 이미지와 두 번째 이미지 사이의 간격을 10px로 설정합니다. */
-}
-
-.match {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .match .player-image:first-child {
@@ -203,7 +215,6 @@
 }
 
 .match .player-image:last-child {
-  margin-left: -20px; /* 두 번째 이미지가 첫 번째 이미지와 겹치도록 음수 마진을 설정합니다. */
   z-index: 0; /* 두 번째 이미지가 아래로 오도록 z-index 값을 낮춥니다. */
 }
 
@@ -211,19 +222,43 @@
 .score,
 .result {
   font-size: 13px;
-  margin-right: 120px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
-}
-
-.score-first {
-  color: hsla(0, 0%, 27%, 1);
-}
-
-.players {
-  margin-left: 30px; /* 두 번째 이미지와 텍스트 사이의 간격을 80px로 설정합니다. */
 }
 
 .match .time-ago {
   margin-left: auto;
   color: hsl(0, 100%, 99%, 1);
   font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .profile-container,
+  .stats,
+  .match-history {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+  }
+}
+
+@media (width < 554px) {
+  .stats {
+    height: 20%;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .stat {
+    margin: 0;
+    flex-direction: row;
+  }
+}
+
+@media (width < 486px) {
+  .myPageProfileImgContainer {
+    width: 50px;
+    height: 50px;
+  }
+  .myPageProfileImg {
+    width: 50px;
+    height: 50px;
+  }
 }

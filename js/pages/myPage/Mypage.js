@@ -1,5 +1,6 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -8,6 +9,7 @@ export default class extends AbstractView {
     this.user = JSON.parse(sessionStorage.getItem('user'));
     this.$myPageSettingIntro = null;
     this.$myPageSettingNickName = null;
+    this.$errorMessage = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -24,9 +26,9 @@ export default class extends AbstractView {
       />
       </svg>
       <div class="profile-container">
-        <img src=${
-          this.user.profile_img
-        } class="myPageProfileImg" alt="Player 1 Image">
+        <div class="myPageProfileImgContainer">
+          <img src=${this.user.profile_img} class="myPageProfileImg" alt="Player 1 Image">
+        </div>
         <div  class="profile-string">
           <div class="profile-name">
             ${this.user.nickname}
@@ -37,35 +39,53 @@ export default class extends AbstractView {
         </div>
       </div>
       <div class="stats">
-        <div class="stat"><span class="stat-title">Ranking</span><br><span class="stat-value">3</span></div>
-        <div class="stat"><span class="stat-title">Matches</span><br><span class="stat-value">3</span></div>
-        <div class="stat"><span class="stat-title">Win</span><br><span class="stat-value">2</span></div>
-        <div class="stat"><span class="stat-title">Score</span><br><span class="stat-value">1042</span></div>
+        <div class="stat"><span class="stat-title">Ranking</span><br><span class="stat-value" id="myPageRanking">3</span></div>
+        <div class="stat"><span class="stat-title">Matches</span><br><span class="stat-value" id="myPageMatches">3</span></div>
+        <div class="stat"><span class="stat-title">Win</span><br><span class="stat-value" id="myPageWin">2</span></div>
+        <div class="stat"><span class="stat-title">Score</span><br><span class="stat-value" id="myPageScore">1042</span></div>
       </div>
       <div class="match-history">
         <div class="match">
-          <img src="../public/hacho.png" class="player-image" alt="Player 1 Image">
-          <img src="../public/jimin.png" class="player-image" alt="Player 2 Image">
-          <span class="players">hacho VS jimpark</span>
-          <span class="score"><span class="score-first">3</span>:2</span>
-          <span class="result">win</span>
-          <span class="time-ago">2 days ago</span>
+          <div id="myPageMatchImg">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 1 Image">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 2 Image">
+          </div>
+          <div id="myPageMatchResult">
+            <span class="players">huipark VS jimpark</span>
+            <span class="score">3:2</span>
+          </div>
+          <div id="myPageMatchTime">
+            <span class="result">win</span>
+            <span class="time-ago">2 days ago</span>
+          </div>
         </div>
         <div class="match">
-          <img src="../public/hacho.png" class="player-image" alt="Player 1 Image">
-          <img src="../public/jimin.png" class="player-image" alt="Player 2 Image">
-          <span class="players">hacho VS jimpark</span>
-          <span class="score"><span class="score-first">1</span>:2</span>
-          <span class="result">lose</span>
-          <span class="time-ago">3 days ago</span>
+          <div id="myPageMatchImg">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 1 Image">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 2 Image">
+          </div>
+          <div id="myPageMatchResult">
+            <span class="players">huipark VS jimpark</span>
+            <span class="score">3:2</span>
+          </div>
+          <div id="myPageMatchTime">
+            <span class="result">win</span>
+            <span class="time-ago">2 days ago</span>
+          </div>
         </div>
         <div class="match">
-          <img src="../public/hacho.png" class="player-image" alt="Player 1 Image">
-          <img src="../public/jimin.png" class="player-image" alt="Player 2 Image">
-          <span class="players">hacho VS jimpark</span>
-          <span class="score"><span class="score-first">0</span>:2</span>
-          <span class="result">win</span>
-          <span class="time-ago">4 days ago</span>
+          <div id="myPageMatchImg">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 1 Image">
+            <img src="../public/huipark.jpg" class="player-image" alt="Player 2 Image">
+          </div>
+          <div id="myPageMatchResult">
+            <span class="players">huipark VS jimpark</span>
+            <span class="score">3:2</span>
+          </div>
+          <div id="myPageMatchTime">
+            <span class="result">win</span>
+            <span class="time-ago">2 days ago</span>
+          </div>
         </div>
       </div>
     </div>
@@ -74,17 +94,12 @@ export default class extends AbstractView {
       <div id="myPageSettingModal">
         <div id="myPageInfoSection">
           <form id="myPageSettingForm">
-            <input class="myPageSettingInputs" id="myPageSettingProfileImage" type="image" id="profileImg" src=${
-              this.user.profile_img
-            } />
+            <img class="myPageSettingInputs" id="myPageSettingProfileImage"  id="profileImg" src=${this.user.profile_img} />
             <input id="myPageSettingFileInput" type="file" accept="image/*"  hidden/>
             <span>choose profile image</span>
-            <input class="myPageSettingInputs" id="myPageSettingNickName" placeholder=${
-              this.user.nickname
-            } />
-            <input class="myPageSettingInputs" id="myPageSettingIntro" placeholder=${
-              this.user.intro.length ? this.user.intro : 'intro...'
-            } />
+            <input class="myPageSettingInputs" type="text" id="myPageSettingNickName" placeholder=${this.user.nickname} autocomplete='off' />
+            <input class="myPageSettingInputs" type="text" id="myPageSettingIntro" value="${this.user.intro}" maxlength="30" autocomplete='off'/>
+            <p id="errorMessage"><p>
           </form>
         </div>
         <div id="myPageBtnsSection">
@@ -110,24 +125,16 @@ export default class extends AbstractView {
           body: formData,
         },
       );
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        user['intro'] = data.data.intro;
-        user['nickname'] = data.data.nickname;
-        user['profile_img'] = data.data.profile_img;
-        this.user = user;
-        sessionStorage.setItem('user', JSON.stringify(user));
-        this.updateUI(user);
-        this.$myPageSettingNickName.value = '';
-        this.$myPageSettingIntro.value = '';
-        document
-          .getElementById('myPageSettingModalContainer')
-          .classList.remove('active');
+        this.updateUserInfo(data);
+        this.closeMyPageSettingModal();
       } else {
         if (res.status === 401) {
           await refreshAccessToken();
           return this.update(formData);
+        } else if (res.status === 400) {
+          this.errorMsgHandler(data);
         } else {
           console.log('MyPage Setting Update Error : ', await res.json());
         }
@@ -137,7 +144,31 @@ export default class extends AbstractView {
     }
   }
 
+  errorMsgHandler(data) {
+    const $errorMessage = document.getElementById('errorMessage');
+    $errorMessage.textContent = data.data.nickname[0];
+  }
+
+  updateUserInfo(data) {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    user['intro'] = data.data.intro;
+    user['nickname'] = data.data.nickname;
+    user['profile_img'] = data.data.profile_img;
+    sessionStorage.setItem('user', JSON.stringify(user));
+    this.user = user;
+    this.updateUI(user);
+  }
+
+  closeMyPageSettingModal() {
+    this.$myPageSettingNickName.value = '';
+    this.$errorMessage.textContent = '';
+    document
+      .getElementById('myPageSettingModalContainer')
+      .classList.remove('active');
+  }
+
   updateUI(user) {
+    console.log(user);
     const $myPageNickName = document.querySelector('.profile-name');
     const $myPageIntro = document.querySelector('#myPageIntro');
     const $myPageProfileImg = document.querySelector('.myPageProfileImg');
@@ -145,12 +176,13 @@ export default class extends AbstractView {
       'myPageSettingNickName',
     );
     const $myPageSettingIntro = document.getElementById('myPageSettingIntro');
+    console.log(user);
 
     $myPageNickName.textContent = user.nickname;
     $myPageIntro.textContent = user.intro;
     $myPageProfileImg.src = user.profile_img;
     $myPageSettingNickName.placeholder = user.nickname;
-    $myPageSettingIntro.placeholder = user.intro;
+    $myPageSettingIntro.value = user.intro;
   }
 
   async onClickUpdate($fileInput) {
@@ -174,16 +206,16 @@ export default class extends AbstractView {
 
     $myPageSettingBtn.addEventListener('click', () => {
       $myPageSettingModalContainer.classList.add('active');
-      console.log(123123);
+      console.log(this.user);
     });
 
     $myPageSettingModalContainer.addEventListener('click', e => {
       if (e.target === $myPageSettingModalContainer)
-        $myPageSettingModalContainer.classList.remove('active');
+        this.closeMyPageSettingModal();
     });
   }
 
-  afterRender() {
+  myPageSettingModalEvent() {
     const $myPageSettingInputs = document.querySelectorAll(
       '.myPageSettingInputs',
     );
@@ -196,19 +228,25 @@ export default class extends AbstractView {
     const $myPageSettingNickName = document.getElementById(
       'myPageSettingNickName',
     );
+    const $myPageSettingForm = document.getElementById('myPageSettingForm');
     const $myPageSettingIntro = document.getElementById('myPageSettingIntro');
+    const $errorMessage = document.getElementById('errorMessage');
+    this.$errorMessage = $errorMessage;
     this.$myPageSettingNickName = $myPageSettingNickName;
     this.$myPageSettingIntro = $myPageSettingIntro;
+
+    this.onClickSettingBtn();
 
     $myPageSettingUpdateBtn.addEventListener('click', () => {
       this.onClickUpdate($myPageSettingFileInput);
     });
 
-    $myPageSettingInputs.forEach((input, idx) => {
-      input.addEventListener('click', e => {
-        e.preventDefault();
-        if (idx === 0) $myPageSettingFileInput.click();
-      });
+    $myPageSettingForm.addEventListener('submit', e => {
+      e.preventDefault();
+    });
+
+    $myPageSettingInputs[0].addEventListener('click', () => {
+      $myPageSettingFileInput.click();
     });
 
     $myPageSettingFileInput.addEventListener('change', e => {
@@ -222,7 +260,62 @@ export default class extends AbstractView {
         reader.readAsDataURL(file);
       }
     });
+  }
 
-    this.onClickSettingBtn();
+  async getUserProfile() {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/players/profile/', {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        return data.data;
+      } else {
+        if (data.status === 401) {
+          await refreshAccessToken();
+          this.getUserProfile();
+        }
+        console.log('Get User Profile Error : ', error);
+      }
+    } catch (error) {
+      console.log('Get User Profile Error : ', error);
+    }
+  }
+
+  async updateUserProfile() {
+    const userProfile = await this.getUserProfile();
+    const $matches = document.getElementById('myPageMatches');
+    const $win = document.getElementById('myPageWin');
+    const $score = document.getElementById('myPageScore');
+    const $ranking = document.getElementById('myPageRanking');
+
+    $matches.innerHTML = userProfile.player.matches;
+    $ranking.innerHTML = userProfile.player.ranking;
+    $win.innerHTML = userProfile.player.wins;
+    $score.innerHTML = userProfile.player.total_score;
+  }
+
+  async afterRender() {
+    await checkConnectionSocket();
+    this.updateUserProfile();
+    this.myPageSettingModalEvent();
   }
 }
+
+// {
+//   "player": {
+//       "id": 61,
+//       "nickname": "huipark",
+//       "email": "huipark@student.42seoul.kr",
+//       "profile_img": "http://127.0.0.1:8000/media/profile_imgs/IMG_6352_ka9YRqZ.JPG",
+//       "intro": "박희태다 인트로는 30글자 수 제한",
+//       "ranking": 1,
+//       "matches": 0,
+//       "wins": 0,
+//       "total_score": 0,
+//       "is_online": false
+//   },
+//   "games": "No game"
+// }
