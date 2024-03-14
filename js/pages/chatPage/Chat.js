@@ -144,7 +144,7 @@ export default class extends AbstractView {
     <div class="chatRightContainer">
       <div class="chatRoom"></div>
       <form id="chattingForm">
-        <input id="chattingInput" type="text" autocomplete="off" />
+        <input id="chattingInput" type="text" autocomplete="off" maxlength='300' />
         <svg
           id="chattingSubmitImage"
           width="2rem"
@@ -163,12 +163,15 @@ export default class extends AbstractView {
 		`;
   }
 
-  async renderOnlineUsers() {
+  async renderOnlineUsers(nickname) {
     const $chatUserInner = document.querySelector('.chatUserInner');
+    const url = nickname
+      ? `http://127.0.0.1:8000/players/online/${nickname}/`
+      : 'http://127.0.0.1:8000/players/online';
 
     const getOnlineUsers = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/players/online', {
+        const res = await fetch(url, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -176,7 +179,6 @@ export default class extends AbstractView {
         const data = await res.json();
         if (res.ok) {
           this.onlineUsers = data.data.results;
-          console.log(this.onlineUsers);
         } else {
           if (data.status === 401) {
             await refreshAccessToken();
@@ -209,13 +211,16 @@ export default class extends AbstractView {
   }
 
   bindSearchUserInputEvent() {
-    const chatSearchUserInput = document.getElementById('chatSearchUserInput');
-    const chatSearchFormContainer = document.querySelector(
+    const $chatSearchUserInput = document.getElementById('chatSearchUserInput');
+    const $chatSearchFormContainer = document.querySelector(
       '.chatSearchFormContainer',
     );
 
-    chatSearchFormContainer.addEventListener('submit', e => e.preventDefault());
-    chatSearchUserInput.addEventListener('input', e => {});
+    $chatSearchFormContainer.addEventListener('submit', e => {
+      e.preventDefault();
+      this.renderOnlineUsers($chatSearchUserInput.value);
+    });
+    // chatSearchUserInput.addEventListener('input', e => {});
   }
 
   async connectionChatSocket() {
@@ -279,11 +284,11 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.webSocketEventHandler.bind(this));
+
     const chattingSubmitImage = document.querySelector('#chattingSubmitImage');
     const $chatRoom = document.querySelector('.chatRoom');
     this.$chatRoom = $chatRoom;
-
-    await checkConnectionSocket(this.webSocketEventHandler.bind(this));
 
     this.bindSearchUserInputEvent();
     await this.connectionChatSocket();
