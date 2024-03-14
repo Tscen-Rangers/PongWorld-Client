@@ -268,7 +268,7 @@
   display: flex;
   position: relative;
   align-items: center;
-  padding-left: 10px;
+  margin-left: 10px;
   z-index: 1;
 }
 
@@ -373,6 +373,12 @@
   }
   .chatUserImage {
     display: none;
+  }
+  #chatHeader {
+    height: 20%;
+  }
+  .chatLeftContainer {
+    height: 80%;
   }
 }
 

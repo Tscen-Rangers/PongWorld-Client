@@ -51,7 +51,7 @@ export default class extends AbstractView {
       <div class="chatRightContainer">
         <div class="chatRoom"></div>
         <form id="chattingForm">
-          <input id="chattingInput" type="text" autocomplete="off" />
+          <input id="chattingInput" type="text" autocomplete="off" maxlength='300'/>
           <svg
             id="chattingSubmitImage"
             width="2rem"
@@ -70,7 +70,7 @@ export default class extends AbstractView {
 		`;
   }
 
-  updateUserList(chattingRooms) {
+  async updateUserList(chattingRooms) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
     chatUserInner.innerHTML = `${chattingRooms.data
@@ -311,6 +311,7 @@ export default class extends AbstractView {
           Number(e.currentTarget.getAttribute('data-chatroomid')),
           1,
         );
+        this.$chatRoom.innerHTML = '';
         const parentElement = e.currentTarget.parentNode;
         if (parentElement.parentNode) {
           parentElement.parentNode.removeChild(parentElement);
@@ -358,20 +359,12 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
-    await checkConnectionSocket(this.socketEventHendler.bind(this));
     const $chatRoom = document.querySelector('.chatRoom');
     this.$chatRoom = $chatRoom;
 
-    if (this.params.user) {
-      this.target = Number(this.params.user);
-      this.sendWebSocket();
-    }
-
     document.querySelectorAll('a[data-spa]').forEach(link => {
-      link.addEventListener('click', event => {
-        // 웹소켓 나가기 메시지 전송
+      link.addEventListener('click', () => {
         this.leaveWebSocket();
-        // 여기서 페이지 전환 로직을 구현하거나, 기존 로직을 호출
       });
     });
 
@@ -379,33 +372,32 @@ export default class extends AbstractView {
     const $chattingForm = document.querySelector('#chattingForm');
     this.$chattingForm = $chattingForm;
     const chattingRooms = await this.getChattingRoom();
-    console.log(chattingRooms);
     this.$chattingSubmitImage = $chattingSubmitImage;
 
-    this.updateUserList(chattingRooms);
+    await this.updateUserList(chattingRooms);
+
+    await checkConnectionSocket(this.socketEventHendler.bind(this));
+    if (this.params.user) {
+      this.target = Number(this.params.user);
+      this.sendWebSocket();
+    }
   }
 
   async socketEventHendler(message) {
     if (!message.type) {
       if (message.is_new) {
         const chattingRooms = await this.getChattingRoom();
-        this.updateUserList(chattingRooms);
+        await this.updateUserList(chattingRooms);
       }
-      this.$unReadCount.forEach(e => {
-        if (
-          message.chatroom_id ===
-          Number(e.parentNode.getAttribute('data-chatroomid'))
-        ) {
-          e.style.opacity = 0;
-        }
-      });
       this.$chatRoom.innerHTML = '';
       const chatRoomdID = await message.chatroom_id;
-      this.renderPrevChat(chatRoomdID);
-      try {
-      } catch (error) {
-        console.error(error);
-      }
+      await this.renderPrevChat(chatRoomdID);
+      this.$unReadCount.forEach(e => {
+        if (
+          chatRoomdID === Number(e.parentNode.getAttribute('data-chatroomid'))
+        )
+          e.style.opacity = 0;
+      });
     } else if (message.type === 'private_chat') {
       this.renderChat(message);
     } else if (message.type === 'unread_count') {
@@ -419,10 +411,12 @@ export default class extends AbstractView {
           e.innerHTML = message.unread_count;
         }
       });
-    } else if (message.type === 'user_online') {
+    } else if (
+      message.type === 'user_online' &&
+      message.user_id !== this.user.id
+    ) {
       this.$chatUserProfiles.forEach(user => {
         if (Number(user.getAttribute('data-userid')) === message.user_id) {
-          console.log(user);
           user.querySelector('.directOnlineUserImage').style.display = 'block';
         }
       });

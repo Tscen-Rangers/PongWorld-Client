@@ -22,7 +22,6 @@ class ConnectionSocket extends BaseWebSocket {
 
       this.ws.onclose = async () => {
         console.log('Connection WebSocket 닫힘');
-        // this.connect(url);
         await checkConnectionSocket();
       };
     });
