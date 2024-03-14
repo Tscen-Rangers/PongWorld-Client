@@ -715,7 +715,7 @@ a {
   }
   .nav {
     max-height: 0;
-    height: 226px;
+    height: 250px;
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -723,7 +723,7 @@ a {
     padding-inline: 30px;
   }
   .nav.active {
-    max-height: 226px;
+    max-height: 250px;
   }
   .nav__link {
     padding-right: 0;
