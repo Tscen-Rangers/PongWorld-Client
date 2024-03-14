@@ -105,7 +105,6 @@ const getParams = match => {
 
 const navigateTo = url => {
   if (url === location.href) return;
-
   history.pushState(null, null, url);
   router();
 };
