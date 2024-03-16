@@ -3,8 +3,9 @@ import {refreshAccessToken, getToken} from '../../tokenManager.js';
 import {deleteFriend, getNewRequest} from '../../FriendsRestApi.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
-
+import {userProfileData} from '../../PlayersRestApi.js';
 let checkModalEvent = 0;
+const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 
 export default class extends AbstractView {
   constructor(params) {
@@ -80,7 +81,9 @@ export default class extends AbstractView {
         <div class="friendList" style="padding:0px 10px" key=${index}>
         <div class="friendProfile">
           <div class="friendProfileImg">
-          <img class="profileImg" src=${user.user.profile_img}/> 
+          <img class="profileImg" data-id='${user.user.id}' src=${
+                user.user.profile_img
+              }/> 
           ${
             user.user.is_online
               ? '<img class="onlineImg" src="/public/online.png"/>'
@@ -128,6 +131,15 @@ export default class extends AbstractView {
         }
       });
     });
+    const profileImgs = document.querySelectorAll('.profileImg');
+    profileImgs.forEach(profileImg => {
+      profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
   }
 
   async recievedRequest() {
@@ -147,6 +159,7 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.recieved = data.data;
+          console.log(data.data);
         }
       } catch (error) {
         console.log('get Recieved Request error', error);
@@ -242,6 +255,7 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.sent = data.data;
+          console.log(data.data);
         }
       } catch (error) {
         console.log('get Sent Request error', error);
@@ -260,7 +274,9 @@ export default class extends AbstractView {
        <div class="friendList" style="padding:0% 4%" key=${index}>
        <div class="friendProfile">
          <div class="friendProfileImg"> 
-         <img class="profileImg" src=${user.user.profile_img}/>
+         <img class="profileImg" data-id='${user.user.id}' src=${
+                user.user.profile_img
+              }/>
          ${
            user.user.is_online
              ? '<img class="onlineImg" src="/public/online.png"/>'
@@ -295,6 +311,15 @@ export default class extends AbstractView {
         cancelRequestModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
         cancelRequestModal.classList.add('active');
         cancelRequestModal.setAttribute('data-key', index);
+      });
+    });
+    const profileImgs = document.querySelectorAll('.profileImg');
+    profileImgs.forEach(profileImg => {
+      profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
       });
     });
   }

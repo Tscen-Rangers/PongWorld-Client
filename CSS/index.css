@@ -293,6 +293,7 @@ a {
 }
 .battleModalContainer,
 .confirmModalContainer,
+.userProfile-confirmModalContainer,
 .cancelRequestModalContainer,
 #tournamentControlModalBackground,
 .tournamentModalContainer {
@@ -305,7 +306,7 @@ a {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.592);
-  z-index: 7;
+  z-index: 220;
   visibility: hidden;
   transition: 0.5s;
   opacity: 0;
@@ -360,6 +361,7 @@ a {
 }
 
 .confirmModal,
+.userProfile-confirmModal,
 .cancelRequestModal {
   display: flex;
   flex-direction: column;
@@ -377,7 +379,8 @@ a {
   z-index: 7;
 }
 
-.confirmModalContainer.active {
+.confirmModalContainer.active,
+.userProfile-confirmModalContainer.active {
   visibility: visible;
   opacity: 1;
 }
@@ -387,12 +390,14 @@ a {
   opacity: 1;
 }
 .confirmModalMsg,
+.userProfile-confirmModalMsg,
 .cancelRequestModalMsg {
   text-align: center;
   font-size: 1.1rem;
   margin-top: 20px;
 }
 .confirmButtons,
+.userProfile-confirmButtons,
 .cancelRequestModalButtons {
   display: flex;
   width: 100%;
@@ -401,6 +406,8 @@ a {
 
 .confirmBtn,
 .cancelBtn,
+.userProfile-confirmBtn,
+.userProfile-cancelBtn,
 .cancelRequestModalBtn,
 .closeRequestModalBtn {
   font-size: 1rem;
@@ -757,7 +764,7 @@ a {
   z-index: 50;
   visibility: hidden;
   opacity: 0;
-  transition: 2s;
+  transition: 0.2s;
 }
 .userProfileModalContainer.active {
   visibility: visible;
@@ -802,12 +809,20 @@ a {
   width: 90%;
   display: flex;
   align-items: flex-end;
+  position: relative;
 }
 .userProfileImg {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.userProfileOnlineImg {
+  width: 1.6em;
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
 }
 
 .userProfile-card {
@@ -819,7 +834,9 @@ a {
   width: 90%;
   margin-left: 20px;
   color: rgb(0, 0, 0);
-
+  display: flex;
+  justify-content: center;
+  font-size: 1.4rem;
   &::before {
     content: '';
     position: absolute;
@@ -879,7 +896,13 @@ a {
   margin-right: 4%;
   word-spacing: 2px;
 }
-.allHistoryBtn {
+
+/* .allHistoryBtn {
+  color: black;
+} */
+
+.allHistoryBtn.selected,
+.historyWithMeBtn.selected {
   color: black;
 }
 .userProfile-match-history {

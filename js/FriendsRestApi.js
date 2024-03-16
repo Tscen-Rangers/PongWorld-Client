@@ -125,3 +125,36 @@ export const getNewRequest = async () => {
   };
   return await getNewRequestCount();
 };
+
+export const friendRequest = async id => {
+  const sendRequest = async () => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          followed_id: id,
+        }),
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          await refreshAccessToken();
+          return sendRequest();
+        } else {
+          // console.log(await res.json());
+          throw new Error(`Server responded with status: ${res.status}`);
+        }
+      } else {
+        const data = await res.json();
+        return data.data.id;
+      }
+    } catch (error) {
+      console.log('post friend request error', error);
+      return 0;
+    }
+  };
+  return await sendRequest();
+};

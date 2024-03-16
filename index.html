@@ -361,8 +361,9 @@
         <div class="userProfileName">haha</div>
         <div class="userProfileContainer">
           <img class="userProfileImg" src="/public/huipark.jpg" />
+          <img class="userProfileOnlineImg" src="/public/online.png" />
           <div class="userProfile-card">
-            <p id="userProfileIntro"></p>
+            <p id="userProfileIntro">hehe</p>
           </div>
         </div>
         <div class="userProfileStats">
@@ -400,30 +401,9 @@
           <text style="color: black">|</text>
           <text class="historyWithMeBtn">나와의 전적</text>
         </div>
-        <div class="userProfile-match-history">
-          <div class="userProfile-match">
-            <img
-              src="/public/huipark.jpg"
-              class="userProfile-player-image"
-              alt="Player 1 Image" />
-            <img
-              src="/public/huipark.jpg"
-              class="userProfile-player-image"
-              alt="Player 2 Image" />
-            <span class="userProfile-players">hacho VS jimpark</span>
-            <span class="userProfile-score"
-              ><span class="userProfile-score-first">3</span>:2</span
-            >
-            <span class="userProfile-result">win</span>
-            <span class="userProfile-time-ago">2 days ago</span>
-          </div>
-        </div>
+        <div class="userProfile-match-history"></div>
         <div class="userProfileBtns">
-          <a
-            class="chatbutton"
-            href="/chat/direct/${
-          }"
-            data-spa
+          <a class="chatbutton" href="" data-spa
             >chat<svg
               class="chatMsgImage"
               style="margin-left: 5px"
@@ -464,7 +444,17 @@
       </div>
     </div>
     <!-- -------------                   ------------- -->
-
+    <!-- ------------- userProfileModal  ------------- -->
+    <div class="userProfile-confirmModalContainer">
+      <div class="userProfile-confirmModal">
+        <div class="userProfile-confirmModalMsg"></div>
+        <div class="userProfile-confirmButtons">
+          <button class="userProfile-cancelBtn">cancel</button>
+          <button class="userProfile-confirmBtn">yes</button>
+        </div>
+      </div>
+    </div>
+    <!-- -------------                   ------------- -->
     <svg id="headphoneImg" viewBox="0 0 24 24">
       <path
         fill="currentColor"
@@ -482,5 +472,7 @@
     <script type="module" src="/js/bindMusicEvent.js"></script>
     <script type="module" src="/js/bindGameOptionEvent.js"></script>
     <script type="module" src="/js/bindBattleAlert.js"></script>
+    <script type="module" src="/js/userProfileEventHandler.js"></script>
+    <script type="module" src="/js/confirmModalEventHandler.js"></script>
   </body>
 </html>

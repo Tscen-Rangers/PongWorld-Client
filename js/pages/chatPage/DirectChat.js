@@ -3,6 +3,7 @@ import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {userProfileData} from '../../PlayersRestApi.js';
 function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
     console.log(rooms[i]);
@@ -10,7 +11,7 @@ function findUser(id, rooms) {
   }
   return -1;
 }
-
+const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -89,11 +90,13 @@ export default class extends AbstractView {
               ? 'block'
               : 'none'
           }"/>
-          <img class="chatUserImage" src=${
-            room.user1 === this.user.id
-              ? room.user2_profile_img
-              : room.user1_profile_img
-          }/>
+          <img class="chatUserImage" data-id='${
+            room.user1 === this.user.id ? room.user2 : room.user1
+          }' src=${
+          room.user1 === this.user.id
+            ? room.user2_profile_img
+            : room.user1_profile_img
+        }/>
           <p class="chatUserName">${
             room.user1 === this.user.id
               ? room.user2_nickname
@@ -333,6 +336,17 @@ export default class extends AbstractView {
 
         this.target = e.currentTarget.dataset.userid; //타겟 아이디
         this.sendWebSocket();
+      });
+    });
+    const chatUserImages = document.querySelectorAll('.chatUserImage');
+    chatUserImages.forEach(chatUserImage => {
+      // console.log(chatUserImage);
+      console.log('hehe');
+      chatUserImage.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
       });
     });
   }

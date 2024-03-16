@@ -3,6 +3,7 @@ import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {userProfileData} from '../../PlayersRestApi.js';
 const users = [
   {
     name: 'jimpark',
@@ -85,7 +86,7 @@ const users = [
     image: '/public/huipark.jpg',
   },
 ];
-
+const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -196,7 +197,7 @@ export default class extends AbstractView {
         return `<div class="chatUserProfile">
     <div class="chatUserProfileBlur"></div>
     <div class="chatUserInfo">
-      <img class="chatUserImage" src=${user.profile_img}/>
+      <img class="chatUserImage" data-id='${user.id}' src=${user.profile_img}/>
       <p class="chatUserName">${user.nickname}</p>
     </div>
     <a class="directMsgImageContainer" href='/chat/direct/${user.id}' data-spa>
@@ -208,6 +209,18 @@ export default class extends AbstractView {
       })
       .join('')}
     `;
+
+    const chatUserImages = document.querySelectorAll('.chatUserImage');
+    chatUserImages.forEach(chatUserImage => {
+      // console.log(chatUserImage);
+      console.log('hehe');
+      chatUserImage.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
   }
 
   bindSearchUserInputEvent() {
