@@ -194,14 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
         qws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        qws.send({speed: option.level});
+        // console.log(option.level);
+        qws.send({command: 'participant', speed: option.level});
         // let cnt = 0;
         qws.onMessage(msg => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
           }
           if (msg.data) {
-            console.log(msg.data);
+            // console.log(msg.data);
             sessionStorage.setItem('gameData', JSON.stringify(msg.data));
             if (
               msg.data.player1.info.nickname ===
