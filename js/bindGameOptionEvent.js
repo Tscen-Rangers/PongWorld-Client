@@ -16,7 +16,8 @@ function onMatchComplete() {
 
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
-  }, 3000);
+    // 일단 서버에서 소켓 메세지가 일찍 와서 2초로 수정 원래는 3초
+  }, 2000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -201,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
           }
-          if (msg.data) {
+          if (msg.type === 'START_RANDOM_GAME') {
             // console.log(msg.data);
             sessionStorage.setItem('gameData', JSON.stringify(msg.data));
             if (
@@ -221,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $matchingCancelBtn.style.display = 'none';
             onMatchComplete();
           }
+          console.log(msg);
         });
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle') {

@@ -34,6 +34,7 @@
 
 .pingpongTable {
   display: flex;
+
   height: 49vw;
   width: 68vw;
   border-radius: 10px;
@@ -72,8 +73,8 @@
 }
 
 .player2PingpongStick {
-  width: 20px;
-  height: 100px;
+  width: 1.1vw;
+  height: 6vw;
   background-color: black;
   margin-right: 20px;
   position: absolute;
@@ -85,8 +86,8 @@
 }
 
 .player1PingpongStick {
-  width: 20px;
-  height: 100px;
+  width: 1.1vw;
+  height: 6vw;
   background-color: black;
   margin-left: 20px;
   position: absolute;
@@ -95,12 +96,17 @@
   transform: translateY(-50%);
 }
 
-.pingpongBall {
+#pingpongBall {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 20px;
   height: 20px;
   border-radius: 50px;
   background-color: #1eff00;
   box-shadow: 0 0 6px 2px black;
+  z-index: 1;
 }
 
 .playingUserImage {
