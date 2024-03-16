@@ -1,11 +1,15 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
-import {block, unblock} from '../../FriendsRestApi.js';
-import {deleteFriend} from '../../FriendsRestApi.js';
+import {
+  block,
+  unblock,
+  deleteFriend,
+  friendRequest,
+} from '../../FriendsRestApi.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {router} from '../../route.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
-
+import {userProfileData} from '../../PlayersRestApi.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -36,15 +40,6 @@ export default class extends AbstractView {
     </div>
     <div class="friendListContainer">
     </div>
-    <div class="confirmModalContainer">
-    <div class="confirmModal">
-      <div class="confirmModalMsg"></div>
-      <div class="confirmButtons">
-        <button class="cancelBtn">cancel</button>
-        <button class="confirmBtn">yes</button>
-      </div>
-    </div>
-  </div>
     </div>
     </div>
 		`;
@@ -61,7 +56,9 @@ export default class extends AbstractView {
         <div class="friendList" key=${index}>
           <div class="friendProfile">
             <div class="friendProfileImg">
-            <img class="profileImg" src=${user.profile_img}/>
+            <img class="profileImg" data-id= '${user.id}' src=${
+                user.profile_img
+              }/>
             ${
               user.is_online
                 ? '<img class="onlineImg" src="/public/online.png"/>'
@@ -70,22 +67,7 @@ export default class extends AbstractView {
             </div>
             <div class="friendname">${user.nickname}</div>
           </div>
-            <div class="searchOptionBtns">
-            ${
-              user.is_blocking
-                ? ''
-                : `<div class="searchOptionRequestBtn" id="friendRequestBtn" style='color: ${
-                    user.friend_status ? 'rgb(255, 0, 0)' : 'rgb(0,0,0)'
-                  };' data-key='${index}'>
-                    ${
-                      user.friend_status === 1
-                        ? 'cancel request'
-                        : user.friend_status === 0
-                        ? 'friend request'
-                        : ''
-                    }
-                  </div>`
-            }     
+            <div class="searchOptionBtns">  
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
                 user.is_blocking ? 'unblock' : 'block'
               }</div>
@@ -124,54 +106,64 @@ export default class extends AbstractView {
     const searchOptionRequestBtns = document.querySelectorAll(
       '.searchOptionRequestBtn',
     );
-    searchOptionRequestBtns.forEach(searchOptionRequestBtn => {
-      searchOptionRequestBtn.addEventListener('click', e => {
-        const index = e.target.dataset.key;
-        const user = this.users[index].nickname;
-        if (this.users[index].friend_status === 0) {
-          confirmModalMsg.innerHTML = `Would you like to send a friend request to ${user}?`;
-          this.currentAction = 'request';
-        } else if (this.users[index].friend_status === 1) {
-          confirmModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
-          this.currentAction = 'cancel';
-        }
-        confirmModal.classList.add('active');
-        confirmModal.setAttribute('data-key', index);
+    // searchOptionRequestBtns.forEach(searchOptionRequestBtn => {
+    //   searchOptionRequestBtn.addEventListener('click', e => {
+    //     const index = e.target.dataset.key;
+    //     const user = this.users[index].nickname;
+    //     if (this.users[index].friend_status === 0) {
+    //       confirmModalMsg.innerHTML = `Would you like to send a friend request to ${user}?`;
+    //       this.currentAction = 'request';
+    //     } else if (this.users[index].friend_status === 1) {
+    //       confirmModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user}?`;
+    //       this.currentAction = 'cancel';
+    //     }
+    //     confirmModal.classList.add('active');
+    //     confirmModal.setAttribute('data-key', index);
+    //   });
+    // });
+    const profileImgs = document.querySelectorAll('.profileImg');
+    const $allHistoryBtn = document.querySelector('.allHistoryBtn');
+    profileImgs.forEach(profileImg => {
+      profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
       });
     });
   }
   //친구요청 보내기
-  async friendRequest(id) {
-    const sendRequest = async () => {
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getToken()}`,
-          },
-          body: JSON.stringify({
-            followed_id: id,
-          }),
-        });
-        if (!res.ok) {
-          if (res.status === 401) {
-            await refreshAccessToken();
-            return sendRequest();
-          } else {
-            throw new Error(`Server responded with status: ${res.status}`);
-          }
-        } else {
-          const data = await res.json();
-          return data.data.id;
-        }
-      } catch (error) {
-        console.log('post friend request error', error);
-        return 0;
-      }
-    };
-    return await sendRequest();
-  }
+  // async friendRequest(id) {
+  //   const sendRequest = async () => {
+  //     try {
+  //       const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${getToken()}`,
+  //         },
+  //         body: JSON.stringify({
+  //           followed_id: id,
+  //         }),
+  //       });
+  //       if (!res.ok) {
+  //         if (res.status === 401) {
+  //           await refreshAccessToken();
+  //           return sendRequest();
+  //         } else {
+  //           throw new Error(`Server responded with status: ${res.status}`);
+  //         }
+  //       } else {
+  //         const data = await res.json();
+  //         return data.data.id;
+  //       }
+  //     } catch (error) {
+  //       console.log('post friend request error', error);
+  //       return 0;
+  //     }
+  //   };
+  //   return await sendRequest();
+  // }
 
   //모든 유저 렌더링 or 검색된 유저 렌더링
   async searchPlayers(name) {
@@ -205,9 +197,9 @@ export default class extends AbstractView {
   async afterRender() {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.searchPlayers('');
-    const confirmModal = document.querySelector('.confirmModalContainer');
-    const confirmBtn = document.querySelector('.confirmBtn');
-    const cancelBtn = document.querySelector('.cancelBtn');
+    // const confirmModal = document.querySelector('.confirmModalContainer');
+    // const confirmBtn = document.querySelector('.confirmBtn');
+    // const cancelBtn = document.querySelector('.cancelBtn');
     const searchInput = document.querySelector('#searchInput');
 
     searchInput.addEventListener('keydown', async e => {
@@ -217,27 +209,27 @@ export default class extends AbstractView {
         this.updateBlockedUserList();
       }
     });
-    cancelBtn.addEventListener('click', () => {
-      confirmModal.classList.remove('active');
-    });
+    // cancelBtn.addEventListener('click', () => {
+    //   confirmModal.classList.remove('active');
+    // });
 
-    confirmBtn.addEventListener('click', async e => {
-      const index = confirmModal.getAttribute('data-key');
+    // confirmBtn.addEventListener('click', async e => {
+    //   const index = confirmModal.getAttribute('data-key');
 
-      // 서버에서 friend_id 받아서 하기!
-      if (this.currentAction === 'cancel') {
-        if (await deleteFriend(this.users[index].friend_id))
-          this.users[index].friend_status = 0;
-      } else {
-        let id = await this.friendRequest(this.users[index].id);
-        if (id) {
-          this.users[index].friend_status = 1;
-          this.users[index].friend_id = id;
-        }
-      }
-      this.updateBlockedUserList(); // UI 업데이트
-      confirmModal.classList.remove('active');
-    });
+    //   // 서버에서 friend_id 받아서 하기!
+    //   if (this.currentAction === 'cancel') {
+    //     if (await deleteFriend(this.users[index].friend_id))
+    //       this.users[index].friend_status = 0;
+    //   } else {
+    //     let id = await friendRequest(this.users[index].id);
+    //     if (id) {
+    //       this.users[index].friend_status = 1;
+    //       this.users[index].friend_id = id;
+    //     }
+    //   }
+    //   this.updateBlockedUserList(); // UI 업데이트
+    //   confirmModal.classList.remove('active');
+    // });
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
     if (parseInt(sessionStorage.getItem('newRequest')))

@@ -5,6 +5,8 @@ import {checkConnectionSocket} from '../../webSocketManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {getNewRequest} from '../../FriendsRestApi.js';
 import {onMatchComplete} from '../../battleResponseEventHandler.js';
+import {userProfileData} from '../../PlayersRestApi.js';
+
 ////////battle alert
 
 const $battleChallengerImg = document.querySelector('.battleChallengerImg');
@@ -21,6 +23,11 @@ const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
+
+const userProfileModalContainer = document.querySelector(
+  '.userProfileModalContainer',
+);
+const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 
 let timeoutId;
 function battleMatchRequestExpired() {
@@ -130,7 +137,9 @@ export default class extends AbstractView {
       <div class="friendList" key=${index}>
       <div class="friendProfile">
         <div class="friendProfileImg">
-        <img class="profileImg" src=${user.user.profile_img}/>
+        <img data-id=${user.user.id} class="profileImg" src=${
+                user.user.profile_img
+              }/>
          ${
            user.user.is_online
              ? '<img class="onlineImg" src="/public/online.png"/>'
@@ -228,6 +237,15 @@ battle
             this.updateFriendList();
           }
         }
+      });
+    });
+    const profileImgs = document.querySelectorAll('.profileImg');
+    profileImgs.forEach(profileImg => {
+      profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
       });
     });
   }
