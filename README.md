@@ -1,11 +1,9 @@
 # ft_transcendence
 
-## Login
 
-## BattleMatching
+### FrontEnd :
+huipark, hyunjki, hawnkim
+### BackEnd : 
 
 
-## Chatting
-![화면 기록 2024-03-17 오후 9 15 55](https://github.com/Tscen-Rangers/PongWorld-Client/assets/103026721/c64093c2-3228-47b7-8271-ca22ee02cc22)
-
-## MyPage
+## <a href="https://www.notion.so/PongWorld-2ae22aa16e9543028f8ad0fbbb40c735">영상 바로보기</a>
