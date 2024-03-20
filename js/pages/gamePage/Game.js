@@ -2,6 +2,43 @@ import AbstractView from '../../AbstractView.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
+import DirectChat from '../chatPage/DirectChat.js';
+
+let isMovingUp = false;
+let isMovingDown = false;
+
+function convertClientPositionToServerPosition(clientY) {
+  const serverY = (clientY / this.tableHeight) * 490;
+  return serverY;
+}
+
+function convertServerPositionToScreenPosition(serverX, serverY) {
+  const screenX = (serverX / 660 + 0.5) * this.tableWidth;
+  const screenY = (serverY / 490 + 0.5) * this.tableHeight;
+
+  return [screenX, screenY];
+}
+
+// function convertServerPositionToScreenPosition(serverX, serverY) {
+//   // 서버 좌표에서 클라이언트 화면 좌표로 변환
+//   // 서버의 x 좌표는 [-340, 340], y 좌표는 [-245, 245] 범위를 갖습니다.
+//   // 이를 클라이언트 화면의 크기에 맞추어 변환합니다.
+
+//   // 먼저 서버 좌표를 [0, 1]의 비율로 변환
+//   const normalizedX = (serverX + 340) / 680; // [-340, 340] -> [0, 1]
+//   const normalizedY = (serverY + 245) / 490; // [-245, 245] -> [0, 1]
+
+//   // 정규화된 비율을 사용하여 클라이언트 화면의 픽셀 좌표로 변환
+//   const screenX = normalizedX * this.tableWidth;
+//   const screenY = normalizedY * this.tableHeight;
+
+//   // 클라이언트의 탁구대 중앙을 (0,0)으로 설정하기 위해
+//   // y 좌표의 경우 클라이언트 화면 높이의 절반을 기준으로 조정할 필요가 있습니다.
+//   // 하지만 이미 [-245, 245] -> [0, 1]로 정규화하고, 그 비율을 클라이언트 화면 크기에 맞춰 변환했기 때문에
+//   // 이 과정은 중앙을 기준으로 이미 조정된 것입니다.
+
+//   return [screenX, screenY];
+// }
 
 const player1 = {
   name: 'jimpark',
@@ -16,6 +53,11 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Game');
+    this.myPingpongStick = null;
+    this.centerY = null;
+    this.gameOption = JSON.parse(sessionStorage.getItem('gameOption'));
+    this.tableWeigth = null;
+    this.tableHeight = null;
   }
   async getHtml() {
     return `
@@ -104,107 +146,144 @@ export default class extends AbstractView {
   </div>
             `;
   }
+
+  sendStick(coordinate) {
+    console.log(coordinate);
+    qws.send({
+      command: 'move_paddle',
+      y_coordinate: coordinate,
+    });
+  }
+
+  update(coor) {
+    const y = convertClientPositionToServerPosition.bind(this)(
+      coor - this.centerY,
+    );
+    this.sendStick(y);
+    requestAnimationFrame(() => {
+      this.myPingpongStick.style.top = coor + 'px';
+    });
+  }
+
+  onMouseMove(maxY) {
+    if (this.gameOption.control === 'mouse') {
+      document.addEventListener('mousemove', event => {
+        const mouseY = event.clientY - 150;
+        this.myPingpongStick.style.top =
+          Math.min(
+            Math.max(this.myPingpongStick.offsetHeight / 2, mouseY),
+            maxY,
+          ) + 'px';
+      });
+    }
+  }
+
+  animatePaddleMovement(maxY) {
+    if (!this.animationFrameRequest) {
+      const animate = () => {
+        if (isMovingUp || isMovingDown) {
+          const style = window.getComputedStyle(this.myPingpongStick);
+          let newPosition = parseInt(style.top);
+
+          if (isMovingUp)
+            newPosition = Math.max(
+              newPosition - 5,
+              this.myPingpongStick.offsetHeight / 2,
+            );
+          if (isMovingDown) newPosition = Math.min(newPosition + 5, maxY);
+
+          this.update(newPosition);
+          this.myPingpongStick.style.top = `${newPosition}px`;
+          this.animationFrameRequest = requestAnimationFrame(animate);
+        } else {
+          cancelAnimationFrame(this.animationFrameRequest);
+          this.animationFrameRequest = null;
+        }
+      };
+      this.animationFrameRequest = requestAnimationFrame(animate);
+    }
+  }
+
+  onKeyboardMove(maxY) {
+    let coor = 0;
+    if (this.gameOption.control === 'keyboard') {
+      const style = window.getComputedStyle(this.myPingpongStick);
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp') isMovingUp = true;
+        else if (e.key === 'ArrowDown') isMovingDown = true;
+        this.animatePaddleMovement(maxY);
+      });
+      document.addEventListener('keyup', e => {
+        if (e.key === 'ArrowUp') isMovingUp = false;
+        else if (e.key === 'ArrowDown') isMovingDown = false;
+      });
+
+      // setInterval(() => {
+      //   if (isMovingUp) {
+      //     coor = Math.max(
+      //       parseInt(style.top) - 30,
+      //       this.myPingpongStick.offsetHeight / 2,
+      //     );
+      //     this.update(coor);
+      //   } else if (isMovingDown) {
+      //     coor = Math.min(parseInt(style.top) + 30, maxY);
+      //     this.update(coor);
+      //   }
+      // }, 1000 / 40); // 60프레임으로 설정
+    }
+  }
+
+  checkControl() {
+    const pingpongTable = document.querySelector('.pingpongTable');
+    const maxY =
+      pingpongTable.clientHeight - this.myPingpongStick.clientHeight / 2;
+
+    this.onMouseMove(maxY);
+    this.onKeyboardMove(maxY);
+  }
+
+  updateBallPosition(ballPosition) {
+    const ball = document.getElementById('pingpongBall');
+    const [x, y] = convertServerPositionToScreenPosition.bind(this)(
+      ballPosition[0],
+      ballPosition[1],
+    );
+    // 854.6470588235294 497.7612244897959
+    // 854.6470588235295 497.7612244897959
+
+    console.log(x, y);
+    if (ball) {
+      ball.style.left = `${x}px`;
+      ball.style.top = `${y}px`;
+    }
+  }
+
   afterRender() {
+    this.sendStick(0);
     const $battleModalContainer = document.querySelector(
       '.battleModalContainer',
     );
     $battleModalContainer.classList.remove('active');
-    console.log(JSON.parse(sessionStorage.getItem('gameData')));
     const myPingpongStick = document.querySelector(
       `.${sessionStorage.getItem('myPosition')}PingpongStick`,
     );
     const opponentPingpongStick = document.querySelector(
       `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
     );
-    const pingpongTable = document.querySelector('.pingpongTable');
-    const maxY = pingpongTable.clientHeight - myPingpongStick.clientHeight / 2;
-    const gameOption = JSON.parse(sessionStorage.getItem('gameOption'));
     const table = document.querySelector('.pingpongTable');
-    const tableWidth = table.offsetWidth;
-    const tableHeight = table.offsetHeight;
+    this.myPingpongStick = myPingpongStick;
+    this.tableWidth = table.offsetWidth;
+    this.tableHeight = table.offsetHeight;
+    this.centerY = this.tableHeight / 2;
 
-    let topValue = null;
-    let num = null;
-    let centerY = tableHeight / 2;
-
-    // window.addEventListener('resize', () => {
-    //   console.log(myPingpongStick);
-    //   console.log(table.offsetHeight * l);
-    //   myPingpongStick.style.height = table.offsetHeight;
-    // });
-    if (gameOption.control === 'mouse') {
-      document.addEventListener('mousemove', event => {
-        const mouseY = event.clientY - 150;
-        // myPingpongStick.style.top = mouseY + 'px';
-        myPingpongStick.style.top =
-          Math.min(Math.max(myPingpongStick.offsetHeight / 2, mouseY), maxY) +
-          'px';
-      });
-    }
-    if (gameOption.control === 'keyboard') {
-      const style = window.getComputedStyle(myPingpongStick);
-      document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowUp') {
-          num = Math.max(
-            parseInt(style.top) - 30,
-            myPingpongStick.offsetHeight / 2,
-          );
-          topValue = num + 'px';
-          update();
-        } else if (e.key === 'ArrowDown') {
-          num = Math.min(parseInt(style.top) + 30, maxY);
-          topValue = num + 'px';
-          update();
-        }
-      });
-    }
-
-    function convertClientPositionToServerPosition(clientY) {
-      const serverY = (clientY / tableHeight) * 490;
-      return serverY;
-    }
-
-    function update() {
-      const y = convertClientPositionToServerPosition(num - centerY);
-      console.log(y);
-      requestAnimationFrame(() => {
-        myPingpongStick.style.top = topValue;
-      });
-    }
-
-    //4.9
-    //6.8
-    //490 -
-    //680
-    function convertServerPositionToScreenPosition(serverX, serverY) {
-      const screenX = (((serverX / 6.8) * 2 + 1) / 2) * tableWidth;
-      const screenY = (((serverY / 4.9) * 2 + 1) / 2) * tableHeight;
-
-      return [screenX, screenY];
-    }
-
-    function updateBallPosition(ballPosition) {
-      const ball = document.getElementById('pingpongBall');
-      const [x, y] = convertServerPositionToScreenPosition(
-        ballPosition[0],
-        ballPosition[1],
-      );
-      if (ball) {
-        ball.style.left = `${x}px`;
-        ball.style.top = `${y}px`;
-      }
-    }
+    this.checkControl();
 
     qws.onMessage(message => {
       console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
-        updateBallPosition(ballPosition);
+        this.updateBallPosition(ballPosition);
       }
     });
   }
-
-  // webSocketEventHandler(message) {
-  //   console.log(message);
-  // }
 }

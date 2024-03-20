@@ -8,9 +8,17 @@ class QuickMatchSocket extends BaseWebSocket {
   }
   async connect(url) {
     super.connect(url);
-    this.ws.onclose = async () => {
-      console.log('quickmatch WebSocket 닫힘');
-    };
+
+    return new Promise(async (resolve, reject) => {
+      this.ws.onopen = () => {
+        console.log('quickmatck WebSocket OPEN!');
+        resolve();
+      };
+      this.ws.onclose = async () => {
+        console.log('quickmatch WebSocket CLOSE!');
+        reject();
+      };
+    });
   }
   static getInstance() {
     if (!QuickMatchSocket.instance) {
@@ -19,9 +27,7 @@ class QuickMatchSocket extends BaseWebSocket {
     return QuickMatchSocket.instance;
   }
   send(message) {
-    this.ws.onopen = () => {
-      super.send(message);
-    };
+    super.send(message);
   }
 }
 
