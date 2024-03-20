@@ -117,6 +117,7 @@ export default class extends AbstractView {
     const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
     this.$unReadCount = $unReadCount;
     this.$chatUserProfiles = $chatUserProfiles;
+    console.log($chatUserProfiles);
 
     $unReadCount.forEach(e => {
       if (!Number(e.textContent)) e.style.opacity = 0;
@@ -124,7 +125,7 @@ export default class extends AbstractView {
 
     if (Number($unReadCount.textContent)) $unReadCount;
 
-    if (this.params.user) {
+    if (this.params.user && $chatUserProfiles.length) {
       let idx = findUser(Number(this.params.user), chattingRooms.data);
       this.$chattingForm.style.display = 'flex';
       this.$chatUserProfiles[idx].classList.add('active');
@@ -267,6 +268,7 @@ export default class extends AbstractView {
   }
 
   sendWebSocket() {
+    console.log(this.target);
     cws.send({
       type: 'private_chat',
       status: 'enter',
