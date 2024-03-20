@@ -87,6 +87,13 @@
   /* background-color: pink; */
 }
 
+.rankingNumber {
+  position: absolute;
+  z-index: 2;
+  top: -1px;
+  left: 4px;
+}
+
 .recentPlayersImg {
   display: flex;
   flex: 1;
@@ -132,7 +139,7 @@
   font-size: 1.4rem;
   align-self: center;
   justify-content: center;
-  letter-spacing: 10px;
+  word-spacing: 5px;
   text-shadow: 1px 1px 4px grey;
   /* background-color: aqua; */
 }

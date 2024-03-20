@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const $userProfileConfirmModal = document.querySelector(
     '.userProfile-confirmModalContainer',
   );
+  const $divide = document.querySelector('.divide');
   console.log($userProfileConfirmModal);
   console.log($userProfileConfirmModalMsg);
   const $userProfileFriendRequestBtn = document.querySelector(
@@ -23,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $allHistoryBtn.classList.remove('selected');
     $historyWithMeBtn.classList.remove('selected');
     $userProfileFriendRequestBtn.style.display = 'flex';
+    $historyWithMeBtn.style.display = 'inline';
+    $divide.style.display = 'inline';
     $userProfileModalContainer.classList.remove('active');
   });
   $allHistoryBtn.addEventListener('click', () => {
