@@ -194,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
-        qws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        // console.log(option.level);
+        await qws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        // console.log(op{tion.level);
         qws.send({command: 'participant', speed: option.level});
         // let cnt = 0;
         qws.onMessage(msg => {
