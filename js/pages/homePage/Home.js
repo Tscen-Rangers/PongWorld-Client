@@ -6,6 +6,7 @@ import qws from '../../WebSocket/QuickMatchSocket.js';
 import {router} from '../../route.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
+import {userProfileData} from '../../PlayersRestApi.js';
 
 const histories = [
   {
@@ -80,14 +81,6 @@ const histories = [
   },
 ];
 
-const Rankings = [
-  {rankersName: 'jimpark', score: 4000},
-  {rankersName: 'huipark', score: 3600},
-  {rankersName: 'jihyeole', score: 2800},
-  {rankersName: 'yubchoi', score: 2000},
-  {rankersName: 'junkpark', score: 1500},
-];
-
 const users = [
   {id: 1, profile: '/public/huipark.jpg'},
   {id: 2, profile: '/public/huipark.jpg'},
@@ -111,6 +104,8 @@ const $tournamentModalContainer = document.querySelector(
   '.tournamentModalContainer',
 );
 
+const $allHistoryBtn = document.querySelector('.allHistoryBtn');
+
 function onMatchComplete() {
   // 2초 후에 실행될 함수
   setTimeout(function () {
@@ -125,6 +120,7 @@ export default class extends AbstractView {
     super(params);
     this.setTitle('Game');
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.game = null;
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -133,128 +129,8 @@ export default class extends AbstractView {
     <div class="contentsContainer">
   <h1 id="gamepageTitle">Ranking</h1>
   <div class="usersRankBody">
-    <div class="usersRank">
-      <svg
-        class="starImg"
-        xmlns="http://www.w3.org/2000/svg"
-        width="3em"
-        height="3em"
-        viewBox="0 0 24 24">
-        <path
-          fill="#000000"
-          d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
-        />
-      </svg>
-      <div class="rankersInfo">
-     <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
-       Rankings[0].rankersName
-     }</div>
-      </div>
-    </div>
-    <div class="usersRank">
-      <svg
-        class="starImg"
-        xmlns="http://www.w3.org/2000/svg"
-        width="3em"
-        height="3em"
-        viewBox="0 0 24 24">
-        <path
-          fill="#5B5858"
-          d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
-        />
-      </svg>
-      <div class="rankersInfo">
-      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
-        Rankings[1].rankersName
-      }</div>
-       </div>
-    </div>
-    <div class="usersRank">
-      <svg
-        class="starImg"
-        xmlns="http://www.w3.org/2000/svg"
-        width="3em"
-        height="3em"
-        viewBox="0 0 24 24">
-        <path
-          fill="#8C8C8C"
-          d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
-        />
-      </svg>
-      <div class="rankersInfo">
-      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
-        Rankings[2].rankersName
-      }</div>
-       </div>
-    </div>
-    <div class="usersRank">
-      <svg
-        class="starImg"
-        xmlns="http://www.w3.org/2000/svg"
-        width="3em"
-        height="3em"
-        viewBox="0 0 24 24">
-        <path
-          fill="#B2AEAE"
-          d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
-        />
-      </svg>
-      <div class="rankersInfo">
-      <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
-        Rankings[3].rankersName
-      }</div>
-       </div>
-    </div>
-    <div class="usersRank">
-    <svg
-      class="starImg"
-      xmlns="http://www.w3.org/2000/svg"
-      width="3em"
-      height="3em"
-      viewBox="0 0 24 24">
-      <path
-        fill="#C4BFBF"
-        d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"
-      />
-    </svg>
-    <div class="rankersInfo">
-    <img class="rankersImg" src="/public/huipark.jpg"/> <div class="rankersName">${
-      Rankings[4].rankersName
-    }</div>
-     </div>
-  </div>
   </div>
   <div class="usersHistoryBody">
-      ${histories
-        .map(
-          (history, index) => `
-            <div class="usersHistory">
-                <div class="recentPlayersImg">
-                     <div class="recentPlayer1Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-                    <div class="recentPlayer2Img"><img class="recentPlayerImg" src="/public/huipark.jpg"/></div>
-                </div>
-                <div class="versus">
-                  ${history.player1} VS ${history.player2}
-                </div>
-                <div class="resultScore">
-                <text style="color :${
-                  history.player1Score > history.player2Score
-                    ? 'black'
-                    : 'white'
-                }">${history.player1Score}</text>
-                :
-                <text style="color : ${
-                  history.player2Score > history.player1Score
-                    ? 'black'
-                    : 'white'
-                }">${history.player2Score}<text/></div>
-               <div class="gameDate">${history.date}</div>
-               </div>
-               ${index === 9 ? '' : '<div class="line"></div>'}
-
-      `,
-        )
-        .join('')}
   </div>
   <div class="playgameDiv">
     <div class="tournamentButton"><text class="tournamentButtonText">tournament</text><img class="tournamentSvg" src="/public/tournament.svg
@@ -282,7 +158,117 @@ export default class extends AbstractView {
 		`;
   }
 
+  ///nickname이랑 img player1 바꿔!
+  updateHistory() {
+    const usersHistoryBody = document.querySelector('.usersHistoryBody');
+    usersHistoryBody.innerHTML = `      ${
+      this.game.games.length
+        ? this.game.games
+            .map(
+              (game, index) => `
+          <div class="usersHistory">
+              <div class="recentPlayersImg">
+                   <div class="recentPlayer1Img"><img class="recentPlayerImg" src=${
+                     game.player2.player_profile_img
+                   }/></div>
+                  <div class="recentPlayer2Img"><img class="recentPlayerImg" src=${
+                    game.player2.player_profile_img
+                  }/></div>
+              </div>
+              <div class="versus">
+                ${game.player2.nickname} VS ${game.player2.nickname}
+              </div>
+              <div class="resultScore">
+              <text style="color :${
+                game.player1_score > game.player2_score ? 'black' : 'white'
+              }">${game.player1_score}</text>
+              &nbsp;:&nbsp;
+              <text style="color : ${
+                game.player2_score > game.player1_score ? 'black' : 'white'
+              }">${game.player2_score}<text/></div>
+             <div class="gameDate">${game.date}</div>
+             </div>
+             ${
+               index === this.game.games.length - 1
+                 ? ''
+                 : '<div class="line"></div>'
+             }
+
+    `,
+            )
+            .join('')
+        : ''
+    }`;
+  }
+
+  updateRanking() {
+    const usersRankBody = document.querySelector('.usersRankBody');
+    console.log(this.game);
+    usersRankBody.innerHTML = `${
+      this.game.ranking.length !== 0
+        ? this.game.ranking
+            .map(
+              (rank, index) => `
+    <div class="usersRank">
+    <svg class="starImg" xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 24 24">
+    <path fill="black" d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"/>
+    <text x="49%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="8">${
+      index + 1
+    }</text>
+</svg>
+    <div class="rankersInfo">
+      <img class="rankersImg" data-id='${rank.id}' src=${rank.profile_img}/>
+      <div class="rankersName">${rank.nickname}</div>
+    </div>
+  </div>
+    `,
+            )
+            .join('')
+        : ''
+    }`;
+    this.bindUpadteRanking();
+  }
+
+  bindUpadteRanking() {
+    const rankersImgs = document.querySelectorAll('.rankersImg');
+    rankersImgs.forEach(rankImg => {
+      rankImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        console.log(id);
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+      });
+    });
+  }
+
+  async gameInfo() {
+    const getGame = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/game/', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await getGame();
+          } else throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          this.game = data.data;
+        }
+      } catch (error) {
+        console.log('get Game error', error);
+      }
+    };
+    await getGame();
+  }
+
   async afterRender() {
+    await this.gameInfo();
+    this.updateRanking();
+    this.updateHistory();
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
@@ -291,7 +277,6 @@ export default class extends AbstractView {
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
     await checkConnectionSocket();
-
     console.log(this.user);
     console.log('ACCESS = ', getToken());
     console.log('REFRESH', sessionStorage.getItem('refresh_token'));

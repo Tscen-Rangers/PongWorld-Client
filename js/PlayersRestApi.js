@@ -19,7 +19,9 @@ export const userProfileData = async (id, type, all) => {
         if (res.status === 401) {
           await refreshAccessToken();
           return await getUserProfile();
-        } else throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          throw new Error(`Server responded with status: ${res.status}`);
+        }
       } else {
         const data = await res.json();
         console.log(data.data);

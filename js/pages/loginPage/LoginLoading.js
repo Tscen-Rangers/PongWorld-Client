@@ -73,7 +73,7 @@ export default class extends AbstractView {
   async afterRender() {
     setSignUpCompleted(false);
     const userData = await this.getUserData();
-    console.log(userData);
+    // console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
     connectionSocketConnect();
     if (userData.is_new_user) window.history.pushState(null, null, '/signup');
