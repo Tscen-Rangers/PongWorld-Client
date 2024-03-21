@@ -3,11 +3,11 @@ import {router} from './route.js';
 let accessToken = '';
 
 export const setToken = token => {
-  accessToken = token;
+  sessionStorage.setItem('access_token', token); // 세션 스토리지에 액세스 토큰 저장 TODO: check 필요
 };
 
 export const getToken = () => {
-  return accessToken;
+  return sessionStorage.getItem('access_token'); // 세션 스토리지에서 액세스 토큰 가져오기 TODO: check 필요
 };
 
 export const setRefreshToken = token => {

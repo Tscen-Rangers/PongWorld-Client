@@ -105,9 +105,9 @@ export default class extends AbstractView {
           </form>
         </div>
         <div id="myPageBtnsSection">
-          <button class="myPageSettingBtns">Two-factor authentication</button>
-          <button class="myPageSettingBtns">logout</button>
-          <button class="myPageSettingBtns">delete account</button>
+          <button id="twoFactorAuthButton" class="myPageSettingBtns">Two-factor authentication</button>
+          <button id="logoutButton" class="myPageSettingBtns">logout</button>
+          <button id="deleteAccountButton" class="myPageSettingBtns">delete account</button>
         </div>
         <button id="myPageSettingUpdateBtn">update</button>
       </div>
@@ -303,6 +303,42 @@ export default class extends AbstractView {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     this.updateUserProfile();
     this.myPageSettingModalEvent();
+    const accessToken = getToken();
+    
+    // Two-factor authentication 버튼에 대한 이벤트 리스너 추가
+    const twoFactorAuthButton = document.querySelector('#twoFactorAuthButton');
+    twoFactorAuthButton.addEventListener('click', function() {
+        // 인증 페이지로 리다이렉트
+        window.location.href = './verify_code.html';
+    });
+
+    // Delete account 버튼에 대한 이벤트 리스너 추가
+    const deleteAccountButton = document.querySelector('#deleteAccountButton');
+    deleteAccountButton.addEventListener('click', async () => {
+        const confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+        if (confirmed) {
+            try {
+                const response = await fetch('http://localhost:8000/tcen-auth/delete/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                });
+                if (response.ok) {
+                    alert('Account deleted successfully.');
+                    // 여기에 계정 삭제 후 처리 로직 추가, 예: 로그아웃, 홈페이지로 리다이렉트 등
+                    window.location.href = 'http://localhost:5500'; 
+                } else {
+                    console.error('Failed to delete account.');
+                    alert('Failed to delete account.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the account.');
+            }
+        }
+    });
   }
   
   async socketEventHandler(message) {

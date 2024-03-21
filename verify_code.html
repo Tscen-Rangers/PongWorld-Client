@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Your Code</title>
+</head>
+<body>
+    <h1>Verify Your Authentication Code</h1>
+    <p style="color: red" id="error"></p>
+    <form id="verifyCodeForm">
+        <label for="code">Enter your authentication code:</label>
+        <input type="text" id="code" name="code" required />
+        <!-- 이메일 발송 버튼 추가 -->
+        <button id="sendEmailButton">Send Authentication Email</button>
+        <button type="submit">Verify</button>
+    </form>
+
+    <!-- 분리된 JavaScript 파일을 모듈로 불러옵니다. 경로는 실제 프로젝트 구조에 맞게 조정해야 합니다. -->
+    <script type="module" src="./js/pages/two_factor/verify_code.js"></script>
+</body>
+</html>
