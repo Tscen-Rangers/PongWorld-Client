@@ -170,8 +170,8 @@ export default class extends AbstractView {
         </div>
         <div class="stateUpdate">
         <text class="stateUpdateTitle">Your updates</text>
-        <div class="scoreUpdate">score<img src="/public/up.svg"/><text id="score">1024<text></div>
-        <div class="rankingUpdate">ranking<img src="/public/down.svg"/><text id="ranking">5<text></div>
+        <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"/><text id="score">1024<text></div>
+        <div class="rankingUpdate">ranking<img id="rankingChange" src="/public/down.svg"/><text id="ranking">5<text></div>
         </div>
         <a class="goHomeBtn" data-spa href="/home">
           go home
@@ -183,7 +183,6 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
-    // console.log(coordinate);
     qws.send({
       command: 'move_paddle',
       y_coordinate: coordinate,
@@ -340,6 +339,13 @@ export default class extends AbstractView {
     const $gameResultModalContainer = document.querySelector(
       '.gameResultModalContainer',
     );
+
+    const $winnerImg = document.querySelector('.winnerImg');
+    const $score = document.querySelector('#score');
+    const $ranking = document.querySelector('#ranking');
+    const $scoreChange = document.querySelector('#scoreChange');
+    const $rankingChange = document.querySelector('#rankingChange');
+
     this.myPingpongStick = myPingpongStick;
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
@@ -373,9 +379,26 @@ export default class extends AbstractView {
       } else if (message.type === 'PLAYER2_GET_SCORE') {
         $player2Score.innerHTML = message.data.score;
       } else if (message.type === 'GAME_OVER') {
+        $winnerImg.src = message.data.winner.player_profile_img;
+        $score.innerHTML = message.data.new_rating[this.myPosition].new;
+        console.log(message.data.new_rating[this.myPosition]);
+        console.log(message.data.new_ranking[this.myPosition]);
+        $scoreChange.src =
+          message.data.new_rating[this.myPosition].difference > 0
+            ? '/public/up.svg'
+            : message.data.new_rating[this.myPosition].difference < 0
+            ? '/public/down.svg'
+            : '/public/equal.svg';
+        $ranking.innerHTML = message.data.new_ranking[this.myPosition].new;
+        $rankingChange.src =
+          message.data.new_ranking[this.myPosition].difference > 0
+            ? '/public/up.svg'
+            : message.data.new_ranking[this.myPosition].difference < 0
+            ? '/public/down.svg'
+            : '/public/equal.svg';
         $gameResultModalContainer.classList.add('active');
       } else {
-        console.log(message);
+        // console.log(message);
       }
     });
   }

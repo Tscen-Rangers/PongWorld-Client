@@ -181,9 +181,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* visibility: hidden;
+  visibility: hidden;
   transition: 0.5s;
-  opacity: 0; */
+  opacity: 0;
 }
 
 .gameResultModalContainer.active {
