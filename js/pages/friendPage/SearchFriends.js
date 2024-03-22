@@ -55,8 +55,8 @@ export default class extends AbstractView {
               (user, index) => `
         <div class="friendList" key=${index}>
           <div class="friendProfile">
-            <div class="friendProfileImg">
-            <img class="profileImg" data-id= '${user.id}' src=${
+            <div class="friendProfileImg" >
+            <img class="profileImg"  data-id='${user.id}' src=${
                 user.profile_img
               }/>
             ${
@@ -65,7 +65,7 @@ export default class extends AbstractView {
                 : ''
             }
             </div>
-            <div class="friendname">${user.nickname}</div>
+            <div class="friendname"  data-id='${user.id}'>${user.nickname}</div>
           </div>
             <div class="searchOptionBtns">  
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
@@ -121,10 +121,19 @@ export default class extends AbstractView {
     //     confirmModal.setAttribute('data-key', index);
     //   });
     // });
-    const profileImgs = document.querySelectorAll('.profileImg');
     const $allHistoryBtn = document.querySelector('.allHistoryBtn');
+    const profileImgs = document.querySelectorAll('.profileImg');
     profileImgs.forEach(profileImg => {
       profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
+    const friendNames = document.querySelectorAll('.friendname');
+    friendNames.forEach(friendName => {
+      friendName.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');

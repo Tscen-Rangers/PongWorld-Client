@@ -50,7 +50,7 @@ export default class extends AbstractView {
         <div class="friendProfileImg">
         <img class="profileImg" src=${user.blocked.profile_img}/>
         </div>
-        <div class="friendname">${user.blocked.nickname}</div>
+        <div class="friendname" >${user.blocked.nickname}</div>
       </div>
       <text class="blockText" data-key="${index}">unblock</text>
     </div>
