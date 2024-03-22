@@ -203,13 +203,12 @@ export default class extends AbstractView {
 
   updateRanking() {
     const usersRankBody = document.querySelector('.usersRankBody');
-    console.log(this.game);
     usersRankBody.innerHTML = `${
       this.game.ranking.length !== 0
         ? this.game.ranking
             .map(
               (rank, index) => `
-    <div class="usersRank">
+    <div class="usersRank" data-id='${rank.id}'>
     <svg class="starImg" xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 24 24">
     <path fill="black" d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"/>
     <text x="49%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="8">${
@@ -217,7 +216,7 @@ export default class extends AbstractView {
     }</text>
 </svg>
     <div class="rankersInfo">
-      <img class="rankersImg" data-id='${rank.id}' src=${rank.profile_img}/>
+      <img class="rankersImg" src=${rank.profile_img}/>
       <div class="rankersName">${rank.nickname}</div>
     </div>
   </div>
@@ -230,11 +229,10 @@ export default class extends AbstractView {
   }
 
   bindUpadteRanking() {
-    const rankersImgs = document.querySelectorAll('.rankersImg');
-    rankersImgs.forEach(rankImg => {
-      rankImg.addEventListener('click', e => {
-        const id = e.target.dataset.id;
-        console.log(id);
+    const usersRanks = document.querySelectorAll('.usersRank');
+    usersRanks.forEach(usersRank => {
+      usersRank.addEventListener('click', e => {
+        const id = e.currentTarget.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');
       });

@@ -4,7 +4,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  text-shadow: 1px 2.3px 2px grey;
+  /* text-shadow: 1px 2.3px 2px grey; */
 }
 
 #myPageSettingBtn {
@@ -39,18 +39,19 @@
 
 .profile-container {
   margin: 15 auto;
-  padding: 20px;
+  /* padding: 20px; */
   width: 90%;
   display: flex; /* 컨테이너 내의 아이템들을 가로로 정렬합니다. */
+  flex-direction: column;
   align-items: center; /* 아이템들을 세로 방향으로 중앙에 위치시킵니다. */
 }
 
 .profile-string {
   display: flex; /* 내부 요소들을 유연하게 배치 */
-  flex-direction: column; /* 요소들을 세로로 배치 */
+  flex-direction: row; /* 요소들을 세로로 배치 */
   width: 100%; /* 부모 요소의 전체 너비 사용 */
-  padding: 20px;
-  margin: 15px;
+  padding: 20px 0px;
+  /* margin: 15px 0px; */
   margin-left: 0;
   box-sizing: border-box;
 }
@@ -75,21 +76,28 @@
 
 .profile-name {
   margin-bottom: 10px;
-  margin-left: 20px;
-  font-size: 30px;
+  padding-top: 25px;
+  box-sizing: border-box;
+  font-size: 2rem;
+  font-weight: bold;
+  color: grey;
   white-space: nowrap;
 }
 
 .profile-card {
+  display: flex;
   position: relative;
-  padding: 20px;
-  border-radius: 10px;
+  height: 50%;
+  padding: 10px;
+  align-self: flex-end;
+  /* background-color: red; */
+  justify-content: center;
   align-items: center;
-  width: 90%;
+  border-radius: 5px;
+  width: 100%;
   margin-left: 20px;
   min-height: 55px;
   color: rgb(0, 0, 0);
-
   &::before {
     content: '';
     position: absolute;
@@ -105,9 +113,12 @@
 }
 
 .profile-card p {
+  display: flex;
+  /* justify-content: center; */
   font-size: 1.5rem;
   word-break: break-all;
-  text-align: center;
+  color: rgba(0, 0, 0, 0.7);
+  /* text-align: center; */
   margin-bottom: 10px;
 }
 
@@ -116,7 +127,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   width: 90%; /* 부모 요소의 전체 너비 사용 */
-  padding: 20px;
+  padding: 0 20px;
   margin: 15px auto;
   position: relative;
 
@@ -138,9 +149,10 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* 가로 방향으로 중앙 정렬 */
-  margin: 10px; /* 필요에 따라 조정 */
-  padding: 10px;
+  margin: 10px;
+  padding: 10px 0px;
   font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .stat-title {
@@ -152,7 +164,7 @@
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: white;
   text-align: center; /* 텍스트도 중앙 정렬 */
   width: 100%;

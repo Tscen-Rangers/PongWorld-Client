@@ -126,8 +126,8 @@ export default class extends AbstractView {
           <svg
             class="crownSvg"
             xmlns="http://www.w3.org/2000/svg"
-            width="3.2em"
-            height="2.8em"
+            width="3em"
+            height="2.5em"
             viewBox="0 0 20 20">
             <g fill="black">
               <g opacity="0.2">
@@ -160,7 +160,12 @@ export default class extends AbstractView {
           </svg>
           <img class="winnerImg" src="/public/huipark.jpg" />
         </div>
-        <a class="goHomeBtn" href="/home">
+        <div class="stateUpdate">
+        <text class="stateUpdateTitle">Your updates</text>
+        <div class="scoreUpdate">score<text id="score">1024<text></div>
+        <div class="rankingUpdate">ranking<text id="ranking">5<text></div>
+        </div>
+        <a class="goHomeBtn" data-spa href="/home">
           go home
         </a>
       </div>
