@@ -35,15 +35,6 @@ function convertServerPositionToScreenPosition(serverX, serverY) {
   return [screenX, screenY];
 }
 
-const player1 = {
-  name: 'jimpark',
-  totalScore: 0,
-};
-const player2 = {
-  name: 'huipark',
-  totalScore: 0,
-};
-
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -214,7 +205,6 @@ export default class extends AbstractView {
           if (isMovingDown) newPosition = Math.min(newPosition + 5, this.maxY);
 
           this.update(newPosition);
-          this.myPingpongStick.style.top = `${newPosition}px`;
           this.animationFrameRequest = requestAnimationFrame(animate);
         } else {
           cancelAnimationFrame(this.animationFrameRequest);
@@ -398,7 +388,7 @@ export default class extends AbstractView {
             : '/public/equal.svg';
         $gameResultModalContainer.classList.add('active');
       } else {
-        // console.log(message);
+        console.log(message);
       }
     });
   }
