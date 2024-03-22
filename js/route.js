@@ -18,6 +18,8 @@ const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
 
+let currentView = null;
+
 const routes = [
   {
     path: '/404',
@@ -147,10 +149,16 @@ export const router = async () => {
 
   seletedNavStyle(match.route.path);
 
+  if (currentView && typeof currentView.cleanUp === 'function') {
+    console.log('이벤트 지움!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
+    currentView.cleanUp();
+  }
+
   // 일치하는 route에서 인스턴스 생성
   const view = new match.route.view(getParams(match));
   document.querySelector('#app').innerHTML = await view.getHtml();
   view.afterRender();
+  currentView = view;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
