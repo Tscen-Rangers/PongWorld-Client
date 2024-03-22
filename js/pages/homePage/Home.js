@@ -169,14 +169,14 @@ export default class extends AbstractView {
           <div class="usersHistory">
               <div class="recentPlayersImg">
                    <div class="recentPlayer1Img"><img class="recentPlayerImg" src=${
-                     game.player2.player_profile_img
+                     game.player1.player_profile_img
                    }/></div>
                   <div class="recentPlayer2Img"><img class="recentPlayerImg" src=${
                     game.player2.player_profile_img
                   }/></div>
               </div>
               <div class="versus">
-                ${game.player2.nickname} VS ${game.player2.nickname}
+                ${game.player1.nickname} VS ${game.player2.nickname}
               </div>
               <div class="resultScore">
               <text style="color :${
