@@ -210,11 +210,27 @@ document.addEventListener('DOMContentLoaded', () => {
               JSON.parse(sessionStorage.getItem('user')).nickname
             ) {
               sessionStorage.setItem('myPosition', 'player1');
+              sessionStorage.setItem(
+                'gameMyInfo',
+                JSON.stringify(msg.data.player1),
+              );
+              sessionStorage.setItem(
+                'gameOpponentInfo',
+                JSON.stringify(msg.data.player2),
+              );
               sessionStorage.setItem('opponentsPosition', 'player2');
               $opponentMatchingImg.src =
                 msg.data.player2.info.player_profile_img;
             } else {
               sessionStorage.setItem('myPosition', 'player2');
+              sessionStorage.setItem(
+                'gameMyInfo',
+                JSON.stringify(msg.data.player2),
+              );
+              sessionStorage.setItem(
+                'gameOpponentInfo',
+                JSON.stringify(msg.data.player1),
+              );
               sessionStorage.setItem('opponentsPosition', 'player1');
               $opponentMatchingImg.src =
                 msg.data.player1.info.player_profile_img;

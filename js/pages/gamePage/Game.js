@@ -2,14 +2,22 @@ import AbstractView from '../../AbstractView.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
-import DirectChat from '../chatPage/DirectChat.js';
 
 let isMovingUp = false;
 let isMovingDown = false;
 
+function checkQuickMathchSocket() {
+  if (!qws.getWS()) {
+    location.href = 'http://127.0.0.1:5500/home';
+  }
+}
+
 function convertClientPositionToServerPosition(clientY) {
-  const serverY = (clientY / this.tableHeight) * 490;
-  return serverY;
+  return (clientY / this.tableHeight) * 490;
+}
+
+function convertServerPositionToClientPosition(y) {
+  return (y * this.tableHeight) / 490 + this.centerY + 'px';
 }
 
 function convertServerPositionToScreenPosition(serverX, serverY) {
@@ -18,27 +26,6 @@ function convertServerPositionToScreenPosition(serverX, serverY) {
 
   return [screenX, screenY];
 }
-
-// function convertServerPositionToScreenPosition(serverX, serverY) {
-//   // 서버 좌표에서 클라이언트 화면 좌표로 변환
-//   // 서버의 x 좌표는 [-340, 340], y 좌표는 [-245, 245] 범위를 갖습니다.
-//   // 이를 클라이언트 화면의 크기에 맞추어 변환합니다.
-
-//   // 먼저 서버 좌표를 [0, 1]의 비율로 변환
-//   const normalizedX = (serverX + 340) / 680; // [-340, 340] -> [0, 1]
-//   const normalizedY = (serverY + 245) / 490; // [-245, 245] -> [0, 1]
-
-//   // 정규화된 비율을 사용하여 클라이언트 화면의 픽셀 좌표로 변환
-//   const screenX = normalizedX * this.tableWidth;
-//   const screenY = normalizedY * this.tableHeight;
-
-//   // 클라이언트의 탁구대 중앙을 (0,0)으로 설정하기 위해
-//   // y 좌표의 경우 클라이언트 화면 높이의 절반을 기준으로 조정할 필요가 있습니다.
-//   // 하지만 이미 [-245, 245] -> [0, 1]로 정규화하고, 그 비율을 클라이언트 화면 크기에 맞춰 변환했기 때문에
-//   // 이 과정은 중앙을 기준으로 이미 조정된 것입니다.
-
-//   return [screenX, screenY];
-// }
 
 const player1 = {
   name: 'jimpark',
@@ -53,30 +40,53 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
     this.setTitle('Game');
+    this.pingpongTable = null;
     this.myPingpongStick = null;
     this.centerY = null;
+    this.maxY = null;
     this.gameOption = JSON.parse(sessionStorage.getItem('gameOption'));
+    this.user = JSON.parse(sessionStorage.getItem('user'));
+    this.myInfo = JSON.parse(sessionStorage.getItem('gameMyInfo'));
+    this.opponentInfo = JSON.parse(sessionStorage.getItem('gameOpponentInfo'));
+    this.myPosition = sessionStorage.getItem('myPosition');
     this.tableWeigth = null;
     this.tableHeight = null;
+    //따로 this binding을 해주는 이유는 이벤트 리스너로 등록된 함수는 이벤트가 발생한 DOM 요소를 가르켜서 예상치 못한 동작을 해서 추가해줌
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
   }
+
   async getHtml() {
     return `
     <div class="gameBody">
     <div class="playingUserBody">
       <div class="playingUserInfo">
-        <div class="playingUserName">${player1.name}</div>
+        <div class="playingUserName">${
+          this.myPosition === 'player1'
+            ? this.myInfo.info.nickname
+            : this.opponentInfo.info.nickname
+        }</div>
         <div class="playingUserImage">
-          <img class="player1Img" src="/public/huipark.jpg" />
+          <img class="player1Img" src=${
+            this.myPosition === 'player1'
+              ? this.myInfo.info.player_profile_img
+              : this.opponentInfo.info.player_profile_img
+          } />
         </div>
         <div class="playingUserTotalScore">
           score
-          <div class="player1TotalScore">1231</div>
+          <div class="player1TotalScore">${
+            this.myPosition === 'player1'
+              ? this.myInfo.info.total_score
+              : this.opponentInfo.info.total_score
+          } </div>
         </div>
       </div>
     </div>
     <div class="pingpongBody">
       <div class="gameScore">
-        <text class="plsyer1Score">2</text>:<text class="player2Score">3</text>
+        <text class="player1Score">0</text>:<text class="player2Score">0</text>
       </div>
       <div class="pingpongTable">
         <img class="pongworldImg" src="/public/pongworld.png" />
@@ -87,13 +97,25 @@ export default class extends AbstractView {
     </div>
     <div class="playingUserBody">
       <div class="playingUserInfo">
-        <div class="playingUserName">${player2.name}</div>
+        <div class="playingUserName">${
+          this.myPosition === 'player2'
+            ? this.myInfo.info.nickname
+            : this.opponentInfo.info.nickname
+        }</div>
         <div class="playingUserImage">
-          <img class="player2Img" src="/public/huipark.jpg" />
+          <img class="player2Img" src=${
+            this.myPosition === 'player2'
+              ? this.myInfo.info.player_profile_img
+              : this.opponentInfo.info.player_profile_img
+          }  />
         </div>
         <div class="playingUserTotalScore">
           score
-          <div class="player2TotalScore">13000</div>
+          <div class="player2TotalScore">${
+            this.myPosition === 'player2'
+              ? this.myInfo.info.total_score
+              : this.opponentInfo.info.total_score
+          }</div>
         </div>
       </div>
     </div>
@@ -165,20 +187,7 @@ export default class extends AbstractView {
     });
   }
 
-  onMouseMove(maxY) {
-    if (this.gameOption.control === 'mouse') {
-      document.addEventListener('mousemove', event => {
-        const mouseY = event.clientY - 150;
-        this.myPingpongStick.style.top =
-          Math.min(
-            Math.max(this.myPingpongStick.offsetHeight / 2, mouseY),
-            maxY,
-          ) + 'px';
-      });
-    }
-  }
-
-  animatePaddleMovement(maxY) {
+  animatePaddleMovement() {
     if (!this.animationFrameRequest) {
       const animate = () => {
         if (isMovingUp || isMovingDown) {
@@ -190,7 +199,7 @@ export default class extends AbstractView {
               newPosition - 5,
               this.myPingpongStick.offsetHeight / 2,
             );
-          if (isMovingDown) newPosition = Math.min(newPosition + 5, maxY);
+          if (isMovingDown) newPosition = Math.min(newPosition + 5, this.maxY);
 
           this.update(newPosition);
           this.myPingpongStick.style.top = `${newPosition}px`;
@@ -204,19 +213,41 @@ export default class extends AbstractView {
     }
   }
 
-  onKeyboardMove(maxY) {
-    let coor = 0;
+  handleMouseMove(e) {
+    const mouseY = e.clientY - this.pingpongTable.getBoundingClientRect().top;
+    const coordinate = Math.min(
+      Math.max(this.myPingpongStick.offsetHeight / 2, mouseY),
+      this.maxY,
+    );
+    this.myPingpongStick.style.top = coordinate + 'px';
+    this.update(coordinate);
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'ArrowUp') isMovingUp = true;
+    else if (e.key === 'ArrowDown') isMovingDown = true;
+    this.animatePaddleMovement(this.maxY);
+  }
+
+  handleKeyUp(e) {
+    if (e.key === 'ArrowUp') isMovingUp = false;
+    else if (e.key === 'ArrowDown') isMovingDown = false;
+  }
+
+  addEventListeners() {
+    document.addEventListener('keyup', this.handleKeyUp);
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  onMouseMove() {
+    if (this.gameOption.control === 'mouse') {
+      document.addEventListener('mousemove', this.handleMouseMove);
+    }
+  }
+
+  onKeyboardMove() {
     if (this.gameOption.control === 'keyboard') {
-      const style = window.getComputedStyle(this.myPingpongStick);
-      document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowUp') isMovingUp = true;
-        else if (e.key === 'ArrowDown') isMovingDown = true;
-        this.animatePaddleMovement(maxY);
-      });
-      document.addEventListener('keyup', e => {
-        if (e.key === 'ArrowUp') isMovingUp = false;
-        else if (e.key === 'ArrowDown') isMovingDown = false;
-      });
+      this.addEventListeners();
 
       // setInterval(() => {
       //   if (isMovingUp) {
@@ -226,20 +257,19 @@ export default class extends AbstractView {
       //     );
       //     this.update(coor);
       //   } else if (isMovingDown) {
-      //     coor = Math.min(parseInt(style.top) + 30, maxY);
+      //     coor = Math.min(parseInt(style.top) + 30, this.maxY);
       //     this.update(coor);
       //   }
-      // }, 1000 / 40); // 60프레임으로 설정
+      // }, 1000 / 60); // 60프레임으로 설정
     }
   }
 
   checkControl() {
-    const pingpongTable = document.querySelector('.pingpongTable');
-    const maxY =
-      pingpongTable.clientHeight - this.myPingpongStick.clientHeight / 2;
+    this.maxY =
+      this.pingpongTable.clientHeight - this.myPingpongStick.clientHeight / 2;
 
-    this.onMouseMove(maxY);
-    this.onKeyboardMove(maxY);
+    this.onMouseMove();
+    this.onKeyboardMove();
   }
 
   updateBallPosition(ballPosition) {
@@ -248,17 +278,36 @@ export default class extends AbstractView {
       ballPosition[0],
       ballPosition[1],
     );
-    // 854.6470588235294 497.7612244897959
-    // 854.6470588235295 497.7612244897959
-
-    console.log(x, y);
     if (ball) {
       ball.style.left = `${x}px`;
       ball.style.top = `${y}px`;
     }
   }
 
+  endGameEventHandler() {
+    const $goHomeBtn = document.querySelector('.goHomeBtn');
+
+    $goHomeBtn.addEventListener('click', e => {
+      qws.send({
+        command: 'end_game',
+      });
+    });
+  }
+
+  cleanUpEvent() {
+    document.removeEventListener('keyup', this.handleKeyUp);
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('mousemove', this.handleMouseMove);
+  }
+
+  cleanUp() {
+    this.cleanUpEvent();
+    qws.close();
+  }
+
   afterRender() {
+    checkQuickMathchSocket();
+
     this.sendStick(0);
     const $battleModalContainer = document.querySelector(
       '.battleModalContainer',
@@ -270,19 +319,48 @@ export default class extends AbstractView {
     const opponentPingpongStick = document.querySelector(
       `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
     );
-    const table = document.querySelector('.pingpongTable');
+    this.pingpongTable = document.querySelector('.pingpongTable');
+    const $player1Score = document.querySelector('.player1Score');
+    const $player2Score = document.querySelector('.player2Score');
+    const $gameResultModalContainer = document.querySelector(
+      '.gameResultModalContainer',
+    );
     this.myPingpongStick = myPingpongStick;
-    this.tableWidth = table.offsetWidth;
-    this.tableHeight = table.offsetHeight;
+    this.tableWidth = this.pingpongTable.offsetWidth;
+    this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
 
     this.checkControl();
+    this.endGameEventHandler();
 
     qws.onMessage(message => {
-      console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);
+      } else if (
+        this.myPosition === 'player1' &&
+        message.type === 'CHANGE_PLAYER2_PADDLE_POSTITION'
+      ) {
+        opponentPingpongStick.style.top =
+          convertServerPositionToClientPosition.bind(this)(
+            message.data.position[1],
+          );
+      } else if (
+        this.myPosition === 'player2' &&
+        message.type === 'CHANGE_PLAYER1_PADDLE_POSTITION'
+      ) {
+        opponentPingpongStick.style.top =
+          convertServerPositionToClientPosition.bind(this)(
+            message.data.position[1],
+          );
+      } else if (message.type === 'PLAYER1_GET_SCORE') {
+        $player1Score.innerHTML = message.data.score;
+      } else if (message.type === 'PLAYER2_GET_SCORE') {
+        $player2Score.innerHTML = message.data.score;
+      } else if (message.type === 'GAME_OVER') {
+        $gameResultModalContainer.classList.add('active');
+      } else {
+        console.log(message);
       }
     });
   }

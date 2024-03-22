@@ -242,6 +242,8 @@ export default class extends AbstractView {
   }
 
   async gameInfo() {
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     const getGame = async () => {
       try {
         const res = await fetch('http://127.0.0.1:8000/game/', {
