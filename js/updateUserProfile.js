@@ -21,28 +21,47 @@ const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
 const $divide = document.querySelector('.divide');
 
 export const updateGameHistory = gameHistory => {
-  if (gameHistory !== 'No game') {
-    $userProfileHistory.innerHTML = `
-    <div class="userProfile-match">
-    <img
-      src="/public/huipark.jpg"
-      class="userProfile-player-image"
-      alt="Player 1 Image" />
-    <img
-      src="/public/huipark.jpg"
-      class="userProfile-player-image"
-      alt="Player 2 Image" />
-    <span class="userProfile-players">hacho VS jimpark</span>
-    <span class="userProfile-score"
-      ><span class="userProfile-score-first">3</span>:2</span
-    >
-    <span class="userProfile-result">win</span>
-    <span class="userProfile-time-ago">2 days ago</span>
-  </div>`;
-  } else {
-    $userProfileHistory.innerHTML =
-      '<div style="align-self:center; font-size:1.3rem; color:grey">No game records found</div>';
-  }
+  $userProfileHistory.innerHTML = `      ${
+    gameHistory !== 'No game'
+      ? gameHistory
+          .map(
+            (game, index) => `
+            <div class="userProfile-match">
+            <div>
+            <img
+              src=${game.player1.player_profile_img}
+              class="userProfile-player-image"
+              alt="Player 1 Image"
+            />
+            <img
+              src=${game.player2.player_profile_img}
+              class="userProfile-player-image"
+              alt="Player 2 Image"
+            />
+            </div>
+            <div class="userProfile-players">${game.player1.nickname} VS ${
+              game.player2.nickname
+            }</div>
+            <div class="userProfile-score">
+              <div class="userProfile-score-first">${
+                game.player1_score
+              }</div>:${game.player2_score}
+            </div>
+            <div class="userProfile-result">${
+              game.is_win ? 'win' : 'lose'
+            }</div>
+            <div class="userProfile-time-ago">2 days ago</div>
+          </div>
+          ${
+            index !== gameHistory.length - 1
+              ? ` <div style="width:100%; height:2px; background-color:white"></div>`
+              : ''
+          }
+  `,
+          )
+          .join('')
+      : ''
+  }`;
 };
 
 export const updateFriendRequestBtn = player => {

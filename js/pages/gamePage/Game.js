@@ -135,7 +135,7 @@ export default class extends AbstractView {
             class="crownSvg"
             xmlns="http://www.w3.org/2000/svg"
             width="3em"
-            height="2.5em"
+            height="2.3em"
             viewBox="0 0 20 20">
             <g fill="black">
               <g opacity="0.2">

@@ -821,10 +821,10 @@ a {
 }
 
 .userProfileOnlineImg {
-  width: 1.6em;
+  width: 1em;
   position: absolute;
-  left: 10px;
-  bottom: 10px;
+  left: 15px;
+  bottom: 15px;
 }
 
 .userProfile-card {
@@ -955,20 +955,22 @@ a {
 }
 
 .userProfile-player-image {
-  width: 39px; /* 이미지의 너비를 69px로 설정합니다. */
-  height: 31px; /* 이미지의 높이를 61px로 설정합니다. */
-  object-fit: cover; /* 이미지가 적절히 자리를 차지하도록 설정합니다. */
-  border-radius: 40px; /* 이미지의 모서리를 둥글게 처리합니다. */
+  width: 50px; /* 이미지의 너비를 69px로 설정합니다. */
+  height: 50px; /* 이미지의 높이를 61px로 설정합니다. */
+  object-fit: cover;
+  border-radius: 50%; /* 이미지의 모서리를 둥글게 처리합니다. */
   position: relative; /* position 속성을 relative로 설정하여 위치를 조정할 수 있도록 합니다. */
-  margin-right: 10px; /* 첫 번째 이미지와 두 번째 이미지 사이의 간격을 10px로 설정합니다. */
+  /* margin-right: 2px; 첫 번째 이미지와 두 번째 이미지 사이의 간격을 10px로 설정합니다. */
 }
 
 .userProfile-match {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 10px;
+  min-height: 60px;
   z-index: 3;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.5); */
 }
 
 .userProfile-match .userProfile-player-image:first-child {
@@ -983,22 +985,21 @@ a {
 .userProfile-players,
 .userProfile-score,
 .userProfile-result {
-  font-size: 13px;
-  margin-right: 120px; /* 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
+  display: flex;
+  font-size: 1rem;
+  /* margin-right: 120px; 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
 }
 
 .userProfile-score-first {
-  color: hsla(0, 0%, 27%, 1);
+  /* color: hsla(0, 0%, 27%, 1); */
 }
 
 .userProfile-players {
-  margin-left: 30px; /* 두 번째 이미지와 텍스트 사이의 간격을 80px로 설정합니다. */
 }
 
 .userProfile-match .userProfile-time-ago {
-  margin-left: auto;
   color: hsl(0, 100%, 99%, 1);
-  font-size: 13px;
+  font-size: 1rem;
 }
 
 @media (width < 930px) {
