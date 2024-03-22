@@ -30,9 +30,7 @@ export default class extends AbstractView {
 
     $loginBtn.addEventListener('click', async e => {
       try {
-        const res = await fetch(
-          'https://b364-121-135-181-35.ngrok-free.app/tcen-auth/42-login/',
-        );
+        const res = await fetch('http://127.0.0.1:8000/tcen-auth/42-login/');
         console.log(res);
         const data = await res.json();
         console.log(data);
