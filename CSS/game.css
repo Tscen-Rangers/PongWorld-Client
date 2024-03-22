@@ -109,7 +109,7 @@
   background-color: #1eff00;
   box-shadow: 0 0 6px 2px black;
   z-index: 1;
-  transition: 0.01s;
+  transition: 0.03s;
 }
 
 .playingUserImage {

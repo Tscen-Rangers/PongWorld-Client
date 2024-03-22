@@ -20,10 +20,18 @@ function convertServerPositionToClientPosition(y) {
   return (y * this.tableHeight) / 490 + this.centerY + 'px';
 }
 
-function convertServerPositionToScreenPosition(serverX, serverY) {
-  const screenX = (serverX / 660 + 0.5) * this.tableWidth;
-  const screenY = (serverY / 490 + 0.5) * this.tableHeight;
+// function convertServerPositionToScreenPosition(serverX, serverY) {
+//   const screenX = (serverX / 660 + 0.5) * this.tableWidth;
+//   const screenY = (serverY / 490 + 0.5) * this.tableHeight;
 
+//   return [screenX, screenY];
+// }
+function convertServerPositionToScreenPosition(serverX, serverY) {
+  // 화면의 너비와 높이를 기준으로 서버 좌표를 화면 좌표로 변환
+  const screenX = (serverX * this.tableWidth) / 660; // 가정: 서버 좌표계의 최대 x값이 660
+  const screenY = (serverY * this.tableHeight) / 490; // 가정: 서버 좌표계의 최대 y값이 490
+
+  // 변환된 화면 좌표 반환
   return [screenX, screenY];
 }
 
@@ -175,7 +183,7 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
-    console.log(coordinate);
+    // console.log(coordinate);
     qws.send({
       command: 'move_paddle',
       y_coordinate: coordinate,
@@ -283,10 +291,12 @@ export default class extends AbstractView {
       ballPosition[0],
       ballPosition[1],
     );
-    if (ball) {
-      ball.style.left = `${x}px`;
-      ball.style.top = `${y}px`;
-    }
+    const ballCenterOffsetX = ball.offsetWidth / 2;
+    const ballCenterOffsetY = ball.offsetHeight / 2;
+
+    ball.style.transform = `translate(${x - ballCenterOffsetX}px, ${
+      y - ballCenterOffsetY
+    }px)`;
   }
 
   endGameEventHandler() {
