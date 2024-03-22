@@ -89,7 +89,9 @@ export default class extends AbstractView {
               ? '<img class="onlineImg" src="/public/online.png"/>'
               : ''
           }</div> 
-          <div class="friendname">${user.user.nickname}</div>
+          <div class="friendname" data-id='${user.user.id}'>${
+                user.user.nickname
+              }</div>
         </div>
         <div class="requestIcons">
         <svg class="rejectRecievedIcon" data-key='${index}' xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
@@ -134,6 +136,16 @@ export default class extends AbstractView {
     const profileImgs = document.querySelectorAll('.profileImg');
     profileImgs.forEach(profileImg => {
       profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
+    const friendNames = document.querySelectorAll('.friendname');
+    friendNames.forEach(friendName => {
+      friendName.addEventListener('click', e => {
+        console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');
@@ -282,7 +294,9 @@ export default class extends AbstractView {
              ? '<img class="onlineImg" src="/public/online.png"/>'
              : ''
          }</div> 
-         <div class="friendname">${user.user.nickname}</div>
+         <div class="friendname" data-id='${user.user.id}'>${
+                user.user.nickname
+              }</div>
        </div>
        <div class="requestIcons">
        <svg class="cancelSentIcon" data-key='${index}' xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
@@ -316,6 +330,15 @@ export default class extends AbstractView {
     const profileImgs = document.querySelectorAll('.profileImg');
     profileImgs.forEach(profileImg => {
       profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
+    const friendNames = document.querySelectorAll('.friendname');
+    friendNames.forEach(friendName => {
+      friendName.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');

@@ -771,10 +771,6 @@ a {
   opacity: 1;
 }
 .userProfileModal {
-  /* position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); */
   position: relative;
   padding: 10px;
   box-sizing: border-box;
@@ -811,7 +807,13 @@ a {
   align-items: flex-end;
   position: relative;
 }
+.userProfileImgContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
 .userProfileImg {
+  background-color: white;
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -853,7 +855,8 @@ a {
 
 .userProfileStats {
   border-radius: 20px; /* 모서리 둥글게 */
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-content: space-around; /* 내부 요소들 사이의 간격 조정 */
   width: 90%; /* 부모 요소의 전체 너비 사용 */
   padding: 20px;
@@ -1008,6 +1011,14 @@ a {
   html {
     font-size: 13px;
   }
+  .userProfileImgContainer {
+    width: 80px;
+    height: 80px;
+  }
+  .userProfileImg {
+    width: 80px;
+    height: 80px;
+  }
   #navBar {
     display: flex;
     flex-direction: column;
@@ -1045,5 +1056,38 @@ a {
   .contentsContainer {
     width: 75vw;
     margin: 0;
+  }
+}
+
+@media (width < 650px) {
+  .userProfileImgContainer {
+    width: 60px;
+    height: 60px;
+  }
+  .userProfileImg {
+    width: 60px;
+    height: 60px;
+  }
+  .userProfileStats {
+    /* height: 20%; */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding: 5px;
+  }
+  .userProfile-stat {
+    flex-direction: row;
+    margin: 0;
+    /* background-color: red; */
+    /* justify-content: flex-start; */
+  }
+  .userProfile-stat-title {
+    padding-right: 10px;
+    font-size: 1.3rem;
+  }
+  .userProfile-stat-value {
+    font-size: 1.3rem;
+  }
+  .userProfile-match-history {
+    padding: 5px;
   }
 }

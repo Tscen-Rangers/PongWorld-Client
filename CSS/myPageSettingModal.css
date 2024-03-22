@@ -4,7 +4,7 @@
 }
 
 #myPageSettingModalContainer {
-  position: absolute;
+  position: fixed;
   display: flex;
   top: 0;
   left: 0;
@@ -22,7 +22,7 @@
 }
 
 #myPageSettingModal {
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

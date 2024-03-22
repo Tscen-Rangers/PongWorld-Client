@@ -135,9 +135,9 @@ export default class extends AbstractView {
             .map(
               (user, index) => `
       <div class="friendList" key=${index}>
-      <div class="friendProfile">
+      <div class="friendProfile" >
         <div class="friendProfileImg">
-        <img data-id=${user.user.id} class="profileImg" src=${
+        <img class="profileImg"   data-id=${user.user.id}  src=${
                 user.user.profile_img
               }/>
          ${
@@ -145,7 +145,9 @@ export default class extends AbstractView {
              ? '<img class="onlineImg" src="/public/online.png"/>'
              : ''
          }</div>
-        <div class="friendname">${user.user.nickname}</div>
+        <div class="friendname"  data-id=${user.user.id} >${
+                user.user.nickname
+              }</div>
       </div>
       ${
         // user.user.is_online
@@ -242,6 +244,16 @@ battle
     const profileImgs = document.querySelectorAll('.profileImg');
     profileImgs.forEach(profileImg => {
       profileImg.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
+        // userProfileModalContainer.classList.add('active');
+      });
+    });
+    const friendNames = document.querySelectorAll('.friendname');
+    friendNames.forEach(friendName => {
+      friendName.addEventListener('click', e => {
+        console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');
