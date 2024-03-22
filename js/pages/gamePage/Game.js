@@ -140,8 +140,8 @@ export default class extends AbstractView {
         </div>
         <div class="stateUpdate">
         <text class="stateUpdateTitle">Your updates</text>
-        <div class="scoreUpdate">score<text id="score">1024<text></div>
-        <div class="rankingUpdate">ranking<text id="ranking">5<text></div>
+        <div class="scoreUpdate">score<img src="/public/up.svg"/><text id="score">1024<text></div>
+        <div class="rankingUpdate">ranking<img src="/public/down.svg"/><text id="ranking">5<text></div>
         </div>
         <a class="goHomeBtn" data-spa href="/home">
           go home
