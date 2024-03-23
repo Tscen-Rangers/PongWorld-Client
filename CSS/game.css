@@ -82,7 +82,7 @@
   right: 0;
   /* 상위 요소에 대해 중간으로 이동 후 자신의 크기 절반만큼 이동 */
   top: 50%;
-  transform: translateY(-50%);
+  /* transform: translateY(-50%); */
   /* transition: 0.05s; */
 }
 
@@ -94,7 +94,7 @@
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  /* transform: translateY(-50%); */
   /* transition: 0.05s; */
 }
 
