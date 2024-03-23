@@ -911,9 +911,10 @@ a {
 .userProfile-match-history {
   display: flex;
   position: relative;
-  flex: 1.5;
+  /* flex: 1.5; */
   flex-direction: column;
-  justify-content: space-between;
+  /* align-items: center; */
+  justify-content: space-around;
   border-radius: 20px;
   width: 90%;
   height: 100%;
@@ -966,6 +967,7 @@ a {
 .userProfile-match {
   display: flex;
   justify-content: space-between;
+  /* align-self: center; */
   align-items: center;
   padding: 10px;
   min-height: 60px;
@@ -978,7 +980,7 @@ a {
 }
 
 .userProfile-match .userProfile-player-image:last-child {
-  margin-left: -20px; /* 두 번째 이미지가 첫 번째 이미지와 겹치도록 음수 마진을 설정합니다. */
+  margin-left: -10px; /* 두 번째 이미지가 첫 번째 이미지와 겹치도록 음수 마진을 설정합니다. */
   z-index: 0; /* 두 번째 이미지가 아래로 오도록 z-index 값을 낮춥니다. */
 }
 
@@ -990,14 +992,8 @@ a {
   /* margin-right: 120px; 텍스트 요소들 사이의 간격을 15px로 설정합니다. */
 }
 
-.userProfile-score-first {
-  /* color: hsla(0, 0%, 27%, 1); */
-}
-
-.userProfile-players {
-}
-
 .userProfile-match .userProfile-time-ago {
+  display: flex;
   color: hsl(0, 100%, 99%, 1);
   font-size: 1rem;
 }
@@ -1069,6 +1065,9 @@ a {
     width: 60px;
     height: 60px;
   }
+  .userProfile-player-image-container {
+    display: none;
+  }
   .userProfileStats {
     /* height: 20%; */
     grid-template-columns: 1fr 1fr;
@@ -1077,9 +1076,6 @@ a {
   }
   .userProfile-stat {
     flex-direction: row;
-    margin: 0;
-    /* background-color: red; */
-    /* justify-content: flex-start; */
   }
   .userProfile-stat-title {
     padding-right: 10px;
@@ -1090,5 +1086,20 @@ a {
   }
   .userProfile-match-history {
     padding: 5px;
+  }
+}
+
+@media (width < 510px) {
+  .userProfile-match {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .userProfile-players,
+  .userProfile-score,
+  .userProfile-result,
+  .userProfile-time-ago {
+    justify-content: center;
   }
 }

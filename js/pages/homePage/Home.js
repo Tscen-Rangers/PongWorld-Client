@@ -197,7 +197,7 @@ export default class extends AbstractView {
     `,
             )
             .join('')
-        : ''
+        : '<div style="height:100%; text-align:center; font-size:1.4rem; color:darkgrey">No game records found</div>'
     }`;
   }
 
@@ -257,6 +257,7 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.game = data.data;
+          console.log(this.game);
         }
       } catch (error) {
         console.log('get Game error', error);

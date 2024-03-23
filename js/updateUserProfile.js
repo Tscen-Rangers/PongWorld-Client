@@ -27,7 +27,7 @@ export const updateGameHistory = gameHistory => {
           .map(
             (game, index) => `
             <div class="userProfile-match">
-            <div>
+            <div class="userProfile-player-image-container">
             <img
               src=${game.player1.player_profile_img}
               class="userProfile-player-image"
@@ -60,7 +60,7 @@ export const updateGameHistory = gameHistory => {
   `,
           )
           .join('')
-      : ''
+      : '<div style="height:100%; text-align:center;font-size:1.4rem; color:darkgrey">No game records found</div>'
   }`;
 };
 
@@ -86,6 +86,7 @@ export const updateFriendRequestBtn = player => {
 
 export const updateUserModal = (userData, all) => {
   if (all === 0) {
+    console.log(userData);
     if (userData.player.id === JSON.parse(sessionStorage.getItem('user')).id) {
       $historyWithMeBtn.style.display = 'none';
       $divide.style.display = 'none';

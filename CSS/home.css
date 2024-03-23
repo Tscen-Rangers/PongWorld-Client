@@ -81,7 +81,7 @@
 
 .usersHistory {
   display: flex;
-  min-height: 80px;
+  min-height: 90px;
   width: 100%;
   padding: 10px;
   /* background-color: pink; */
@@ -102,6 +102,7 @@
 }
 
 .recentPlayer1Img {
+  object-fit: cover;
   width: 3.8dvw;
   height: 3.8dvw;
   min-width: 40px;
@@ -112,6 +113,7 @@
   border: solid 1px white;
 }
 .recentPlayer2Img {
+  object-fit: cover;
   width: 3.8dvw;
   height: 3.8dvw;
   min-width: 40px;
