@@ -3,6 +3,7 @@ import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
 
+let y = 0;
 let isMovingUp = false;
 let isMovingDown = false;
 
@@ -50,10 +51,13 @@ export default class extends AbstractView {
     this.myPosition = sessionStorage.getItem('myPosition');
     this.tableWeigth = null;
     this.tableHeight = null;
+    this.tableRect = null;
     //따로 this binding을 해주는 이유는 이벤트 리스너로 등록된 함수는 이벤트가 발생한 DOM 요소를 가르켜서 예상치 못한 동작을 해서 추가해줌
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.currentPosY = 0;
+    this.speed = 10; // 탁구채의 이동 속도
   }
 
   async getHtml() {
@@ -181,37 +185,75 @@ export default class extends AbstractView {
   }
 
   update(coor) {
-    const y = convertClientPositionToServerPosition.bind(this)(
-      coor - this.centerY,
-    );
+    const y = this.asd(coor);
     this.sendStick(y);
-    requestAnimationFrame(() => {
-      this.myPingpongStick.style.top = coor + 'px';
-    });
+  }
+
+  // animatePaddleMovement() {
+  //   if (isMovingUp || isMovingDown) {
+  //     const style = window.getComputedStyle(this.myPingpongStick);
+  //     let newPosition = parseInt(style.top);
+
+  //     if (isMovingUp)
+  //       newPosition = Math.max(
+  //         newPosition - 5,
+  //         this.myPingpongStick.offsetHeight / 2,
+  //       );
+  //     if (isMovingDown) newPosition = Math.min(newPosition + 5, this.maxY);
+
+  //     this.myPingpongStick.style.top = newPosition + 'px';
+  //     this.update(newPosition);
+  //     this.rAF = requestAnimationFrame(this.animatePaddleMovement.bind(this));
+  //   } else {
+  //     cancelAnimationFrame(this.rAF);
+  //   }
+  // }
+
+  asd(clientY) {
+    // 클라이언트 측에서의 탁구채의 Y 위치 (translateY로 조정된 값)를 서버의 비율로 변환
+    return (clientY * 490) / this.tableHeight;
+  }
+
+  qwe(y) {
+    return (y / 490) * this.tableHeight;
   }
 
   animatePaddleMovement() {
-    if (!this.animationFrameRequest) {
+    if (!this.rAF) {
       const animate = () => {
         if (isMovingUp || isMovingDown) {
-          const style = window.getComputedStyle(this.myPingpongStick);
-          let newPosition = parseInt(style.top);
+          const myStickRect = this.myPingpongStick.getBoundingClientRect();
+          console.log('STICK TOP = ', myStickRect.top);
+          console.log('STICK BOTTOM = ', myStickRect.bottom);
+          console.log('TABLE TOP = ', this.tableRect.top);
+          console.log('TABLE BOTTOM = ', this.tableRect.bottom);
 
-          if (isMovingUp)
-            newPosition = Math.max(
-              newPosition - 5,
-              this.myPingpongStick.offsetHeight / 2,
-            );
-          if (isMovingDown) newPosition = Math.min(newPosition + 5, this.maxY);
+          if (isMovingUp) {
+            if (myStickRect.top - this.speed <= this.tableRect.top) {
+              this.currentPosY =
+                this.currentPosY - (myStickRect.top - this.tableRect.top);
+            } else this.currentPosY -= this.speed;
+          } else if (isMovingDown) {
+            if (myStickRect.bottom + this.speed >= this.tableRect.bottom) {
+              this.currentPosY =
+                this.currentPosY + (this.tableRect.bottom - myStickRect.bottom);
+            } else this.currentPosY += this.speed;
+          }
 
-          this.update(newPosition);
-          this.animationFrameRequest = requestAnimationFrame(animate);
+          // console.log('AFTER = ', myStickRect.top);
+          console.log(this.asd(this.currentPosY), this.currentPosY);
+
+          // myStickRect.top <= this.tableRect.top
+          // ? (this.currentPosY = 0)
+          this.update(this.currentPosY);
+          this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
+          this.rAF = requestAnimationFrame(animate.bind(this));
         } else {
-          cancelAnimationFrame(this.animationFrameRequest);
-          this.animationFrameRequest = null;
+          cancelAnimationFrame(this.rAF);
+          this.rAF = null;
         }
       };
-      this.animationFrameRequest = requestAnimationFrame(animate);
+      this.rAF = requestAnimationFrame(animate.bind(this));
     }
   }
 
@@ -228,7 +270,7 @@ export default class extends AbstractView {
   handleKeyDown(e) {
     if (e.key === 'ArrowUp') isMovingUp = true;
     else if (e.key === 'ArrowDown') isMovingDown = true;
-    this.animatePaddleMovement(this.maxY);
+    this.animatePaddleMovement();
   }
 
   handleKeyUp(e) {
@@ -275,17 +317,19 @@ export default class extends AbstractView {
   }
 
   updateBallPosition(ballPosition) {
-    const ball = document.getElementById('pingpongBall');
-    const [x, y] = convertServerPositionToScreenPosition.bind(this)(
-      ballPosition[0],
-      ballPosition[1],
-    );
-    const ballCenterOffsetX = ball.offsetWidth / 2;
-    const ballCenterOffsetY = ball.offsetHeight / 2;
+    requestAnimationFrame(() => {
+      // const ball = document.getElementById('pingpongBall');
+      const [x, y] = convertServerPositionToScreenPosition.bind(this)(
+        ballPosition[0],
+        ballPosition[1],
+      );
+      const ballCenterOffsetX = this.ball.offsetWidth / 2;
+      const ballCenterOffsetY = this.ball.offsetHeight / 2;
 
-    ball.style.transform = `translate(${x - ballCenterOffsetX}px, ${
-      y - ballCenterOffsetY
-    }px)`;
+      this.ball.style.transform = `translate(${x - ballCenterOffsetX}px, ${
+        y - ballCenterOffsetY
+      }px)`;
+    });
   }
 
   endGameEventHandler() {
@@ -296,6 +340,16 @@ export default class extends AbstractView {
         command: 'end_game',
       });
     });
+  }
+
+  setStickCenter() {
+    this.opponentPingpongStick.style.top = `${
+      this.opponentPingpongStick.offsetTop -
+      this.opponentPingpongStick.offsetHeight / 2
+    }px`;
+    this.myPingpongStick.style.top = `${
+      this.myPingpongStick.offsetTop - this.myPingpongStick.offsetHeight / 2
+    }px`;
   }
 
   cleanUpEvent() {
@@ -323,7 +377,13 @@ export default class extends AbstractView {
     const opponentPingpongStick = document.querySelector(
       `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
     );
+
     this.pingpongTable = document.querySelector('.pingpongTable');
+    this.tableRect = this.pingpongTable.getBoundingClientRect();
+    this.myPingpongStickTop = myPingpongStick.offsetTop;
+    this.myPingpongStick = myPingpongStick;
+    this.opponentPingpongStick = opponentPingpongStick;
+
     const $player1Score = document.querySelector('.player1Score');
     const $player2Score = document.querySelector('.player2Score');
     const $gameResultModalContainer = document.querySelector(
@@ -336,13 +396,15 @@ export default class extends AbstractView {
     const $scoreChange = document.querySelector('#scoreChange');
     const $rankingChange = document.querySelector('#rankingChange');
 
-    this.myPingpongStick = myPingpongStick;
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
 
+    this.setStickCenter();
     this.checkControl();
     this.endGameEventHandler();
+
+    this.ball = document.getElementById('pingpongBall');
 
     qws.onMessage(message => {
       if (message.type === 'BALL_POSITION') {
@@ -352,18 +414,16 @@ export default class extends AbstractView {
         this.myPosition === 'player1' &&
         message.type === 'CHANGE_PLAYER2_PADDLE_POSTITION'
       ) {
-        opponentPingpongStick.style.top =
-          convertServerPositionToClientPosition.bind(this)(
-            message.data.position[1],
-          );
+        opponentPingpongStick.style.transform = `translateY(${this.qwe(
+          message.data.position[1],
+        )}px)`;
       } else if (
         this.myPosition === 'player2' &&
         message.type === 'CHANGE_PLAYER1_PADDLE_POSTITION'
       ) {
-        opponentPingpongStick.style.top =
-          convertServerPositionToClientPosition.bind(this)(
-            message.data.position[1],
-          );
+        opponentPingpongStick.style.transform = `translateY(${this.qwe(
+          message.data.position[1],
+        )}px)`;
       } else if (message.type === 'PLAYER1_GET_SCORE') {
         $player1Score.innerHTML = message.data.score;
       } else if (message.type === 'PLAYER2_GET_SCORE') {
