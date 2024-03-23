@@ -87,26 +87,39 @@ ${this.profileInfo.player.nickname}
 <div class="match-history">
 ${
   this.profileInfo.games !== 'No game'
-    ? this.profileInfo.games.map(
-        (game, index) => `
+    ? this.profileInfo.games
+        .map(
+          (game, index) => `
 <div class="match">
     <div id="myPageMatchImg">
-      <img src="../public/huipark.jpg" class="player-image" alt="Player 1 Image" />
-      <img src="../public/huipark.jpg" class="player-image" alt="Player 2 Image" />
+      <img src=${
+        game.player1.player_profile_img
+      } class="player-image" alt="Player 1 Image" />
+      <img src=${
+        game.player2.player_profile_img
+      } class="player-image" alt="Player 2 Image" />
     </div>
-    <div id="myPageMatchResult">
-      <span class="players">huipark VS jimpark</span>
-      <span class="score">3:2</span>
-    </div>
-    <div id="myPageMatchTime">
-      <span class="result">win</span>
-      <span class="time-ago">2 days ago</span>
-    </div>
+      <div class="players">${game.player1.nickname} VS ${
+            game.player2.nickname
+          }</div>
+      <div class="score"><text style="color: ${
+        game.player1_score === 10 ? 'black' : 'white'
+      }">${game.player1_score}</text> &nbsp;: &nbsp;<text style=color: ${
+            game.player2_score === 10 ? 'black' : 'white'
+          }>${game.player2_score}</text></div>
+      <div class="result">${game.is_win ? 'win' : 'lose'}</div>
+      <div class="time-ago">${game.date}</div>
   </div>
-</div>
+  ${
+    index !== this.profileInfo.games.length - 1
+      ? ` <div style="width:100%; min-height:2px; background-color:rgba(255,255,255,0.4); box-shadow: 0px 2px 1px 1px rgba(111, 111, 111, 0.3);
+    }"></div>`
+      : ''
+  }
 `,
-      )
-    : '<div style="align-self:center; text-align:center; font-size:1.4rem; color:darkgrey">No game records found</div>'
+        )
+        .join('')
+    : '<div style="height:100%; text-align:center; font-size:1.4rem; color:darkgrey">No game records found</div>'
 }
 </div>
 </div>`;

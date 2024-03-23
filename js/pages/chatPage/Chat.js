@@ -198,7 +198,7 @@ export default class extends AbstractView {
     <div class="chatUserProfileBlur"></div>
     <div class="chatUserInfo">
       <img class="chatUserImage" data-id='${user.id}' src=${user.profile_img}/>
-      <p class="chatUserName">${user.nickname}</p>
+      <p class="chatUserName" data-id='${user.id}'>${user.nickname}</p>
     </div>
     <a class="directMsgImageContainer" href='/chat/direct/${user.id}' data-spa>
       <svg class="directMsgImage" viewBox="0 0 19 19" xmlns="http://www.w3.org/2000/svg">
@@ -211,6 +211,7 @@ export default class extends AbstractView {
     `;
 
     const chatUserImages = document.querySelectorAll('.chatUserImage');
+    const chatUserNames = document.querySelectorAll('.chatUserName');
     chatUserImages.forEach(chatUserImage => {
       // console.log(chatUserImage);
       console.log('hehe');

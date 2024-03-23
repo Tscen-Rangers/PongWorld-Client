@@ -171,8 +171,10 @@
 }
 
 .match-history {
-  display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  /* grid-template-rows: 1fr 1fr 1fr; */
   position: relative;
   border-radius: 20px;
   width: 90%; /* 부모 요소의 전체 너비 사용 */
@@ -195,10 +197,13 @@
 }
 
 .match {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  min-height: 90px;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 4px grey;
 }
 
 #myPageMatchImg {
@@ -215,10 +220,10 @@
 }
 
 .player-image {
-  width: 39px; /* 이미지의 너비를 69px로 설정합니다. */
-  height: 31px; /* 이미지의 높이를 61px로 설정합니다. */
+  width: 50px; /* 이미지의 너비를 69px로 설정합니다. */
+  height: 50px; /* 이미지의 높이를 61px로 설정합니다. */
   object-fit: cover; /* 이미지가 적절히 자리를 차지하도록 설정합니다. */
-  border-radius: 40px; /* 이미지의 모서리를 둥글게 처리합니다. */
+  border-radius: 50%; /* 이미지의 모서리를 둥글게 처리합니다. */
   position: relative; /* position 속성을 relative로 설정하여 위치를 조정할 수 있도록 합니다. */
 }
 
@@ -231,15 +236,14 @@
 }
 
 .players,
-.score,
-.result {
-  font-size: 13px;
+.score {
+  word-spacing: 5px;
 }
 
 .match .time-ago {
-  margin-left: auto;
+  /* margin-left: auto; */
   color: hsl(0, 100%, 99%, 1);
-  font-size: 13px;
+  /* font-size: 13px; */
 }
 
 @media (max-width: 768px) {
@@ -249,6 +253,10 @@
     width: 90%;
     padding: 10px;
     margin: 10px 0;
+  }
+  .player-image {
+    width: 35px;
+    height: 35px;
   }
 }
 
@@ -262,6 +270,14 @@
     margin: 0;
     flex-direction: row;
   }
+  #myPageMatchImg {
+    display: none;
+  }
+  /* .match {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  } */
 }
 
 @media (width < 486px) {
@@ -272,5 +288,18 @@
   .myPageProfileImg {
     width: 50px;
     height: 50px;
+  }
+  .match {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .players,
+  .score,
+  .result,
+  .time-ago {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
