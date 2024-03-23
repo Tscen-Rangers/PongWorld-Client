@@ -33,13 +33,25 @@ export default class extends AbstractView {
           </form>
         </div>
         <div id="myPageBtnsSection">
-          <button class="myPageSettingBtns">Two-factor authentication</button>
+          <button id="twoFactorAuthButton" class="myPageSettingBtns">Two-factor authentication</button>
           <button id="logoutBtn" class="myPageSettingBtns">logout</button>
-          <button class="myPageSettingBtns">delete account</button>
+          <button id="deleteAccountButton" class="myPageSettingBtns">delete account</button>
         </div>
         <button id="myPageSettingUpdateBtn">update</button>
       </div>
     </div>
+    </div>
+    <div id="twoFactorAuthModal" class="modal" style="display:none;">
+      <div class="twoFactorAuthContent">
+        <span class="twoFactorAuthclose">&times;</span>
+        <h2><i class="fas fa-envelope"></i> 본인확인(메일)</h2>
+        <div class="sendAndInput">
+          <input type="text" id="code" placeholder="인증 코드 입력">
+          <button id="sendEmailButton">메일 전송</button>
+        </div>
+        <button id="verifyCodeButton">인증 확인</button>
+        <p style="color: red" id="error"></p>
+      </div>
     </div>
   `;
   }
@@ -296,12 +308,114 @@ ${
     $score.innerHTML = userProfile.player.total_score;
   }
 
+  async sendEmail() {
+    const accessToken = getToken();
+    try {
+      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      if (response.ok) {
+        alert('인증 이메일이 발송되었습니다.');
+      } else {
+        console.error('이메일 발송 실패.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async verifyCode() {
+    const code = document.getElementById('code').value;
+    const accessToken = getToken();
+    try {
+      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code: code }),
+      });
+      if (response.ok) {
+        alert('인증 성공');
+        // 인증 성공 후 로직, 예: 모달 닫기
+      } else {
+        document.getElementById('error').textContent = '인증 실패';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('error').textContent = '오류 발생';
+    }
+  }
+
+  async TwoFactorAuthentication() {
+    const twoFactorAuthButton = document.querySelector('#twoFactorAuthButton');
+    const twoFactorAuthModal = document.getElementById('twoFactorAuthModal');
+    const sendEmailButton = document.getElementById('sendEmailButton');
+    const verifyCodeButton = document.getElementById('verifyCodeButton');
+    const closeModal = document.querySelector('.twoFactorAuthclose');
+  
+    twoFactorAuthButton.addEventListener('click', () => {
+      twoFactorAuthModal.style.display = 'block';
+    });
+  
+    closeModal.addEventListener('click', () => {
+      twoFactorAuthModal.style.display = 'none';
+      document.getElementById('code').value = ''; // 인증 코드 입력 필드 초기화
+      document.getElementById('error').textContent = ''; // 인증 실패 메시지 초기화
+    });
+  
+    sendEmailButton.addEventListener('click', () => {
+      this.sendEmail();
+    });
+  
+    verifyCodeButton.addEventListener('click', () => {
+      this.verifyCode();
+    });
+  }
+
+  async AccountDeletion() {
+    const deleteAccountButton = document.querySelector('#deleteAccountButton');
+    const accessToken = getToken();
+  
+    deleteAccountButton.addEventListener('click', async () => {
+      const confirmed = confirm('계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.');
+      if (confirmed) {
+        try {
+          const response = await fetch('http://localhost:8000/tcen-auth/delete/', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+          });
+          if (response.ok) {
+            alert('계정이 성공적으로 삭제되었습니다.');
+            window.location.href = 'http://localhost:5500'; // 계정 삭제 후 처리 로직
+          } else {
+            console.error('Failed to delete account.');
+            alert('이메일 인증을 완료 후 계정을 삭제 할 수 있습니다.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('계정을 삭제하는 동안 오류가 발생했습니다.');
+        }
+      }
+    });
+  }
+
   async afterRender() {
     await this.getProfile();
     this.updateMyPage();
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     // this.updateUserProfile();
     this.myPageSettingModalEvent();
+    this.TwoFactorAuthentication();
+    this.AccountDeletion();
     const logoutBtn = document.querySelector('#logoutBtn');
     logoutBtn.addEventListener('click', () => {});
   }
