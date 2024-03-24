@@ -1,7 +1,13 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, refreshAccessToken} from '../../tokenManager.js';
+import {
+  getToken,
+  refreshAccessToken,
+  removeRefreshToken,
+} from '../../tokenManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
+import {router} from '../../route.js';
+import cws from '../../WebSocket/ConnectionSocket.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -105,15 +111,15 @@ ${
 <div class="match">
     <div id="myPageMatchImg">
       <img src=${
-        game.player1.player_profile_img
+        game.player1 ? game.player1.player_profile_img : '/public/person.svg'
       } class="player-image" alt="Player 1 Image" />
       <img src=${
-        game.player2.player_profile_img
+        game.player2 ? game.player2.player_profile_img : '/public/person.svg'
       } class="player-image" alt="Player 2 Image" />
     </div>
-      <div class="players">${game.player1.nickname} VS ${
-            game.player2.nickname
-          }</div>
+      <div class="players">${
+        game.player1 ? game.player1.nickname : '알수없음'
+      } VS ${game.player2 ? game.player2.nickname : '알수없음'}</div>
       <div class="score"><text style="color: ${
         game.player1_score === 10 ? 'black' : 'white'
       }">${game.player1_score}</text> &nbsp;: &nbsp;<text style=color: ${
@@ -138,25 +144,29 @@ ${
   }
 
   async getProfile() {
-    try {
-      const res = await fetch('http://127.0.0.1:8000/players/profile/', {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-      if (!res.ok) {
-        if (res.status === 401) {
-          await refreshAccessToken();
-          return await this.getProfile();
-        } else throw new Error(`Server responded with status: ${res.status}`);
-      } else {
-        const data = await res.json();
-        this.profileInfo = data.data;
-        console.log(this.profileInfo);
+    const getData = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/players/profile/', {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            await refreshAccessToken();
+            return await this.getData();
+          } else throw new Error(`Server responded with status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          this.profileInfo = data.data;
+          console.log(this.profileInfo);
+        }
+      } catch (error) {
+        console.log('get myProfile error', error);
       }
-    } catch (error) {
-      console.log('get myProfile error', error);
-    }
+    };
+
+    await getData();
   }
 
   async update(formData) {
@@ -308,27 +318,14 @@ ${
     });
   }
 
-  async updateUserProfile() {
-    const userProfile = await this.getUserProfile();
-    const $matches = document.getElementById('myPageMatches');
-    const $win = document.getElementById('myPageWin');
-    const $score = document.getElementById('myPageScore');
-    const $ranking = document.getElementById('myPageRanking');
-
-    $matches.innerHTML = userProfile.player.matches;
-    $ranking.innerHTML = userProfile.player.ranking;
-    $win.innerHTML = userProfile.player.wins;
-    $score.innerHTML = userProfile.player.total_score;
-  }
-
   async sendEmail() {
     const accessToken = getToken();
     try {
       const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
       });
       if (response.ok) {
@@ -348,10 +345,10 @@ ${
       const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify({code: code}),
       });
       if (response.ok) {
         alert('인증 성공');
@@ -371,21 +368,21 @@ ${
     const sendEmailButton = document.getElementById('sendEmailButton');
     const verifyCodeButton = document.getElementById('verifyCodeButton');
     const closeModal = document.querySelector('.twoFactorAuthclose');
-  
+
     twoFactorAuthButton.addEventListener('click', () => {
       twoFactorAuthModal.style.display = 'block';
     });
-  
+
     closeModal.addEventListener('click', () => {
       twoFactorAuthModal.style.display = 'none';
       document.getElementById('code').value = ''; // 인증 코드 입력 필드 초기화
       document.getElementById('error').textContent = ''; // 인증 실패 메시지 초기화
     });
-  
+
     sendEmailButton.addEventListener('click', () => {
       this.sendEmail();
     });
-  
+
     verifyCodeButton.addEventListener('click', () => {
       this.verifyCode();
     });
@@ -394,20 +391,29 @@ ${
   async AccountDeletion() {
     const deleteAccountButton = document.querySelector('#deleteAccountButton');
     const accessToken = getToken();
-  
+
     deleteAccountButton.addEventListener('click', async () => {
-      const confirmed = confirm('계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.');
+      const confirmed = confirm(
+        '계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.',
+      );
       if (confirmed) {
         try {
-          const response = await fetch('http://localhost:8000/tcen-auth/delete/', {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
+          const response = await fetch(
+            'http://localhost:8000/tcen-auth/delete/',
+            {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
             },
-          });
+          );
           if (response.ok) {
             alert('계정이 성공적으로 삭제되었습니다.');
+            history.pushState(null, null, '/');
+            router();
+            cws.close();
+            removeRefreshToken();
             window.location.href = 'http://localhost:5500'; // 계정 삭제 후 처리 로직
           } else {
             console.error('Failed to delete account.');
@@ -422,10 +428,9 @@ ${
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.getProfile();
     this.updateMyPage();
-    await checkConnectionSocket(this.socketEventHandler.bind(this));
-    // this.updateUserProfile();
     this.myPageSettingModalEvent();
     this.TwoFactorAuthentication();
     this.AccountDeletion();
