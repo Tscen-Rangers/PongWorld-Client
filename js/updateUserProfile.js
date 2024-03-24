@@ -21,6 +21,7 @@ const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
 const $divide = document.querySelector('.divide');
 
 export const updateGameHistory = gameHistory => {
+  console.log('game', gameHistory);
   $userProfileHistory.innerHTML = `      ${
     gameHistory !== 'No game'
       ? gameHistory
@@ -50,7 +51,7 @@ export const updateGameHistory = gameHistory => {
             <div class="userProfile-result">${
               game.is_win ? 'win' : 'lose'
             }</div>
-            <div class="userProfile-time-ago">2 days ago</div>
+            <div class="userProfile-time-ago">${game.date}</div>
           </div>
           ${
             index !== gameHistory.length - 1
@@ -86,7 +87,7 @@ export const updateFriendRequestBtn = player => {
 
 export const updateUserModal = (userData, all) => {
   if (all === 0) {
-    console.log(userData);
+    console.log('hh', userData);
     if (userData.player.id === JSON.parse(sessionStorage.getItem('user')).id) {
       $historyWithMeBtn.style.display = 'none';
       $divide.style.display = 'none';

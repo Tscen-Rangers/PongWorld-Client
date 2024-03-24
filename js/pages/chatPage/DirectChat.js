@@ -341,14 +341,20 @@ export default class extends AbstractView {
       });
     });
     const chatUserImages = document.querySelectorAll('.chatUserImage');
+    const chatUserNames = document.querySelectorAll('.chatUserName');
     chatUserImages.forEach(chatUserImage => {
-      // console.log(chatUserImage);
       console.log('hehe');
       chatUserImage.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         $allHistoryBtn.classList.add('selected');
-        // userProfileModalContainer.classList.add('active');
+      });
+    });
+    chatUserNames.forEach(chatUserName => {
+      chatUserName.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        userProfileData(id, 0, 0);
+        $allHistoryBtn.classList.add('selected');
       });
     });
   }

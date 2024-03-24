@@ -10,7 +10,7 @@ let lastMessageTime = null;
 
 function checkSocket() {
   const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
-
+  console.log('socket', webSocketType);
   if (webSocketType === 'START_RANDOM_GAME') return qws;
   else if (webSocketType === 'START_FRIEND_GAME') return cws;
   else return tws;
@@ -172,6 +172,10 @@ export default class extends AbstractView {
         </a>
       </div>
     </div>
+    <div class="tournamentResultModalContainer">
+    <div class="tournamentResultModal">
+    </div>
+    </div>
   </div>
             `;
   }
@@ -181,6 +185,11 @@ export default class extends AbstractView {
       this.socket.send({
         type: 'invite_game',
         command: 'move_paddle',
+        y_coordinate: coordinate,
+      });
+    else if (this.socket === tws)
+      this.socket.send({
+        tournament_mode: 'move_paddle',
         y_coordinate: coordinate,
       });
     else
@@ -408,7 +417,7 @@ export default class extends AbstractView {
     const $ranking = document.querySelector('#ranking');
     const $scoreChange = document.querySelector('#scoreChange');
     const $rankingChange = document.querySelector('#rankingChange');
-
+    let flag = 0;
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
@@ -462,10 +471,34 @@ export default class extends AbstractView {
             : '/public/equal.svg';
         $gameResultModalContainer.classList.add('active');
       }
+      // else if (message.type === 'GAME_RESULT_A')
+      // {
+      //   $winnerImg.src = message.data.winner.player_profile_img;
+      //   if(message.data.winner.nickname === this.user.nickname)
+      //   {
+
+      //   }
+      //   $gameResultModalContainer.classList.add('active');
+
+      // }
+      // else if (message.type === 'GAME_RESULT_A')
+      // {
+
+      // }
+      else if (message.type === 'END_OF_SEMI_FINAL_A') {
+        if (flag === 1) {
+          //다끝남
+        } else flag++;
+      } else if (message.type === 'END_OF_SEMI_FINAL_B') {
+        if (flag === 1) {
+          //다끝남
+        } else flag++;
+      }
       console.log(message);
     };
 
     if (this.socket === qws || this.socket === tws) {
+      console.log(this.socket);
       this.socket.onMessage(message => socketOnMessage.bind(this)(message));
     } else {
       await checkConnectionSocket(socketOnMessage.bind(this));

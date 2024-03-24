@@ -37,6 +37,32 @@ export const responseBattleRequest = message => {
     sessionStorage.setItem('battleId', message.data.id);
     battleMatchRequestExpired();
   } else if (message.type === 'START_FRIEND_GAME') {
+    if (
+      message.data.player1.info.nickname ===
+      JSON.parse(sessionStorage.getItem('user')).nickname
+    ) {
+      sessionStorage.setItem('myPosition', 'player1');
+      sessionStorage.setItem(
+        'gameMyInfo',
+        JSON.stringify(message.data.player1),
+      );
+      sessionStorage.setItem('opponentsPosition', 'player2');
+      sessionStorage.setItem(
+        'gameOpponentInfo',
+        JSON.stringify(message.data.player2),
+      );
+    } else {
+      sessionStorage.setItem('myPosition', 'player2');
+      sessionStorage.setItem(
+        'gameMyInfo',
+        JSON.stringify(message.data.player2),
+      );
+      sessionStorage.setItem('opponentsPosition', 'player1');
+      sessionStorage.setItem(
+        'gameOpponentInfo',
+        JSON.stringify(message.data.player1),
+      );
+    }
     sessionStorage.setItem('webSocketType', JSON.stringify(message.type));
     onMatchComplete();
   } else if (message.type === 'INVALID_GAME') {

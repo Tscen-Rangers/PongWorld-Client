@@ -305,10 +305,10 @@ export default class extends AbstractView {
     $battleCancelBtn.addEventListener('click', () => {
       $battleModalContainer.classList.remove('active');
     });
-    $tournamentCancelBtn.addEventListener('click', () => {
-      tws.close();
-      $tournamentModalContainer.classList.remove('active');
-    });
+    // $tournamentCancelBtn.addEventListener('click', () => {
+    //   tws.close();
+    //   $tournamentModalContainer.classList.remove('active');
+    // });
   }
   async socketEventHandler(message) {
     responseBattleRequest(message);
