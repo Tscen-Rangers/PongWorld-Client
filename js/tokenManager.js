@@ -18,6 +18,10 @@ export const getRefreshToken = () => {
   return sessionStorage.getItem('refresh_token');
 };
 
+export const removeRefreshToken = () => {
+  sessionStorage.removeItem('refresh_token');
+};
+
 export const refreshAccessToken = async () => {
   try {
     const res = await fetch('http://127.0.0.1:8000/tcen-auth/refresh-token/', {
