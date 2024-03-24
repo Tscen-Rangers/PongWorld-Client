@@ -172,12 +172,12 @@ export default class extends AbstractView {
                    <div class="recentPlayer1Img"><img class="recentPlayerImg" src=${
                      game.player1
                        ? game.player1.player_profile_img
-                       : '../../../public/person.svg'
+                       : '/public/person.svg'
                    }></div>
                   <div class="recentPlayer2Img"><img class="recentPlayerImg" src=${
                     game.player2
                       ? game.player2.player_profile_img
-                      : '../../../public/preson.svg'
+                      : '/public/preson.svg'
                   }></div>
               </div>
               <div class="versus">
@@ -274,10 +274,10 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.gameInfo();
     this.updateRanking();
     this.updateHistory();
-    await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
     const $quickMatchModal = document.querySelector(

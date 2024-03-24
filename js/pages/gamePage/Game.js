@@ -244,6 +244,7 @@ export default class extends AbstractView {
       this.rAF = requestAnimationFrame(animate.bind(this));
     }
   }
+
   handleMouseMove(e) {
     // 탁구대의 상단 경계에서 마우스 포인터까지의 상대적 위치 계산
     const mouseY = e.clientY - this.tableRect.top;
