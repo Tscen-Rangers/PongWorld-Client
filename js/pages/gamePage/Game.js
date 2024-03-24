@@ -2,31 +2,29 @@ import AbstractView from '../../AbstractView.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
+import {checkConnectionSocket} from '../../webSocketManager.js';
 
-let y = 0;
 let isMovingUp = false;
 let isMovingDown = false;
+let lastMessageTime = null;
 
-function checkQuickMathchSocket() {
-  if (!qws.getWS()) {
-    location.href = 'http://127.0.0.1:5500/home';
-  }
+function checkSocket() {
+  const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
+
+  if (webSocketType === 'START_RANDOM_GAME') return qws;
+  else if (webSocketType === 'START_FRIEND_GAME') return cws;
+  else return tws;
 }
 
-function convertClientPositionToServerPosition(clientY) {
-  return (clientY / this.tableHeight) * 490;
+function convertClientToServerPosition(clientY) {
+  // 클라이언트 측에서의 탁구채의 Y 위치 (translateY로 조정된 값)를 서버의 비율로 변환
+  return (clientY * 490) / this.tableHeight;
 }
 
-function convertServerPositionToClientPosition(y) {
-  return (y * this.tableHeight) / 490 + this.centerY + 'px';
+function convertServerToClientPoition(y) {
+  return (y / 490) * this.tableHeight;
 }
 
-// function convertServerPositionToScreenPosition(serverX, serverY) {
-//   const screenX = (serverX / 660 + 0.5) * this.tableWidth;
-//   const screenY = (serverY / 490 + 0.5) * this.tableHeight;
-
-//   return [screenX, screenY];
-// }
 function convertServerPositionToScreenPosition(serverX, serverY) {
   // 화면의 너비와 높이를 기준으로 서버 좌표를 화면 좌표로 변환
   const screenX = (serverX * this.tableWidth) / 660; // 가정: 서버 좌표계의 최대 x값이 660
@@ -58,6 +56,7 @@ export default class extends AbstractView {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.currentPosY = 0;
     this.speed = 10; // 탁구채의 이동 속도
+    this.socket = null;
   }
 
   async getHtml() {
@@ -178,14 +177,21 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
-    qws.send({
-      command: 'move_paddle',
-      y_coordinate: coordinate,
-    });
+    if (this.socket === cws)
+      this.socket.send({
+        type: 'invite_game',
+        command: 'move_paddle',
+        y_coordinate: coordinate,
+      });
+    else
+      this.socket.send({
+        command: 'move_paddle',
+        y_coordinate: coordinate,
+      });
   }
 
-  update(coor) {
-    const y = this.asd(coor);
+  update() {
+    const y = convertClientToServerPosition.bind(this)(this.currentPosY);
     this.sendStick(y);
   }
 
@@ -209,24 +215,11 @@ export default class extends AbstractView {
   //   }
   // }
 
-  asd(clientY) {
-    // 클라이언트 측에서의 탁구채의 Y 위치 (translateY로 조정된 값)를 서버의 비율로 변환
-    return (clientY * 490) / this.tableHeight;
-  }
-
-  qwe(y) {
-    return (y / 490) * this.tableHeight;
-  }
-
   animatePaddleMovement() {
     if (!this.rAF) {
       const animate = () => {
         if (isMovingUp || isMovingDown) {
           const myStickRect = this.myPingpongStick.getBoundingClientRect();
-          console.log('STICK TOP = ', myStickRect.top);
-          console.log('STICK BOTTOM = ', myStickRect.bottom);
-          console.log('TABLE TOP = ', this.tableRect.top);
-          console.log('TABLE BOTTOM = ', this.tableRect.bottom);
 
           if (isMovingUp) {
             if (myStickRect.top - this.speed <= this.tableRect.top) {
@@ -240,12 +233,7 @@ export default class extends AbstractView {
             } else this.currentPosY += this.speed;
           }
 
-          // console.log('AFTER = ', myStickRect.top);
-          console.log(this.asd(this.currentPosY), this.currentPosY);
-
-          // myStickRect.top <= this.tableRect.top
-          // ? (this.currentPosY = 0)
-          this.update(this.currentPosY);
+          this.update();
           this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
           this.rAF = requestAnimationFrame(animate.bind(this));
         } else {
@@ -256,15 +244,30 @@ export default class extends AbstractView {
       this.rAF = requestAnimationFrame(animate.bind(this));
     }
   }
-
   handleMouseMove(e) {
-    const mouseY = e.clientY - this.pingpongTable.getBoundingClientRect().top;
-    const coordinate = Math.min(
-      Math.max(this.myPingpongStick.offsetHeight / 2, mouseY),
-      this.maxY,
-    );
-    this.myPingpongStick.style.top = coordinate + 'px';
-    this.update(coordinate);
+    // 탁구대의 상단 경계에서 마우스 포인터까지의 상대적 위치 계산
+    const mouseY = e.clientY - this.tableRect.top;
+    // 탁구대의 높이
+    const tableHeight = this.pingpongTable.clientHeight;
+    // 탁구채의 높이
+    const stickHeight = this.myPingpongStick.clientHeight;
+
+    // 탁구채가 탁구대 상단 경계를 넘지 않도록 조정
+    let positionY = Math.max(mouseY, stickHeight / 2);
+    // 탁구채가 탁구대 하단 경계를 넘지 않도록 조정
+    positionY = Math.min(positionY, tableHeight - stickHeight / 2);
+    console.log(mouseY);
+
+    // 탁구채의 새로운 Y 위치를 계산 (탁구대 중심으로부터의 상대적 위치)
+    this.currentPosY = positionY - tableHeight / 2;
+    console.log('currPOS = ', this.currentPosY);
+
+    // 탁구채의 위치를 업데이트 (transform 사용)
+    this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
+
+    // 서버로 현재 탁구채의 위치를 보냄
+    // 마우스 이동 시의 위치 계산은 서버 위치 계산과 다를 수 있으므로, 필요한 변환 함수를 사용하여 서버에 적합한 값으로 변환하여 전송
+    this.update();
   }
 
   handleKeyDown(e) {
@@ -276,11 +279,6 @@ export default class extends AbstractView {
   handleKeyUp(e) {
     if (e.key === 'ArrowUp') isMovingUp = false;
     else if (e.key === 'ArrowDown') isMovingDown = false;
-  }
-
-  addEventListeners() {
-    document.addEventListener('keyup', this.handleKeyUp);
-    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   onMouseMove() {
@@ -318,7 +316,6 @@ export default class extends AbstractView {
 
   updateBallPosition(ballPosition) {
     requestAnimationFrame(() => {
-      // const ball = document.getElementById('pingpongBall');
       const [x, y] = convertServerPositionToScreenPosition.bind(this)(
         ballPosition[0],
         ballPosition[1],
@@ -336,9 +333,15 @@ export default class extends AbstractView {
     const $goHomeBtn = document.querySelector('.goHomeBtn');
 
     $goHomeBtn.addEventListener('click', e => {
-      qws.send({
-        command: 'end_game',
-      });
+      if (this.socket === cws)
+        qws.send({
+          type: 'invite_game',
+          command: 'end_game',
+        });
+      else
+        qws.send({
+          command: 'end_game',
+        });
     });
   }
 
@@ -352,6 +355,11 @@ export default class extends AbstractView {
     }px`;
   }
 
+  addEventListeners() {
+    document.addEventListener('keyup', this.handleKeyUp);
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
   cleanUpEvent() {
     document.removeEventListener('keyup', this.handleKeyUp);
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -360,12 +368,16 @@ export default class extends AbstractView {
 
   cleanUp() {
     this.cleanUpEvent();
-    qws.close();
+    if (this.socket === cws) {
+      this.socket.send({
+        type: 'invite_game',
+        command: 'quit',
+      });
+    } else this.socket.close();
   }
 
-  afterRender() {
-    checkQuickMathchSocket();
-
+  async afterRender() {
+    this.socket = checkSocket();
     this.sendStick(0);
     const $battleModalContainer = document.querySelector(
       '.battleModalContainer',
@@ -399,14 +411,15 @@ export default class extends AbstractView {
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
+    this.ball = document.getElementById('pingpongBall');
 
     this.setStickCenter();
     this.checkControl();
     this.endGameEventHandler();
 
-    this.ball = document.getElementById('pingpongBall');
+    console.log(this.myPosition);
 
-    qws.onMessage(message => {
+    const socketOnMessage = async message => {
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);
@@ -414,16 +427,18 @@ export default class extends AbstractView {
         this.myPosition === 'player1' &&
         message.type === 'CHANGE_PLAYER2_PADDLE_POSTITION'
       ) {
-        opponentPingpongStick.style.transform = `translateY(${this.qwe(
-          message.data.position[1],
-        )}px)`;
+        console.log(message);
+        opponentPingpongStick.style.transform = `translateY(${convertServerToClientPoition.bind(
+          this,
+        )(message.data.position[1])}px)`;
       } else if (
         this.myPosition === 'player2' &&
         message.type === 'CHANGE_PLAYER1_PADDLE_POSTITION'
       ) {
-        opponentPingpongStick.style.transform = `translateY(${this.qwe(
-          message.data.position[1],
-        )}px)`;
+        console.log(message);
+        opponentPingpongStick.style.transform = `translateY(${convertServerToClientPoition.bind(
+          this,
+        )(message.data.position[1])}px)`;
       } else if (message.type === 'PLAYER1_GET_SCORE') {
         $player1Score.innerHTML = message.data.score;
       } else if (message.type === 'PLAYER2_GET_SCORE') {
@@ -431,8 +446,6 @@ export default class extends AbstractView {
       } else if (message.type === 'GAME_OVER') {
         $winnerImg.src = message.data.winner.player_profile_img;
         $score.innerHTML = message.data.new_rating[this.myPosition].new;
-        console.log(message.data.new_rating[this.myPosition]);
-        console.log(message.data.new_ranking[this.myPosition]);
         $scoreChange.src =
           message.data.new_rating[this.myPosition].difference > 0
             ? '/public/up.svg'
@@ -447,9 +460,14 @@ export default class extends AbstractView {
             ? '/public/down.svg'
             : '/public/equal.svg';
         $gameResultModalContainer.classList.add('active');
-      } else {
-        console.log(message);
       }
-    });
+      console.log(message);
+    };
+
+    if (this.socket === qws || this.socket === tws) {
+      this.socket.onMessage(message => socketOnMessage.bind(this)(message));
+    } else {
+      await checkConnectionSocket(socketOnMessage.bind(this));
+    }
   }
 }

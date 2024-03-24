@@ -20,6 +20,39 @@ function onMatchComplete() {
   }, 2000);
 }
 
+function checkStartRandomGame(msg) {
+  const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
+  const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
+
+  if (msg.type === 'START_RANDOM_GAME') {
+    sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));
+    if (
+      msg.data.player1.info.nickname ===
+      JSON.parse(sessionStorage.getItem('user')).nickname
+    ) {
+      sessionStorage.setItem('myPosition', 'player1');
+      sessionStorage.setItem('gameMyInfo', JSON.stringify(msg.data.player1));
+      sessionStorage.setItem(
+        'gameOpponentInfo',
+        JSON.stringify(msg.data.player2),
+      );
+      sessionStorage.setItem('opponentsPosition', 'player2');
+      $opponentMatchingImg.src = msg.data.player2.info.player_profile_img;
+    } else {
+      sessionStorage.setItem('myPosition', 'player2');
+      sessionStorage.setItem('gameMyInfo', JSON.stringify(msg.data.player2));
+      sessionStorage.setItem(
+        'gameOpponentInfo',
+        JSON.stringify(msg.data.player1),
+      );
+      sessionStorage.setItem('opponentsPosition', 'player1');
+      $opponentMatchingImg.src = msg.data.player1.info.player_profile_img;
+    }
+    $matchingCancelBtn.style.display = 'none';
+    onMatchComplete();
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const $gameOptionModalContainer = document.getElementById(
     'gameOptionModalContainer',
@@ -181,63 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('gameOption', JSON.stringify(option));
       console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
-        // const queryString = window.location.search;
-        // const urlParams = new URLSearchParams(queryString);
-        // const playerID = urlParams.get('player_id');
         const $matchingText = document.querySelector('.matchingText');
-        const $opponentMatchingImg = document.querySelector(
-          '.opponentMatchingImg',
-        );
-        const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
         const $quickMatchModal = document.querySelector(
           '.quickMatchModalContainer',
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
         await qws.connect(`ws://127.0.0.1:8000/ws/random/`);
-        // console.log(op{tion.level);
+
         qws.send({command: 'participant', speed: option.level});
-        // let cnt = 0;
+
         qws.onMessage(msg => {
           if (msg.message) {
             $matchingText.innerHTML = msg.message;
           }
-          if (msg.type === 'START_RANDOM_GAME') {
-            // console.log(msg.data);
-            sessionStorage.setItem('gameData', JSON.stringify(msg.data));
-            if (
-              msg.data.player1.info.nickname ===
-              JSON.parse(sessionStorage.getItem('user')).nickname
-            ) {
-              sessionStorage.setItem('myPosition', 'player1');
-              sessionStorage.setItem(
-                'gameMyInfo',
-                JSON.stringify(msg.data.player1),
-              );
-              sessionStorage.setItem(
-                'gameOpponentInfo',
-                JSON.stringify(msg.data.player2),
-              );
-              sessionStorage.setItem('opponentsPosition', 'player2');
-              $opponentMatchingImg.src =
-                msg.data.player2.info.player_profile_img;
-            } else {
-              sessionStorage.setItem('myPosition', 'player2');
-              sessionStorage.setItem(
-                'gameMyInfo',
-                JSON.stringify(msg.data.player2),
-              );
-              sessionStorage.setItem(
-                'gameOpponentInfo',
-                JSON.stringify(msg.data.player1),
-              );
-              sessionStorage.setItem('opponentsPosition', 'player1');
-              $opponentMatchingImg.src =
-                msg.data.player1.info.player_profile_img;
-            }
-            $matchingCancelBtn.style.display = 'none';
-            onMatchComplete();
-          }
+          checkStartRandomGame(msg);
           console.log(msg);
         });
       }

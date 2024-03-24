@@ -37,7 +37,7 @@ export const responseBattleRequest = message => {
     sessionStorage.setItem('battleId', message.data.id);
     battleMatchRequestExpired();
   } else if (message.type === 'START_FRIEND_GAME') {
-    sessionStorage.setItem('gameData', JSON.stringify(message.data));
+    sessionStorage.setItem('webSocketType', JSON.stringify(message.type));
     onMatchComplete();
   } else if (message.type === 'INVALID_GAME') {
     if (sessionStorage.getItem('battleResponse') === 'accept') {

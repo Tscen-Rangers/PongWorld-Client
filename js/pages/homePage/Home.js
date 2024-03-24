@@ -268,8 +268,8 @@ export default class extends AbstractView {
 
   async afterRender() {
     await this.gameInfo();
-    this.updateRanking();
-    this.updateHistory();
+    // this.updateRanking();
+    // this.updateHistory();
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
