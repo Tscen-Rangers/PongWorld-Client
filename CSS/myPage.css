@@ -237,10 +237,18 @@
 
 .players,
 .score {
+  display: flex;
+  /* text-align: center; */
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
   word-spacing: 5px;
 }
 
 .match .time-ago {
+  min-width: 100px;
+  display: flex;
+  justify-content: center;
   /* margin-left: auto; */
   color: hsl(0, 100%, 99%, 1);
   /* font-size: 13px; */
