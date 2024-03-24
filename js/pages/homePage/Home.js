@@ -161,6 +161,7 @@ export default class extends AbstractView {
   ///nickname이랑 img player1 바꿔!
   updateHistory() {
     const usersHistoryBody = document.querySelector('.usersHistoryBody');
+    console.log(usersHistoryBody);
     usersHistoryBody.innerHTML = `      ${
       this.game.games.length
         ? this.game.games
@@ -169,14 +170,20 @@ export default class extends AbstractView {
           <div class="usersHistory">
               <div class="recentPlayersImg">
                    <div class="recentPlayer1Img"><img class="recentPlayerImg" src=${
-                     game.player1.player_profile_img
-                   }/></div>
+                     game.player1
+                       ? game.player1.player_profile_img
+                       : '../../../public/person.svg'
+                   }></div>
                   <div class="recentPlayer2Img"><img class="recentPlayerImg" src=${
-                    game.player2.player_profile_img
-                  }/></div>
+                    game.player2
+                      ? game.player2.player_profile_img
+                      : '../../../public/preson.svg'
+                  }></div>
               </div>
               <div class="versus">
-                ${game.player1.nickname} VS ${game.player2.nickname}
+                ${game.player1 ? game.player1.nickname : '알수없음'} VS ${
+                game.player2 ? game.player2.nickname : '알수없음'
+              }
               </div>
               <div class="resultScore">
               <text style="color :${
@@ -268,8 +275,8 @@ export default class extends AbstractView {
 
   async afterRender() {
     await this.gameInfo();
-    // this.updateRanking();
-    // this.updateHistory();
+    this.updateRanking();
+    this.updateHistory();
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     const $quickMatchBtn = document.querySelector('.quickMatchButton');
     const $tournamentBtn = document.querySelector('.tournamentButton');
