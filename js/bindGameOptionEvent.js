@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // WebSocket 연결
     tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    $tournamentCancelBtn.style.display = 'block';
     $tournamentModalContainer.classList.add('active');
     $tournamentControlModal.classList.remove('show');
     // 메시지 수신 이벤트 핸들러

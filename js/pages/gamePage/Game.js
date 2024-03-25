@@ -15,8 +15,6 @@ const checkSocket = async () => {
   if (webSocketType === 'START_RANDOM_GAME') return qws;
   else if (webSocketType === 'START_FRIEND_GAME') return cws;
   else {
-    if (tws.getWS().readyState === WebSocket.CLOSED || !tws.getWS())
-      await tws.connect('ws://127.0.0.1:8000/ws/tournament/');
     return tws;
   }
 };
@@ -183,18 +181,20 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
+    console.log('1');
     if (this.socket === cws)
       this.socket.send({
         type: 'invite_game',
         command: 'move_paddle',
         y_coordinate: coordinate,
       });
-    else if (this.socket === tws)
+    else if (this.socket === tws) {
+      console.log('2');
       this.socket.send({
         tournament_mode: 'move_paddle',
         y_coordinate: coordinate,
       });
-    else
+    } else
       this.socket.send({
         command: 'move_paddle',
         y_coordinate: coordinate,
@@ -439,7 +439,6 @@ export default class extends AbstractView {
 
     const onMatchComplete = () => {
       // 3초 후에 실행될 함수
-      tws.close();
       setTimeout(function () {
         // 게임 화면으로 이동
         console.log('complete!!!!!!!!!!!!!!');
@@ -564,6 +563,7 @@ export default class extends AbstractView {
         }
         onMatchComplete();
       } else if (message.type === 'END_OF_FINAL') {
+        console.log(message);
         $winnerImg.src = message.data.winner.player_profile_img;
         if (message.data.winner.nickname === this.user.nickname) {
           $score.innerHTML = message.data.new_rating.winner.new;

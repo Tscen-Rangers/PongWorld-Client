@@ -707,6 +707,12 @@ a {
   background-color: rgb(184, 184, 184);
 }
 
+#battleStartMsg {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
 #noticeModal {
   position: fixed;
   top: 50%;
@@ -914,7 +920,7 @@ a {
   /* flex: 1.5; */
   flex-direction: column;
   /* align-items: center; */
-  justify-content: space-around;
+  /* justify-content: space-around; */
   border-radius: 20px;
   width: 90%;
   height: 100%;
@@ -956,6 +962,7 @@ a {
 }
 
 .userProfile-player-image {
+  background-color: rgba(255, 255, 255, 0.38);
   width: 50px; /* 이미지의 너비를 69px로 설정합니다. */
   height: 50px; /* 이미지의 높이를 61px로 설정합니다. */
   object-fit: cover;
