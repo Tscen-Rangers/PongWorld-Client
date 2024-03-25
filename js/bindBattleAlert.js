@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const $chooseMouse = document.querySelector('#chooseMouse');
   const $battleAcceptButton = document.querySelector('.battleAcceptButton');
   const $battleDeclineButton = document.querySelector('.battleDeclineButton');
+  const $battleStartMsg = document.querySelector('#battleStartMsg');
   let control = null;
   $chooseMouse.addEventListener('click', () => {
     console.log('hehe');
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $chooseMouse.classList.remove('active');
     $chooseKeyboard.classList.remove('active');
     $battleAcceptButton.disabled = true;
-    $battleAlertModalContainer.classList.remove('active');
+    $battleStartMsg.style.display = 'flex';
+    // $battleAlertModalContainer.classList.remove('active');
   });
 });

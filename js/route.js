@@ -19,6 +19,7 @@ const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
 
 let currentView = null;
+let currHref = '';
 
 const routes = [
   {
@@ -149,7 +150,11 @@ export const router = async () => {
 
   seletedNavStyle(match.route.path);
 
-  if (currentView && typeof currentView.cleanUp === 'function') {
+  if (
+    currentView &&
+    typeof currentView.cleanUp === 'function' &&
+    currHref != location.pathname
+  ) {
     console.log('이벤트 지움!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
     currentView.cleanUp();
   }
@@ -159,6 +164,7 @@ export const router = async () => {
   document.querySelector('#app').innerHTML = await view.getHtml();
   view.afterRender();
   currentView = view;
+  currHref = location.pathname;
 };
 
 document.addEventListener('DOMContentLoaded', () => {

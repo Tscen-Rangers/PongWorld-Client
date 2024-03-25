@@ -163,7 +163,7 @@ export default class extends AbstractView {
     const usersHistoryBody = document.querySelector('.usersHistoryBody');
     console.log(usersHistoryBody);
     usersHistoryBody.innerHTML = `      ${
-      this.game.games.length
+      this.game.games !== 'No game'
         ? this.game.games
             .map(
               (game, index) => `
