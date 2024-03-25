@@ -151,12 +151,13 @@ export default class extends AbstractView {
       </div>
       ${
         // user.user.is_online
-        `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
+        user.is_battle_request_allowed
+          ? `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
 battle
             <img class="leftgloveImg" src="/public/leftglove.png"/>
             <img class="rightgloveImg" src="/public/rightglove.png"/>
           </div>`
-        // : ''
+          : ''
       }
       <a class="chatbutton" href='/chat/direct/${
         user.user.id
@@ -283,6 +284,8 @@ battle
         } else {
           const data = await res.json();
           this.users = data.data;
+          console.log(name);
+          console.log(this.users);
         }
       } catch (error) {
         console.log('get friends error', error);
