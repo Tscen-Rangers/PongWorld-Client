@@ -3,18 +3,23 @@ import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
-
+import {router} from '../../route.js';
+import T from '../../WebSocket/TournamentSocket.js';
 let isMovingUp = false;
 let isMovingDown = false;
 let lastMessageTime = null;
 
-function checkSocket() {
+const checkSocket = async () => {
   const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
   console.log('socket', webSocketType);
   if (webSocketType === 'START_RANDOM_GAME') return qws;
   else if (webSocketType === 'START_FRIEND_GAME') return cws;
-  else return tws;
-}
+  else {
+    if (tws.getWS().readyState === WebSocket.CLOSED || !tws.getWS())
+      await tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    return tws;
+  }
+};
 
 function convertClientToServerPosition(clientY) {
   // 클라이언트 측에서의 탁구채의 Y 위치 (translateY로 조정된 값)를 서버의 비율로 변환
@@ -167,14 +172,11 @@ export default class extends AbstractView {
         <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"/><text id="score">1024<text></div>
         <div class="rankingUpdate">ranking<img id="rankingChange" src="/public/down.svg"/><text id="ranking">5<text></div>
         </div>
+        <div class="tournamentState"></div>
         <a class="goHomeBtn" data-spa href="/home">
           go home
         </a>
       </div>
-    </div>
-    <div class="tournamentResultModalContainer">
-    <div class="tournamentResultModal">
-    </div>
     </div>
   </div>
             `;
@@ -387,7 +389,7 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
-    this.socket = checkSocket();
+    this.socket = await checkSocket();
     this.sendStick(0);
     const $battleModalContainer = document.querySelector(
       '.battleModalContainer',
@@ -417,7 +419,13 @@ export default class extends AbstractView {
     const $ranking = document.querySelector('#ranking');
     const $scoreChange = document.querySelector('#scoreChange');
     const $rankingChange = document.querySelector('#rankingChange');
+
+    const $tournamentState = document.querySelector('.tournamentState');
+    const $stateUpdate = document.querySelector('.stateUpdate');
+    const $goHomeBtn = document.querySelector('.goHomeBtn');
+
     let flag = 0;
+    let win = 0;
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
@@ -428,6 +436,35 @@ export default class extends AbstractView {
     this.endGameEventHandler();
 
     console.log(this.myPosition);
+
+    const onMatchComplete = () => {
+      // 3초 후에 실행될 함수
+      tws.close();
+      setTimeout(function () {
+        // 게임 화면으로 이동
+        console.log('complete!!!!!!!!!!!!!!');
+        console.log($gameResultModalContainer);
+        $gameResultModalContainer.classList.remove('active');
+        window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+        router();
+      }, 2000); // 2000 밀리초 = 2초
+    };
+
+    const showTournamentResult = message => {
+      $winnerImg.src = message.data.winner.player_profile_img;
+      if (message.data.winner.nickname === this.user.nickname) {
+        win = 1;
+        $tournamentState.innerHTML =
+          'Waiting for other games to finish<img id="waitingTournament" src="/public/threedotsLoading.svg">';
+        $goHomeBtn.style.display = 'none';
+      } else {
+        $tournamentState.innerHTML = 'Please try again in the next tournament';
+        $goHomeBtn.style.display = 'block';
+      }
+      $stateUpdate.style.display = 'none';
+      $tournamentState.style.display = 'flex';
+      $gameResultModalContainer.classList.add('active');
+    };
 
     const socketOnMessage = async message => {
       if (message.type === 'BALL_POSITION') {
@@ -469,32 +506,92 @@ export default class extends AbstractView {
             : message.data.new_ranking[this.myPosition].difference < 0
             ? '/public/down.svg'
             : '/public/equal.svg';
+        $tournamentState.style.display = 'none';
+        $stateUpdate.style.display = 'flex';
+        $goHomeBtn.style.display = 'block';
         $gameResultModalContainer.classList.add('active');
-      }
-      // else if (message.type === 'GAME_RESULT_A')
-      // {
-      //   $winnerImg.src = message.data.winner.player_profile_img;
-      //   if(message.data.winner.nickname === this.user.nickname)
-      //   {
-
-      //   }
-      //   $gameResultModalContainer.classList.add('active');
-
-      // }
-      // else if (message.type === 'GAME_RESULT_A')
-      // {
-
-      // }
-      else if (message.type === 'END_OF_SEMI_FINAL_A') {
+      } else if (message.type === 'GAME_RESULT_A') {
+        showTournamentResult(message);
+      } else if (message.type === 'GAME_RESULT_B') {
+        showTournamentResult(message);
+      } else if (message.type === 'END_OF_SEMI_FINAL_A') {
         if (flag === 1) {
-          //다끝남
+          if (win) {
+            console.log('winner');
+            $tournamentState.innerHTML =
+              'The final game will begin soon. Please stand by!';
+            this.socket.send({
+              tournament_mode: 'final',
+            });
+          }
         } else flag++;
       } else if (message.type === 'END_OF_SEMI_FINAL_B') {
         if (flag === 1) {
-          //다끝남
+          if (win) {
+            console.log('winner');
+            $tournamentState.innerHTML =
+              'The final game will begin soon. Please stand by!';
+            this.socket.send({
+              tournament_mode: 'final',
+            });
+          }
         } else flag++;
+      } else if (message.type === 'START_TOURNAMENT_FINAL') {
+        console.log('START_TOURNAMENT_FINAL', message);
+        // sessionStorage.setItem('webSocketType', JSON.stringify(message.type));
+        if (message.data.player1.info.nickname === this.user.nickname) {
+          sessionStorage.setItem('myPosition', 'player1');
+          sessionStorage.setItem(
+            'gameMyInfo',
+            JSON.stringify(message.data.player1),
+          );
+          sessionStorage.setItem('opponentsPosition', 'player2');
+          sessionStorage.setItem(
+            'gameOpponentInfo',
+            JSON.stringify(message.data.player2),
+          );
+        } else {
+          sessionStorage.setItem('myPosition', 'player2');
+          sessionStorage.setItem(
+            'gameMyInfo',
+            JSON.stringify(message.data.player2),
+          );
+          sessionStorage.setItem('opponentsPosition', 'player1');
+          sessionStorage.setItem(
+            'gameOpponentInfo',
+            JSON.stringify(message.data.player1),
+          );
+        }
+        onMatchComplete();
+      } else if (message.type === 'END_OF_FINAL') {
+        $winnerImg.src = message.data.winner.player_profile_img;
+        if (message.data.winner.nickname === this.user.nickname) {
+          $score.innerHTML = message.data.new_rating.winner.new;
+          $scoreChange.src =
+            message.data.new_rating.winner.difference > 0
+              ? '/public/up.svg'
+              : message.data.new_rating.winner.difference < 0
+              ? '/public/down.svg'
+              : '/public/equal.svg';
+          $ranking.innerHTML = message.data.new_ranking.winner.new;
+          $rankingChange.src =
+            message.data.new_ranking.winner.difference > 0
+              ? '/public/up.svg'
+              : message.data.new_ranking.winner.difference < 0
+              ? '/public/down.svg'
+              : '/public/equal.svg';
+          $tournamentState.style.display = 'none';
+          $stateUpdate.style.display = 'flex';
+        } else {
+          $tournamentState.innerHTML =
+            'Please try again in the next tournament';
+          $tournamentState.style.display = 'block';
+          $stateUpdate.style.display = 'none';
+        }
+        $goHomeBtn.style.display = 'block';
+        $gameResultModalContainer.classList.add('active');
       }
-      console.log(message);
+      // console.log(message);
     };
 
     if (this.socket === qws || this.socket === tws) {
