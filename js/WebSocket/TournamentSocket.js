@@ -8,15 +8,19 @@ class TournamentSocket extends BaseWebSocket {
   }
 
   connect(url) {
-    super.connect(url);
+    new Promise((resolve, reject) => {
+      super.connect(url);
 
-    this.ws.onopen = () => {
-      console.log('TournamentSocket OPEN!!!!');
-    };
+      this.ws.onopen = () => {
+        console.log('TournamentSocket OPEN!!!!');
+        resolve();
+      };
 
-    this.ws.onclose = () => {
-      console.log('TournamentSocket CLOSE!!!!');
-    };
+      this.ws.onclose = () => {
+        console.log('TournamentSocket CLOSE!!!!');
+        reject();
+      };
+    });
   }
 
   send(message) {
@@ -25,6 +29,10 @@ class TournamentSocket extends BaseWebSocket {
       console.log('send');
     }
     console.log('ghelwelqleqlwelqwel');
+  }
+
+  static resetInstance() {
+    TournamentSocket.instance = null;
   }
 
   static getInstance() {
