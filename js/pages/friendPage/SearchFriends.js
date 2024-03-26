@@ -10,6 +10,7 @@ import {checkConnectionSocket} from '../../webSocketManager.js';
 import {router} from '../../route.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -67,7 +68,7 @@ export default class extends AbstractView {
             </div>
             <div class="friendname"  data-id='${user.id}'>${user.nickname}</div>
           </div>
-            <div class="searchOptionBtns">  
+            <div class="searchOptionBtns">
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
                 user.is_blocking ? 'unblock' : 'block'
               }</div>
@@ -145,7 +146,7 @@ export default class extends AbstractView {
   // async friendRequest(id) {
   //   const sendRequest = async () => {
   //     try {
-  //       const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
+  //       const res = await fetch(`${API_URL}/friends/follow/${id}/`, {
   //         method: 'POST',
   //         headers: {
   //           'Content-Type': 'application/json',
@@ -177,8 +178,8 @@ export default class extends AbstractView {
   //모든 유저 렌더링 or 검색된 유저 렌더링
   async searchPlayers(name) {
     const url = name.length
-      ? `http://127.0.0.1:8000/players/search/${name}/`
-      : 'http://127.0.0.1:8000/players/search/';
+      ? `${API_URL}/players/search/${name}/`
+      : `${API_URL}/players/search/`;
     const getPlayers = async () => {
       try {
         const res = await fetch(url, {

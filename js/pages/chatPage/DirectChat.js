@@ -4,6 +4,7 @@ import cws from '../../WebSocket/ConnectionSocket.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
     console.log(rooms[i]);
@@ -136,14 +137,11 @@ export default class extends AbstractView {
 
   async renderPrevChat(chatRoomID) {
     try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/chat/${chatRoomID}/messages`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
+      const res = await fetch(`${API_URL}/chat/${chatRoomID}/messages`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
         },
-      );
+      });
       const data = await res.json();
       if (!res.ok) {
         if (data.status === 401) {
@@ -243,15 +241,12 @@ export default class extends AbstractView {
   async deleteChatRoom(chatRoomId, cnt) {
     if (cnt) {
       try {
-        const res = await fetch(
-          `http://127.0.0.1:8000/chat/${chatRoomId}/leave/`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
+        const res = await fetch(`${API_URL}/chat/${chatRoomId}/leave/`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
           },
-        );
+        });
         const data = await res.json();
         if (res.ok) {
         } else {
@@ -361,7 +356,7 @@ export default class extends AbstractView {
 
   async getChattingRoom() {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/chat/rooms`, {
+      const res = await fetch(`${API_URL}/chat/rooms`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
