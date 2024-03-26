@@ -16,7 +16,7 @@ import LoginLoading from './pages/loginPage/LoginLoading.js';
 const navBar = document.querySelector('#navBar');
 const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
-const Navs = Array.from(document.querySelectorAll('.nav__link'));
+const Navs = Array.from(document.querySelectorAll('.n'));
 
 let currentView = null;
 
@@ -87,7 +87,7 @@ const routes = [
 const seletedNavStyle = path => {
   Navs.forEach(e => {
     //startWith : 문자열이 특정 문자열로 시작하는지 검사
-    if (path.startsWith(e.pathname)) e.classList.add('active');
+    if (path.startsWith(e.parentNode.pathname)) e.classList.add('active');
     else e.classList.remove('active');
   });
 };
