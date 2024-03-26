@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const $noticeModal = document.querySelector('#noticeModal');
   const xSvg = document.querySelector('#xSvg');
   const noticeModal = document.querySelector('#noticeModal');
+  const $battleAlertModalContainer = document.querySelector(
+    '.battleAlertModalContainer',
+  );
   // const $quickMatchModal = document.querySelector('.quickMatchModalContainer');
   // const $battleModalContainer = document.querySelector('.battleModalContainer');
   const $currentStaff = document.querySelector('.currentStaff');
@@ -166,145 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('keyboard');
     option.control = 'keyboard';
     tournamentOnMessage();
-    // $tournamentMsg.innerHTML =
-    //   'Waiting for all <br /> players to join the tournament...';
-
-    // // 토큰 갱신 확인
-    // if (!getToken().length) await refreshAccessToken();
-
-    // // WebSocket 연결
-    // tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-    // $tournamentModalContainer.classList.add('active');
-    // $tournamentControlModal.classList.remove('show');
-    // // 메시지 수신 이벤트 핸들러
-    // tws.onMessage(msg => {
-    //   // 참가자 수 업데이트
-    //   console.log(msg);
-    //   if (msg.participants_num) {
-    //     $currentStaff.innerText = `${msg.participants_num}/4`;
-    //   }
-
-    //   // 모든 참가자가 조인한 경우
-    //   // 토너먼트 ID 처리
-    //   if (msg.type === 'TOURNAMENT_PARTICIPANTS') {
-    //     sessionStorage.setItem('tournament_id', msg.data.id);
-    //   }
-    //   if (msg.type === 'SUCCESS_SEMI_FINAL_MATCHING') {
-    //     sessionStorage.setItem('gameOption', JSON.stringify(option));
-    //     $currentStaff.innerText = `4/4`;
-    //     $tournamentMsg.innerHTML =
-    //       'Tournament Ready<br />The game will start soon!';
-
-    //     $tournamentCancelBtn.style.display = 'none';
-    //     tws.send({
-    //       tournament_mode: 'semi_final',
-    //       tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
-    //     });
-    //   }
-    //   if (msg.type === 'START_TOURNAMENT_SEMI_FINAL') {
-    //     sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));
-    //     if (
-    //       msg.data.player1.info.nickname ===
-    //       JSON.parse(sessionStorage.getItem('user')).nickname
-    //     ) {
-    //       sessionStorage.setItem('myPosition', 'player1');
-    //       sessionStorage.setItem(
-    //         'gameMyInfo',
-    //         JSON.stringify(msg.data.player1),
-    //       );
-    //       sessionStorage.setItem('opponentsPosition', 'player2');
-    //       sessionStorage.setItem(
-    //         'gameOpponentInfo',
-    //         JSON.stringify(msg.data.player2),
-    //       );
-    //     } else {
-    //       sessionStorage.setItem('myPosition', 'player2');
-    //       sessionStorage.setItem(
-    //         'gameMyInfo',
-    //         JSON.stringify(msg.data.player2),
-    //       );
-    //       sessionStorage.setItem('opponentsPosition', 'player1');
-    //       sessionStorage.setItem(
-    //         'gameOpponentInfo',
-    //         JSON.stringify(msg.data.player1),
-    //       );
-    //     }
-    //     onMatchComplete();
-    //     $tournamentModalContainer.classList.remove('active');
-    //   }
-    // });
   });
 
   $tournamentControlMouse.addEventListener('click', async () => {
     console.log('mouse');
     option.control = 'mouse';
     tournamentOnMessage();
-    // $tournamentMsg.innerHTML =
-    //   'Waiting for all <br /> players to join the tournament...';
-
-    // // 토큰 갱신 확인
-    // if (!getToken().length) await refreshAccessToken();
-
-    // // WebSocket 연결
-    // tws.connect('ws://127.0.0.1:8000/ws/tournament/');
-    // $tournamentModalContainer.classList.add('active');
-    // $tournamentControlModal.classList.remove('show');
-    // // 메시지 수신 이벤트 핸들러
-    // tws.onMessage(msg => {
-    //   // 참가자 수 업데이트
-    //   console.log(msg);
-    //   if (msg.participants_num) {
-    //     $currentStaff.innerText = `${msg.participants_num}/4`;
-    //   }
-
-    //   // 모든 참가자가 조인한 경우
-    //   // 토너먼트 ID 처리
-    //   if (msg.type === 'TOURNAMENT_PARTICIPANTS') {
-    //     sessionStorage.setItem('tournament_id', msg.data.id);
-    //   }
-    //   if (msg.type === 'SUCCESS_SEMI_FINAL_MATCHING') {
-    //     sessionStorage.setItem('gameOption', JSON.stringify(option));
-    //     $currentStaff.innerText = `4/4`;
-    //     $tournamentMsg.innerHTML =
-    //       'Tournament Ready<br />The game will start soon!';
-    //     $tournamentCancelBtn.style.display = 'none';
-    //     tws.send({
-    //       tournament_mode: 'semi_final',
-    //       tournament_id: JSON.parse(sessionStorage.getItem('tournament_id')),
-    //     });
-    //   }
-    //   if (msg.type === 'START_TOURNAMENT_SEMI_FINAL') {
-    //     sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));
-    //     if (
-    //       msg.data.player1.info.nickname ===
-    //       JSON.parse(sessionStorage.getItem('user')).nickname
-    //     ) {
-    //       sessionStorage.setItem('myPosition', 'player1');
-    //       sessionStorage.setItem(
-    //         'gameMyInfo',
-    //         JSON.stringify(msg.data.player1),
-    //       );
-    //       sessionStorage.setItem('opponentsPosition', 'player2');
-    //       sessionStorage.setItem(
-    //         'gameOpponentInfo',
-    //         JSON.stringify(msg.data.player2),
-    //       );
-    //     } else {
-    //       sessionStorage.setItem('myPosition', 'player2');
-    //       sessionStorage.setItem(
-    //         'gameMyInfo',
-    //         JSON.stringify(msg.data.player2),
-    //       );
-    //       sessionStorage.setItem('opponentsPosition', 'player1');
-    //       sessionStorage.setItem(
-    //         'gameOpponentInfo',
-    //         JSON.stringify(msg.data.player1),
-    //       );
-    //     }
-    //     onMatchComplete();
-    //     $tournamentModalContainer.classList.remove('active');
-    //   }
-    // });
   });
 
   $tournamentCancelBtn.addEventListener('click', () => {
@@ -367,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   xSvg.addEventListener('click', () => {
     $noticeModal.classList.remove('active');
+    $battleAlertModalContainer.classList.remove('active');
   });
   $gameOptionModalContainer.addEventListener('click', e => {
     if ($gameOptionModalContainer === e.target) {

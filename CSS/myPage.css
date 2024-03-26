@@ -172,8 +172,7 @@
 .match-history {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  /* grid-template-rows: 1fr 1fr 1fr; */
+  /* justify-content: center; */
   position: relative;
   border-radius: 20px;
   width: 90%; /* 부모 요소의 전체 너비 사용 */
@@ -195,11 +194,19 @@
   }
 }
 
+.match-history-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+}
+
 .match {
   z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  min-height: 90px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  /* justify-content: space-between; */
+  min-height: 100px;
   align-items: center;
   font-size: 1.1rem;
   text-shadow: 1px 1px 4px grey;
@@ -241,14 +248,19 @@
   /* text-align: center; */
   align-items: center;
   justify-content: center;
-  min-width: 100px;
   word-spacing: 5px;
+}
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .match .time-ago {
-  min-width: 100px;
+  /* min-width: 100px; */
   display: flex;
   justify-content: center;
+  align-items: center;
   /* margin-left: auto; */
   color: hsl(0, 100%, 99%, 1);
   /* font-size: 13px; */
@@ -280,6 +292,9 @@
   }
   #myPageMatchImg {
     display: none;
+  }
+  .match {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
   /* .match {
     display: grid;
