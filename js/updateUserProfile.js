@@ -13,6 +13,9 @@ const $userProfileOnlineImg = document.querySelector('.userProfileOnlineImg');
 const $userProfileHistory = document.querySelector(
   '.userProfile-match-history',
 );
+const $userProfileHistoryInner = document.querySelector(
+  '.userProfile-match-history-inner',
+);
 const $userProfileFriendRequestBtn = document.querySelector(
   '.userProfile-friendRequestBtn',
 );
@@ -28,6 +31,7 @@ export const updateGameHistory = gameHistory => {
           .map(
             (game, index) => `
             <div class="userProfile-match">
+            <div class="userProfile-match-inner">
             <div class="userProfile-player-image-container">
             <img
               src=${game.player1.player_profile_img}
@@ -52,12 +56,13 @@ export const updateGameHistory = gameHistory => {
               game.is_win ? 'win' : 'lose'
             }</div>
             <div class="userProfile-time-ago">${game.date}</div>
+            </div>
+            ${
+              index !== gameHistory.length - 1
+                ? ` <div style="width:100%; height:1px; background-color:white"></div>`
+                : ''
+            }
           </div>
-          ${
-            index !== gameHistory.length - 1
-              ? ` <div style="width:100%; height:2px; background-color:white"></div>`
-              : ''
-          }
   `,
           )
           .join('')
