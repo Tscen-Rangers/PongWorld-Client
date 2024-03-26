@@ -346,9 +346,13 @@ export default class extends AbstractView {
 
     $goHomeBtn.addEventListener('click', e => {
       if (this.socket === cws)
-        qws.send({
+        cws.send({
           type: 'invite_game',
           command: 'end_game',
+        });
+      else if (this.socket === tws)
+        tws.send({
+          tournament_mode: 'end_tournament',
         });
       else
         qws.send({
@@ -384,6 +388,10 @@ export default class extends AbstractView {
       this.socket.send({
         type: 'invite_game',
         command: 'quit',
+      });
+    } else if (this.socket === tws) {
+      tws.send({
+        tournament_mode: 'end_tournament',
       });
     } else this.socket.close();
   }
@@ -500,9 +508,9 @@ export default class extends AbstractView {
             : '/public/equal.svg';
         $ranking.innerHTML = message.data.new_ranking[this.myPosition].new;
         $rankingChange.src =
-          message.data.new_ranking[this.myPosition].difference > 0
+          message.data.new_ranking[this.myPosition].difference < 0
             ? '/public/up.svg'
-            : message.data.new_ranking[this.myPosition].difference < 0
+            : message.data.new_ranking[this.myPosition].difference > 0
             ? '/public/down.svg'
             : '/public/equal.svg';
         $tournamentState.style.display = 'none';
@@ -575,9 +583,9 @@ export default class extends AbstractView {
               : '/public/equal.svg';
           $ranking.innerHTML = message.data.new_ranking.winner.new;
           $rankingChange.src =
-            message.data.new_ranking.winner.difference > 0
+            message.data.new_ranking.winner.difference < 0
               ? '/public/up.svg'
-              : message.data.new_ranking.winner.difference < 0
+              : message.data.new_ranking.winner.difference > 0
               ? '/public/down.svg'
               : '/public/equal.svg';
           $tournamentState.style.display = 'none';
@@ -591,7 +599,6 @@ export default class extends AbstractView {
         $goHomeBtn.style.display = 'block';
         $gameResultModalContainer.classList.add('active');
       }
-      // console.log(message);
     };
 
     if (this.socket === qws || this.socket === tws) {
