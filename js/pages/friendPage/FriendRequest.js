@@ -4,6 +4,7 @@ import {deleteFriend, getNewRequest} from '../../FriendsRestApi.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 let checkModalEvent = 0;
 const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 
@@ -65,7 +66,7 @@ export default class extends AbstractView {
       </div>
     </div>
   </div>
-  
+
 		`;
   }
 
@@ -83,12 +84,12 @@ export default class extends AbstractView {
           <div class="friendProfileImg">
           <img class="profileImg" data-id='${user.user.id}' src=${
                 user.user.profile_img
-              }/> 
+              }/>
           ${
             user.user.is_online
               ? '<img class="onlineImg" src="/public/online.png"/>'
               : ''
-          }</div> 
+          }</div>
           <div class="friendname" data-id='${user.user.id}'>${
                 user.user.nickname
               }</div>
@@ -157,7 +158,7 @@ export default class extends AbstractView {
   async recievedRequest() {
     const getRecieved = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/friends/followed/', {
+        const res = await fetch(`${API_URL}/friends/followed/`, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -183,19 +184,16 @@ export default class extends AbstractView {
   async acceptRequest(id) {
     const patchAccept = async () => {
       try {
-        const res = await fetch(
-          `http://127.0.0.1:8000/friends/follow/accept/${id}/`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${getToken()}`,
-            },
-            body: JSON.stringify({
-              friend_id: id,
-            }),
+        const res = await fetch(`${API_URL}/friends/follow/accept/${id}/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getToken()}`,
           },
-        );
+          body: JSON.stringify({
+            friend_id: id,
+          }),
+        });
         if (!res.ok) {
           if (res.status === 401) {
             await refreshAccessToken();
@@ -217,19 +215,16 @@ export default class extends AbstractView {
   async deleteRecievedRequest(id) {
     const deleteRequest = async () => {
       try {
-        const res = await fetch(
-          `http://127.0.0.1:8000/friends/follow/delete/${id}/`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${getToken()}`,
-            },
-            body: JSON.stringify({
-              friend_id: id,
-            }),
+        const res = await fetch(`${API_URL}/friends/follow/delete/${id}/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getToken()}`,
           },
-        );
+          body: JSON.stringify({
+            friend_id: id,
+          }),
+        });
         if (!res.ok) {
           if (res.status === 401) {
             await refreshAccessToken();
@@ -252,7 +247,7 @@ export default class extends AbstractView {
   async sentRequest() {
     const getSent = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/friends/following/', {
+        const res = await fetch(`${API_URL}/friends/following/`, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -285,7 +280,7 @@ export default class extends AbstractView {
               (user, index) => `
        <div class="friendList" style="padding:0% 4%" key=${index}>
        <div class="friendProfile">
-         <div class="friendProfileImg"> 
+         <div class="friendProfileImg">
          <img class="profileImg" data-id='${user.user.id}' src=${
                 user.user.profile_img
               }/>
@@ -293,14 +288,14 @@ export default class extends AbstractView {
            user.user.is_online
              ? '<img class="onlineImg" src="/public/online.png"/>'
              : ''
-         }</div> 
+         }</div>
          <div class="friendname" data-id='${user.user.id}'>${
                 user.user.nickname
               }</div>
        </div>
        <div class="requestIcons">
        <svg class="cancelSentIcon" data-key='${index}' xmlns="http://www.w3.org/2000/svg" width="1.8em" height="1.8em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/></svg>
-       </div> 
+       </div>
    </div>
  `,
             )

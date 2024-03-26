@@ -6,6 +6,7 @@ import cws from '../../WebSocket/ConnectionSocket.js';
 import {getNewRequest} from '../../FriendsRestApi.js';
 import {onMatchComplete} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 
 ////////battle alert
 
@@ -266,8 +267,8 @@ battle
   async renderFriends(name) {
     const url =
       name.length === 0
-        ? 'http://127.0.0.1:8000/friends/search/'
-        : `http://127.0.0.1:8000/friends/search/${name}/`;
+        ? `${API_URL}/friends/search/`
+        : `${API_URL}/friends/search/${name}/`;
     const getFriends = async () => {
       try {
         const res = await fetch(url, {

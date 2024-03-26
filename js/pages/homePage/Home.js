@@ -7,6 +7,7 @@ import {router} from '../../route.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 
 const histories = [
   {
@@ -251,7 +252,7 @@ export default class extends AbstractView {
 
     const getGame = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/game/', {
+        const res = await fetch(`${API_URL}/game/`, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },

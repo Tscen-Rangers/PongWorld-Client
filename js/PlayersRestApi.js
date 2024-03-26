@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
 import {updateUserModal} from './updateUserProfile.js';
 
@@ -6,14 +7,11 @@ const $allHistoryBtn = document.querySelector('.allHistoryBtn');
 export const userProfileData = async (id, type, all) => {
   const getUserProfile = async () => {
     try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/players/profile/${id}/${type}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
+      const res = await fetch(`${API_URL}/players/profile/${id}/${type}/`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
         },
-      );
+      });
       console.log(getToken());
       if (!res.ok) {
         if (res.status === 401) {

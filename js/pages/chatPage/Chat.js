@@ -4,6 +4,7 @@ import {checkConnectionSocket} from '../../webSocketManager.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
+import API_URL from '../../../config.js';
 const users = [
   {
     name: 'jimpark',
@@ -167,8 +168,8 @@ export default class extends AbstractView {
   async renderOnlineUsers(nickname) {
     const $chatUserInner = document.querySelector('.chatUserInner');
     const url = nickname
-      ? `http://127.0.0.1:8000/players/online/${nickname}/`
-      : 'http://127.0.0.1:8000/players/online';
+      ? `${API_URL}/players/online/${nickname}/`
+      : `${API_URL}/players/online`;
 
     const getOnlineUsers = async () => {
       try {

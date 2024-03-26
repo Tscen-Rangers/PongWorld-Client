@@ -8,6 +8,7 @@ import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
 import {router} from '../../route.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
+import API_URL from '../../../config.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -146,7 +147,7 @@ ${
   async getProfile() {
     const getData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/players/profile/', {
+        const res = await fetch(`${API_URL}/players/profile/`, {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
@@ -171,16 +172,13 @@ ${
 
   async update(formData) {
     try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/players/setting/${this.user.id}/`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-          body: formData,
+      const res = await fetch(`${API_URL}/players/setting/${this.user.id}/`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
         },
-      );
+        body: formData,
+      });
       const data = await res.json();
       if (res.ok) {
         this.updateUserInfo(data);

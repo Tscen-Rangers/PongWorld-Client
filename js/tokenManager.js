@@ -1,3 +1,4 @@
+import API_URL from '../config.js';
 import {router} from './route.js';
 
 let accessToken = '';
@@ -24,7 +25,7 @@ export const removeRefreshToken = () => {
 
 export const refreshAccessToken = async () => {
   try {
-    const res = await fetch('http://127.0.0.1:8000/tcen-auth/refresh-token/', {
+    const res = await fetch(`${API_URL}/tcen-auth/refresh-token/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

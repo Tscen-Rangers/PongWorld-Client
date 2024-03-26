@@ -1,9 +1,10 @@
 import {getToken, refreshAccessToken} from './tokenManager.js';
+import API_URL from '../config.js';
 
 export const unblock = async id => {
   const deleteBlocked = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/block/cancel/${id}/`, {
+      const res = await fetch(`${API_URL}/block/cancel/${id}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ export const unblock = async id => {
 export const block = async id => {
   const postBlock = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/block/${id}/`, {
+      const res = await fetch(`${API_URL}/block/${id}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ export const block = async id => {
 export const deleteFriend = async id => {
   const deleteRequest = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/friends/delete/${id}/`, {
+      const res = await fetch(`${API_URL}/friends/delete/${id}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +105,7 @@ export const deleteFriend = async id => {
 export const getNewRequest = async () => {
   const getNewRequestCount = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/friends/followed/count', {
+      const res = await fetch(`${API_URL}/friends/followed/count`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -129,7 +130,7 @@ export const getNewRequest = async () => {
 export const friendRequest = async id => {
   const sendRequest = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/friends/follow/${id}/`, {
+      const res = await fetch(`${API_URL}/friends/follow/${id}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

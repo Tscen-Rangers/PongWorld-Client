@@ -3,6 +3,7 @@ import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {unblock} from '../../FriendsRestApi.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {checkConnectionSocket} from '../../webSocketManager.js';
+import API_URL from '../../../config.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -65,8 +66,8 @@ export default class extends AbstractView {
   async renderBlocked(name) {
     const url =
       name.length === 0
-        ? 'http://127.0.0.1:8000/block/search/'
-        : `http://127.0.0.1:8000/block/search/${name}/`;
+        ? `${API_URL}/block/search/`
+        : `${API_URL}/block/search/${name}/`;
     const getBlocked = async () => {
       try {
         const res = await fetch(url, {
