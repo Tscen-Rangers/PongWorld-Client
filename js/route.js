@@ -12,14 +12,14 @@ import Game from './pages/gamePage/Game.js';
 import NotFound from './pages/notFoundPage/notFound.js';
 import SignUp from './pages/signUp/SignUp.js';
 import LoginLoading from './pages/loginPage/LoginLoading.js';
+import TwoFactorAuthPage from './pages/twoFactorPage/twofactor.js';
 
 const navBar = document.querySelector('#navBar');
 const mainTitle = document.querySelector('#main_title');
 const headphone = document.querySelector('#headphoneImg');
-const Navs = Array.from(document.querySelectorAll('.n'));
+const Navs = Array.from(document.querySelectorAll('.nav__link'));
 
 let currentView = null;
-let currHref = '';
 
 const routes = [
   {
@@ -82,13 +82,17 @@ const routes = [
     path: '/setting',
     view: Setting,
   },
+  {
+    path: '/two-factor-auth',
+    view: TwoFactorAuthPage,
+  }
 ];
 
 // 현재 선택된 Nav메뉴 스타일 활성화
 const seletedNavStyle = path => {
   Navs.forEach(e => {
     //startWith : 문자열이 특정 문자열로 시작하는지 검사
-    if (path.startsWith(e.parentNode.pathname)) e.classList.add('active');
+    if (path.startsWith(e.pathname)) e.classList.add('active');
     else e.classList.remove('active');
   });
 };
@@ -113,13 +117,18 @@ const navigateTo = url => {
 };
 
 export const router = async () => {
-  navBar.style.display =
-    location.pathname === '/' ||
-    location.pathname === '/game' ||
-    location.pathname === '/signup' ||
-    location.pathname === '/loginloading'
-      ? 'none'
-      : 'block';
+   // '/two-factor-auth' 경로일 때 네비게이션 바 숨김 처리
+   if (location.pathname === '/two-factor-auth') {
+    navBar.style.display = 'none';
+  } else {
+    navBar.style.display =
+      location.pathname === '/' ||
+      location.pathname === '/game' ||
+      location.pathname === '/signup' ||
+      location.pathname === '/loginloading'
+        ? 'none'
+        : 'block';
+  }
   headphone.style.display =
     location.pathname === '/' ||
     location.pathname === '/signup' ||
@@ -150,11 +159,7 @@ export const router = async () => {
 
   seletedNavStyle(match.route.path);
 
-  if (
-    currentView &&
-    typeof currentView.cleanUp === 'function' &&
-    currHref != location.pathname
-  ) {
+  if (currentView && typeof currentView.cleanUp === 'function') {
     console.log('이벤트 지움!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
     currentView.cleanUp();
   }
@@ -164,7 +169,6 @@ export const router = async () => {
   document.querySelector('#app').innerHTML = await view.getHtml();
   view.afterRender();
   currentView = view;
-  currHref = location.pathname;
 };
 
 document.addEventListener('DOMContentLoaded', () => {

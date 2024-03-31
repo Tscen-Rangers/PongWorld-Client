@@ -19,6 +19,7 @@ export default class extends AbstractView {
     this.$myPageSettingNickName = null;
     this.$errorMessage = null;
     this.profileInfo = null;
+    this.bindToggleChangeEvent = this.handleToggleChange.bind(this);
   }
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
@@ -47,18 +48,14 @@ export default class extends AbstractView {
         <button id="myPageSettingUpdateBtn">update</button>
       </div>
     </div>
-    </div>
-    <div id="twoFactorAuthModal" class="modal" style="display:none;">
-      <div class="twoFactorAuthContent">
-        <span class="twoFactorAuthclose">&times;</span>
-        <h2><i class="fas fa-envelope"></i> 본인확인(메일)</h2>
-        <div class="sendAndInput">
-          <input type="text" id="code" placeholder="인증 코드 입력">
-          <button id="sendEmailButton">메일 전송</button>
-        </div>
-        <button id="verifyCodeButton">인증 확인</button>
-        <p style="color: red" id="error"></p>
+    <div id="twoFactorAuthModal">
+      <div class="twoFactorAuthModal-content">
+        <label class="switch">
+          <input type="checkbox" id="twoFactorAuthToggle">
+          <span class="slider round"></span>
+        </label>
       </div>
+    </div>
     </div>
   `;
   }
@@ -316,75 +313,6 @@ ${
     });
   }
 
-  async sendEmail() {
-    const accessToken = getToken();
-    try {
-      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        alert('인증 이메일이 발송되었습니다.');
-      } else {
-        console.error('이메일 발송 실패.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-
-  async verifyCode() {
-    const code = document.getElementById('code').value;
-    const accessToken = getToken();
-    try {
-      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({code: code}),
-      });
-      if (response.ok) {
-        alert('인증 성공');
-        // 인증 성공 후 로직, 예: 모달 닫기
-      } else {
-        document.getElementById('error').textContent = '인증 실패';
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      document.getElementById('error').textContent = '오류 발생';
-    }
-  }
-
-  async TwoFactorAuthentication() {
-    const twoFactorAuthButton = document.querySelector('#twoFactorAuthButton');
-    const twoFactorAuthModal = document.getElementById('twoFactorAuthModal');
-    const sendEmailButton = document.getElementById('sendEmailButton');
-    const verifyCodeButton = document.getElementById('verifyCodeButton');
-    const closeModal = document.querySelector('.twoFactorAuthclose');
-
-    twoFactorAuthButton.addEventListener('click', () => {
-      twoFactorAuthModal.style.display = 'block';
-    });
-
-    closeModal.addEventListener('click', () => {
-      twoFactorAuthModal.style.display = 'none';
-      document.getElementById('code').value = ''; // 인증 코드 입력 필드 초기화
-      document.getElementById('error').textContent = ''; // 인증 실패 메시지 초기화
-    });
-
-    sendEmailButton.addEventListener('click', () => {
-      this.sendEmail();
-    });
-
-    verifyCodeButton.addEventListener('click', () => {
-      this.verifyCode();
-    });
-  }
 
   async AccountDeletion() {
     const deleteAccountButton = document.querySelector('#deleteAccountButton');
@@ -415,7 +343,7 @@ ${
             window.location.href = 'http://localhost:5500'; // 계정 삭제 후 처리 로직
           } else {
             console.error('Failed to delete account.');
-            alert('이메일 인증을 완료 후 계정을 삭제 할 수 있습니다.');
+            alert('이중인증이 활성화된 상태에서만 계정을 삭제할 수 있습니다.');
           }
         } catch (error) {
           console.error('Error:', error);
@@ -425,17 +353,109 @@ ${
     });
   }
 
+
+  async handleToggleChange(e) {
+    const isEnabled = e.target.checked;
+    try {
+      const response = await fetch(`${API_URL}/tcen-auth/verify/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({ two_factor_auth_enabled: isEnabled })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        this.user.two_factor_auth_enabled = isEnabled;
+        sessionStorage.setItem('user', JSON.stringify(this.user));
+        alert(`이중인증이 ${isEnabled ? '활성화되었습니다.' : '비활성화되었습니다.'}`);
+      } else {
+        throw new Error(data.message || '이중인증 상태 변경 실패');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('이중인증 상태를 변경하는 중 오류가 발생했습니다.');
+      e.target.checked = !isEnabled; // 실패 시 토글 상태를 원래대로 되돌림
+    }
+  }
+
+  showTwoFactorAuthModal() {
+    const modal = document.getElementById('twoFactorAuthModal');
+    const toggle = document.getElementById('twoFactorAuthToggle');
+    toggle.checked = this.user.two_factor_auth_enabled; // 현재 상태 반영
+    modal.style.display = "block";
+
+    toggle.removeEventListener('change', this.bindToggleChangeEvent);
+    // 새 이벤트 리스너 추가
+    toggle.addEventListener('change', this.bindToggleChangeEvent);
+
+    const closeModalOnOutsideClick = (event) => {
+      if (event.target === modal) {
+          modal.style.display = "none";
+          // 이벤트 리스너 제거
+          window.removeEventListener('click', closeModalOnOutsideClick);
+      }
+    };
+
+  // window에 이벤트 리스너 추가
+    window.addEventListener('click', closeModalOnOutsideClick);
+  }
+
+  twoFactorAuthEvent() {
+    const twoFactorAuthButton = document.getElementById('twoFactorAuthButton');
+    if (twoFactorAuthButton) {
+      twoFactorAuthButton.addEventListener('click', () => {
+        this.showTwoFactorAuthModal(); // 이중 인증 모달 표시
+      });
+    }
+  }
+
+  logoutUser() {
+    // 로그아웃 버튼에 이벤트 리스너 추가
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', async () => {
+        // 세션 스토리지 클리어
+        sessionStorage.clear();
+
+        // 서버에 로그아웃 요청 (선택사항)
+        // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
+        try {
+            const response = await fetch(`${API_URL}/tcen-auth/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}` // 토큰 기반 인증을 사용하는 경우
+                }
+            });
+            if (response.ok) {
+                console.log('로그아웃 성공');
+            } else {
+                console.error('로그아웃 실패');
+            }
+        } catch (error) {
+            console.error('로그아웃 중 오류 발생', error);
+        }
+
+        // 로그인 페이지나 홈페이지로 리다이렉트
+        window.location.href = '/'; //
+    });
+}
+
+
   async afterRender() {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.getProfile();
     this.updateMyPage();
     this.myPageSettingModalEvent();
-    this.TwoFactorAuthentication();
     this.AccountDeletion();
-    const logoutBtn = document.querySelector('#logoutBtn');
-    logoutBtn.addEventListener('click', () => {});
+    this.logoutUser();
+    this.twoFactorAuthEvent();
   }
+
+
   async socketEventHandler(message) {
     responseBattleRequest(message);
   }
+  
 }

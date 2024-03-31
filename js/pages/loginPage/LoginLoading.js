@@ -9,7 +9,6 @@ import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {connectionSocketConnect} from '../../webSocketManager.js';
-import API_URL from '../../../config.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -50,15 +49,18 @@ export default class extends AbstractView {
     const authCode = new URLSearchParams(window.location.search).get('code');
 
     try {
-      const res = await fetch(`${API_URL}/tcen-auth/pong-world-login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        'http://127.0.0.1:8000/tcen-auth/pong-world-login/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: authCode,
+          }),
         },
-        body: JSON.stringify({
-          code: authCode,
-        }),
-      });
+      );
       const userData = await res.json();
       setToken(userData.data.access_token);
       setRefreshToken(userData.data.refresh_token);
@@ -71,11 +73,21 @@ export default class extends AbstractView {
   async afterRender() {
     setSignUpCompleted(false);
     const userData = await this.getUserData();
-    // console.log(userData);
+    console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
     connectionSocketConnect();
-    if (userData.is_new_user) window.history.pushState(null, null, '/signup');
-    else window.history.pushState(null, null, '/home');
+     // 'two_factor_auth_enabled' 값에 따라 분기 처리
+    if (userData.user.two_factor_auth_enabled) {
+      // 이중인증이 활성화된 경우, 이중인증 페이지로 리다이렉션
+      window.history.pushState(null, null, '/two-factor-auth');
+    } else {
+      // 이중인증이 활성화되지 않은 경우, 신규 사용자 여부에 따라 분기 처리
+      if (userData.is_new_user) {
+        window.history.pushState(null, null, '/signup');
+      } else {
+        window.history.pushState(null, null, '/home');
+      }
+    }
     router();
   }
 }
