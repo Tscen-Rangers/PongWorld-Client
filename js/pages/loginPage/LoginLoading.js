@@ -9,6 +9,7 @@ import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {connectionSocketConnect} from '../../webSocketManager.js';
+import API_URL from '../../../config.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -49,18 +50,15 @@ export default class extends AbstractView {
     const authCode = new URLSearchParams(window.location.search).get('code');
 
     try {
-      const res = await fetch(
-        'http://127.0.0.1:8000/tcen-auth/pong-world-login/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            code: authCode,
-          }),
+      const res = await fetch(`${API_URL}/tcen-auth/pong-world-login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          code: authCode,
+        }),
+      });
       const userData = await res.json();
       setToken(userData.data.access_token);
       setRefreshToken(userData.data.refresh_token);
@@ -76,7 +74,7 @@ export default class extends AbstractView {
     console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
     connectionSocketConnect();
-     // 'two_factor_auth_enabled' 값에 따라 분기 처리
+    // 'two_factor_auth_enabled' 값에 따라 분기 처리
     if (userData.user.two_factor_auth_enabled) {
       // 이중인증이 활성화된 경우, 이중인증 페이지로 리다이렉션
       window.history.pushState(null, null, '/two-factor-auth');
