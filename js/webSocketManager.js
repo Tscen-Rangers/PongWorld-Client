@@ -5,9 +5,7 @@ let tempHandler = null;
 
 export const checkConnectionSocket = async handler => {
   if (handler) tempHandler = handler;
-  console.log('HELLO');
   return new Promise(async (resolve, reject) => {
-    console.log(cws.getWS());
     // 새로고침 상황
     if (!cws.getWS()) {
       try {
