@@ -22,7 +22,6 @@ const $userProfileFriendRequestBtn = document.querySelector(
 const $chatButton = document.querySelector('.chatbutton');
 const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
 const $divide = document.querySelector('.divide');
-
 export const updateGameHistory = gameHistory => {
   console.log('game', gameHistory);
   $userProfileHistory.innerHTML = `      ${
@@ -98,6 +97,11 @@ export const updateUserModal = (userData, all) => {
     if (userData.player.id === JSON.parse(sessionStorage.getItem('user')).id) {
       $historyWithMeBtn.style.display = 'none';
       $divide.style.display = 'none';
+      $chatButton.style.display = 'none';
+      $userProfileFriendRequestBtn.style.display = 'none';
+    } else {
+      $chatButton.style.display = 'flex';
+      $userProfileFriendRequestBtn.style.display = 'flex';
     }
     $userProfileName.innerText = userData.player.nickname;
     $userProfileImg.src = userData.player.profile_img;

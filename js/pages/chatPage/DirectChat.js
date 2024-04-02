@@ -72,7 +72,7 @@ export default class extends AbstractView {
 		`;
   }
 
-  async updateUserList(chattingRooms) {
+  async updateUserList(chattingRooms, flag) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
     chatUserInner.innerHTML = `${chattingRooms.data
@@ -126,7 +126,7 @@ export default class extends AbstractView {
 
     if (Number($unReadCount.textContent)) $unReadCount;
 
-    if (this.params.user && $chatUserProfiles.length) {
+    if (flag) {
       let idx = findUser(Number(this.params.user), chattingRooms.data);
       this.$chattingForm.style.display = 'flex';
       this.$chatUserProfiles[idx].classList.add('active');
@@ -402,10 +402,10 @@ export default class extends AbstractView {
 
   async socketEventHendler(message) {
     if (!message.type) {
-      if (message.is_new) {
-        const chattingRooms = await this.getChattingRoom();
-        await this.updateUserList(chattingRooms);
-      }
+      // if (message.is_new) {
+      const chattingRooms = await this.getChattingRoom();
+      // }
+      await this.updateUserList(chattingRooms, true);
       this.$chatRoom.innerHTML = '';
       const chatRoomdID = await message.chatroom_id;
       await this.renderPrevChat(chatRoomdID);
@@ -445,5 +445,6 @@ export default class extends AbstractView {
     }
     responseBattleRequest(message);
     console.log('onMessage : ', message);
+    console.log('ASDASDASDASDASDA');
   }
 }
