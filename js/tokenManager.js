@@ -1,7 +1,8 @@
 import API_URL from '../config.js';
+import {logout} from './pages/myPage/Mypage.js';
 import {router} from './route.js';
 
-let accessToken = '';
+let accessToken = null;
 
 export const setToken = token => {
   accessToken = token;
@@ -40,8 +41,7 @@ export const refreshAccessToken = async () => {
       setToken(data.data.access);
     } else {
       alert('Please try again.');
-      window.history.pushState(null, null, '/');
-      router();
+      logout();
     }
   } catch (error) {
     console.log(error);

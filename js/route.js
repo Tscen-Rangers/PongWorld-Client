@@ -13,6 +13,7 @@ import NotFound from './pages/notFoundPage/notFound.js';
 import SignUp from './pages/signUp/SignUp.js';
 import LoginLoading from './pages/loginPage/LoginLoading.js';
 import TwoFactorAuthPage from './pages/twoFactorPage/twofactor.js';
+import {getToken, refreshAccessToken} from './tokenManager.js';
 
 const navBar = document.querySelector('#navBar');
 const mainTitle = document.querySelector('#main_title');
@@ -85,7 +86,7 @@ const routes = [
   {
     path: '/two-factor-auth',
     view: TwoFactorAuthPage,
-  }
+  },
 ];
 
 // 현재 선택된 Nav메뉴 스타일 활성화
@@ -110,15 +111,18 @@ const getParams = match => {
   return obj;
 };
 
-const navigateTo = url => {
+const navigateTo = async url => {
   if (url === location.href) return;
+  if (!getToken()) {
+    await refreshAccessToken();
+  }
   history.pushState(null, null, url);
   router();
 };
 
 export const router = async () => {
-   // '/two-factor-auth' 경로일 때 네비게이션 바 숨김 처리
-   if (location.pathname === '/two-factor-auth') {
+  // '/two-factor-auth' 경로일 때 네비게이션 바 숨김 처리
+  if (location.pathname === '/two-factor-auth') {
     navBar.style.display = 'none';
   } else {
     navBar.style.display =
@@ -160,7 +164,6 @@ export const router = async () => {
   seletedNavStyle(match.route.path);
 
   if (currentView && typeof currentView.cleanUp === 'function') {
-    console.log('이벤트 지움!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
     currentView.cleanUp();
   }
 
