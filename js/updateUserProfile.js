@@ -22,7 +22,6 @@ const $userProfileFriendRequestBtn = document.querySelector(
 const $chatButton = document.querySelector('.chatbutton');
 const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
 const $divide = document.querySelector('.divide');
-
 export const updateGameHistory = gameHistory => {
   console.log('game', gameHistory);
   $userProfileHistory.innerHTML = `      ${
@@ -48,9 +47,11 @@ export const updateGameHistory = gameHistory => {
               game.player2.nickname
             }</div>
             <div class="userProfile-score">
-              <div class="userProfile-score-first">${
-                game.player1_score
-              }</div>:${game.player2_score}
+              <div style="color: ${
+                game.player1_score === 10 ? 'black' : 'white'
+              } ">${game.player1_score}</div>:<div style="color: ${
+              game.player2_score === 10 ? 'black' : 'white'
+            } ">${game.player2_score}</div>
             </div>
             <div class="userProfile-result">${
               game.is_win ? 'win' : 'lose'
@@ -96,6 +97,11 @@ export const updateUserModal = (userData, all) => {
     if (userData.player.id === JSON.parse(sessionStorage.getItem('user')).id) {
       $historyWithMeBtn.style.display = 'none';
       $divide.style.display = 'none';
+      $chatButton.style.display = 'none';
+      $userProfileFriendRequestBtn.style.display = 'none';
+    } else {
+      $chatButton.style.display = 'flex';
+      $userProfileFriendRequestBtn.style.display = 'flex';
     }
     $userProfileName.innerText = userData.player.nickname;
     $userProfileImg.src = userData.player.profile_img;
@@ -108,6 +114,7 @@ export const updateUserModal = (userData, all) => {
     $userProfileWin.innerText = userData.player.wins;
     $userProfileRanking.innerText = userData.player.ranking;
     $chatButton.href = `/chat/direct/${userData.player.id}`;
+    console.log(userData.player.id);
     updateFriendRequestBtn(userData.player);
     updateGameHistory(userData.games);
     // if (userData.player.friend_status === 0)

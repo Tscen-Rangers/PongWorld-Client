@@ -27,7 +27,7 @@ export const responseBattleRequest = message => {
     $challengerName.innerText = message.opponent_nickname;
     sessionStorage.setItem('opponentName', message.opponent_nickname);
     $battleLevel.innerText =
-      message.mode === 0 ? 'easy' : message.mode === 1 ? 'normal' : 'hard';
+      message.mode === 1 ? 'easy' : message.mode === 2 ? 'normal' : 'hard';
     const option = {
       control: null,
       level: message.mode, // 서버에서는 0,1,2 클라이언트에서는 1,2,3
