@@ -336,7 +336,7 @@ export default class extends AbstractView {
       });
     });
     const chatUserImages = document.querySelectorAll('.chatUserImage');
-    const chatUserNames = document.querySelectorAll('.chatUserName');
+    // const chatUserNames = document.querySelectorAll('.chatUserName');
     chatUserImages.forEach(chatUserImage => {
       console.log('hehe');
       chatUserImage.addEventListener('click', e => {
@@ -345,13 +345,13 @@ export default class extends AbstractView {
         $allHistoryBtn.classList.add('selected');
       });
     });
-    chatUserNames.forEach(chatUserName => {
-      chatUserName.addEventListener('click', e => {
-        const id = e.target.dataset.id;
-        userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
-      });
-    });
+    // chatUserNames.forEach(chatUserName => {
+    //   chatUserName.addEventListener('click', e => {
+    //     const id = e.target.dataset.id;
+    //     userProfileData(id, 0, 0);
+    //     $allHistoryBtn.classList.add('selected');
+    //   });
+    // });
   }
 
   async getChattingRoom() {

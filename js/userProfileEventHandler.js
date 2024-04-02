@@ -1,5 +1,5 @@
 import {userProfileData} from './PlayersRestApi.js';
-
+import {router} from './route.js';
 document.addEventListener('DOMContentLoaded', () => {
   const $userProfileCloseBtn = document.querySelector('#userProfileCloseBtn');
   const $userProfileModalContainer = document.querySelector(
@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $historyWithMeBtn.style.display = 'inline';
     $divide.style.display = 'inline';
     $userProfileModalContainer.classList.remove('active');
+    // window.history.pushState(null, null, '/'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+    // router();
   });
   $allHistoryBtn.addEventListener('click', () => {
     const user = JSON.parse(
@@ -51,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(
       $userProfileFriendRequestBtn.getAttribute('userProfileData'),
     );
+    console.log(user);
     if (user.friend_status === 0)
       $userProfileConfirmModalMsg.innerHTML = `Would you like to send a friend request to ${user.nickname}?`;
     else if (user.friend_status === 1)
