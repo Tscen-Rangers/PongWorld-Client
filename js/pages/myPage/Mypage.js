@@ -41,7 +41,15 @@ export default class extends AbstractView {
           </form>
         </div>
         <div id="myPageBtnsSection">
-          <button id="twoFactorAuthButton" class="myPageSettingBtns">Two-factor authentication</button>
+          <div id="twoFactorAuthContainer">
+            <button id="twoFactorAuthButton" class="myPageSettingBtns">Two-factor authentication</button>
+            <div class="twoFactorAuthModal-content">
+              <label class="switch">
+                <input type="checkbox" id="twoFactorAuthToggle">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
           <button id="logoutBtn" class="myPageSettingBtns">logout</button>
           <button id="deleteAccountButton" class="myPageSettingBtns">delete account</button>
         </div>
@@ -49,12 +57,6 @@ export default class extends AbstractView {
       </div>
     </div>
     <div id="twoFactorAuthModal">
-      <div class="twoFactorAuthModal-content">
-        <label class="switch">
-          <input type="checkbox" id="twoFactorAuthToggle">
-          <span class="slider round"></span>
-        </label>
-      </div>
     </div>
     </div>
   `;
@@ -257,7 +259,6 @@ ${
 
     $myPageSettingBtn.addEventListener('click', () => {
       $myPageSettingModalContainer.classList.add('active');
-      console.log(this.user);
     });
 
     $myPageSettingModalContainer.addEventListener('click', e => {
@@ -313,7 +314,6 @@ ${
     });
   }
 
-
   async AccountDeletion() {
     const deleteAccountButton = document.querySelector('#deleteAccountButton');
     const accessToken = getToken();
@@ -353,7 +353,6 @@ ${
     });
   }
 
-
   async handleToggleChange(e) {
     const isEnabled = e.target.checked;
     try {
@@ -361,15 +360,19 @@ ${
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getToken()}`
+          Authorization: `Bearer ${getToken()}`,
         },
-        body: JSON.stringify({ two_factor_auth_enabled: isEnabled })
+        body: JSON.stringify({two_factor_auth_enabled: isEnabled}),
       });
       const data = await response.json();
       if (response.ok) {
         this.user.two_factor_auth_enabled = isEnabled;
         sessionStorage.setItem('user', JSON.stringify(this.user));
-        alert(`이중인증이 ${isEnabled ? '활성화되었습니다.' : '비활성화되었습니다.'}`);
+        alert(
+          `이중인증이 ${
+            isEnabled ? '활성화되었습니다.' : '비활성화되었습니다.'
+          }`,
+        );
       } else {
         throw new Error(data.message || '이중인증 상태 변경 실패');
       }
@@ -380,68 +383,42 @@ ${
     }
   }
 
-  showTwoFactorAuthModal() {
-    const modal = document.getElementById('twoFactorAuthModal');
+  twoFactorAuthEvent() {
     const toggle = document.getElementById('twoFactorAuthToggle');
     toggle.checked = this.user.two_factor_auth_enabled; // 현재 상태 반영
-    modal.style.display = "block";
-
-    toggle.removeEventListener('change', this.bindToggleChangeEvent);
-    // 새 이벤트 리스너 추가
     toggle.addEventListener('change', this.bindToggleChangeEvent);
-
-    const closeModalOnOutsideClick = (event) => {
-      if (event.target === modal) {
-          modal.style.display = "none";
-          // 이벤트 리스너 제거
-          window.removeEventListener('click', closeModalOnOutsideClick);
-      }
-    };
-
-  // window에 이벤트 리스너 추가
-    window.addEventListener('click', closeModalOnOutsideClick);
-  }
-
-  twoFactorAuthEvent() {
-    const twoFactorAuthButton = document.getElementById('twoFactorAuthButton');
-    if (twoFactorAuthButton) {
-      twoFactorAuthButton.addEventListener('click', () => {
-        this.showTwoFactorAuthModal(); // 이중 인증 모달 표시
-      });
-    }
   }
 
   logoutUser() {
     // 로그아웃 버튼에 이벤트 리스너 추가
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', async () => {
-        // 세션 스토리지 클리어
-        sessionStorage.clear();
+      // 세션 스토리지 클리어
+      sessionStorage.clear();
 
-        // 서버에 로그아웃 요청 (선택사항)
-        // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
-        try {
-            const response = await fetch(`${API_URL}/tcen-auth/logout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}` // 토큰 기반 인증을 사용하는 경우
-                }
-            });
-            if (response.ok) {
-                console.log('로그아웃 성공');
-            } else {
-                console.error('로그아웃 실패');
-            }
-        } catch (error) {
-            console.error('로그아웃 중 오류 발생', error);
+      // 서버에 로그아웃 요청 (선택사항)
+      // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
+      try {
+        const response = await fetch(`${API_URL}/tcen-auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getToken()}`, // 토큰 기반 인증을 사용하는 경우
+          },
+        });
+        if (response.ok) {
+          console.log('로그아웃 성공');
+        } else {
+          console.error('로그아웃 실패');
         }
+      } catch (error) {
+        console.error('로그아웃 중 오류 발생', error);
+      }
 
-        // 로그인 페이지나 홈페이지로 리다이렉트
-        window.location.href = '/'; //
+      // 로그인 페이지나 홈페이지로 리다이렉트
+      window.location.href = '/'; //
     });
-}
-
+  }
 
   async afterRender() {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
@@ -453,9 +430,7 @@ ${
     this.twoFactorAuthEvent();
   }
 
-
   async socketEventHandler(message) {
     responseBattleRequest(message);
   }
-  
 }
