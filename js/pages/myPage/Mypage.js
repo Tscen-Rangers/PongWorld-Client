@@ -10,6 +10,33 @@ import {router} from '../../route.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import API_URL from '../../../config.js';
 
+export const logout = async () => {
+  sessionStorage.clear();
+
+  // 서버에 로그아웃 요청 (선택사항)
+  // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
+  try {
+    const response = await fetch(`${API_URL}/tcen-auth/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`, // 토큰 기반 인증을 사용하는 경우
+      },
+    });
+    if (response.ok) {
+      console.log('로그아웃 성공');
+    } else {
+      console.error('로그아웃 실패');
+    }
+  } catch (error) {
+    console.error('로그아웃 중 오류 발생', error);
+  }
+
+  // 로그인 페이지나 홈페이지로 리다이렉트
+  cws.close();
+  window.location.href = '/'; //
+};
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -24,6 +51,8 @@ export default class extends AbstractView {
 
   // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
+    if (!this.user) return;
+
     return `
     <div class="contentsContainer">
     <div id="myPageConatiner">
@@ -393,30 +422,7 @@ ${
     // 로그아웃 버튼에 이벤트 리스너 추가
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', async () => {
-      // 세션 스토리지 클리어
-      sessionStorage.clear();
-
-      // 서버에 로그아웃 요청 (선택사항)
-      // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
-      try {
-        const response = await fetch(`${API_URL}/tcen-auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getToken()}`, // 토큰 기반 인증을 사용하는 경우
-          },
-        });
-        if (response.ok) {
-          console.log('로그아웃 성공');
-        } else {
-          console.error('로그아웃 실패');
-        }
-      } catch (error) {
-        console.error('로그아웃 중 오류 발생', error);
-      }
-
-      // 로그인 페이지나 홈페이지로 리다이렉트
-      window.location.href = '/'; //
+      logout();
     });
   }
 

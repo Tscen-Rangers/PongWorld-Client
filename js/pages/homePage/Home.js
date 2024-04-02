@@ -119,7 +119,7 @@ function onMatchComplete() {
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle('Game');
+    this.setTitle('PongWroldㅣHome');
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.game = null;
   }
@@ -144,6 +144,7 @@ export default class extends AbstractView {
         <div class="matchingOpponent">
           <div class="myMatching">
           <img class="myMatchingImg" src=${
+            JSON.parse(sessionStorage.getItem('user')) &&
             JSON.parse(sessionStorage.getItem('user')).profile_img
           }/>
           </div>
