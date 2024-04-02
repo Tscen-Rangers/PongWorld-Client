@@ -7,7 +7,6 @@ import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 function findUser(id, rooms) {
   for (let i = 0; i < rooms.length; i++) {
-    console.log(rooms[i]);
     if (rooms[i].user1 === id || rooms[i].user2 === id) return i;
   }
   return -1;
@@ -72,7 +71,7 @@ export default class extends AbstractView {
 		`;
   }
 
-  async updateUserList(chattingRooms, flag) {
+  async updateUserList(chattingRooms, is_new) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
     chatUserInner.innerHTML = `${chattingRooms.data
@@ -98,11 +97,13 @@ export default class extends AbstractView {
             ? room.user2_profile_img
             : room.user1_profile_img
         }/>
-          <p class="chatUserName">${
-            room.user1 === this.user.id
-              ? room.user2_nickname
-              : room.user1_nickname
-          }</p>
+          <p class="chatUserName" data-id='${
+            room.user1 === this.user.id ? room.user2 : room.user1
+          }' >${
+          room.user1 === this.user.id
+            ? room.user2_nickname
+            : room.user1_nickname
+        }</p>
         </div>
         <div class="unReadCount">${room.unread_count}</div>
         <div class="outDirectChatRoomContainer" data-chatroomid=${room.id}>
@@ -118,7 +119,6 @@ export default class extends AbstractView {
     const $chatUserProfiles = document.querySelectorAll('.chatUserProfile');
     this.$unReadCount = $unReadCount;
     this.$chatUserProfiles = $chatUserProfiles;
-    console.log($chatUserProfiles);
 
     $unReadCount.forEach(e => {
       if (!Number(e.textContent)) e.style.opacity = 0;
@@ -126,10 +126,12 @@ export default class extends AbstractView {
 
     if (Number($unReadCount.textContent)) $unReadCount;
 
-    if (flag) {
+    if (this.params.user) {
       let idx = findUser(Number(this.params.user), chattingRooms.data);
-      this.$chattingForm.style.display = 'flex';
-      this.$chatUserProfiles[idx].classList.add('active');
+      if (idx !== -1) {
+        this.$chattingForm.style.display = 'flex';
+        this.$chatUserProfiles[idx].classList.add('active');
+      }
       // this.$chatUserProfiles[idx].click();
     }
     this.bindUserListEvents();
@@ -321,24 +323,27 @@ export default class extends AbstractView {
 
     this.$chatUserProfiles.forEach(profile => {
       profile.addEventListener('click', async e => {
-        this.nextChattingLog = null;
-        this.$chattingForm.style.display = 'flex';
-        // 기존 active 클래스 삭제
-        this.leaveWebSocket();
-        this.$chatUserProfiles.forEach(profile => {
-          profile.classList.remove('active');
-        });
+        if (e.currentTarget.classList[1] !== 'active') {
+          this.nextChattingLog = null;
+          this.$chattingForm.style.display = 'flex';
 
-        e.currentTarget.classList.add('active');
+          // 기존 active 클래스 삭제
+          this.leaveWebSocket();
+          this.$chatUserProfiles.forEach(profile => {
+            profile.classList.remove('active');
+          });
 
-        this.target = e.currentTarget.dataset.userid; //타겟 아이디
-        this.sendWebSocket();
+          e.currentTarget.classList.add('active');
+
+          this.target = e.currentTarget.dataset.userid; //타겟 아이디
+          this.sendWebSocket();
+        }
       });
     });
+
     const chatUserImages = document.querySelectorAll('.chatUserImage');
     const chatUserNames = document.querySelectorAll('.chatUserName');
     chatUserImages.forEach(chatUserImage => {
-      console.log('hehe');
       chatUserImage.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
@@ -376,6 +381,7 @@ export default class extends AbstractView {
   }
 
   async afterRender() {
+    await checkConnectionSocket(this.socketEventHendler.bind(this));
     const $chatRoom = document.querySelector('.chatRoom');
     this.$chatRoom = $chatRoom;
 
@@ -391,21 +397,19 @@ export default class extends AbstractView {
     const chattingRooms = await this.getChattingRoom();
     this.$chattingSubmitImage = $chattingSubmitImage;
 
-    await this.updateUserList(chattingRooms);
-
-    await checkConnectionSocket(this.socketEventHendler.bind(this));
     if (this.params.user) {
       this.target = Number(this.params.user);
       this.sendWebSocket();
     }
+    await this.updateUserList(chattingRooms);
   }
 
   async socketEventHendler(message) {
     if (!message.type) {
-      // if (message.is_new) {
-      const chattingRooms = await this.getChattingRoom();
-      // }
-      await this.updateUserList(chattingRooms, true);
+      if (message.is_new) {
+        const chattingRooms = await this.getChattingRoom();
+        await this.updateUserList(chattingRooms);
+      }
       this.$chatRoom.innerHTML = '';
       const chatRoomdID = await message.chatroom_id;
       await this.renderPrevChat(chatRoomdID);
@@ -445,6 +449,5 @@ export default class extends AbstractView {
     }
     responseBattleRequest(message);
     console.log('onMessage : ', message);
-    console.log('ASDASDASDASDASDA');
   }
 }
