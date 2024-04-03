@@ -312,6 +312,7 @@
   align-self: flex-start;
   align-items: flex-end;
   max-width: 90%;
+  margin-bottom: 5px;
 }
 
 .friendChat,
