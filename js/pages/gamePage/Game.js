@@ -452,7 +452,7 @@ export default class extends AbstractView {
         console.log('complete!!!!!!!!!!!!!!');
         console.log($gameResultModalContainer);
         $gameResultModalContainer.classList.remove('active');
-        window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
+        // window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
         router();
       }, 2000); // 2000 밀리초 = 2초
     };

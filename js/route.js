@@ -21,6 +21,7 @@ const headphone = document.querySelector('#headphoneImg');
 const Navs = Array.from(document.querySelectorAll('.nav__link'));
 
 let currentView = null;
+let currHref = '';
 
 const routes = [
   {
@@ -92,8 +93,6 @@ const routes = [
 // 현재 선택된 Nav메뉴 스타일 활성화
 const seletedNavStyle = path => {
   Navs.forEach(e => {
-    //startWith : 문자열이 특정 문자열로 시작하는지 검사
-
     if (path.startsWith(e.pathname)) e.childNodes[0].classList.add('active');
     else e.childNodes[0].classList.remove('active');
   });
@@ -164,7 +163,11 @@ export const router = async () => {
 
   seletedNavStyle(match.route.path);
 
-  if (currentView && typeof currentView.cleanUp === 'function') {
+  if (
+    currentView &&
+    typeof currentView.cleanUp === 'function' &&
+    currHref != location.pathname
+  ) {
     currentView.cleanUp();
   }
 
@@ -173,6 +176,7 @@ export const router = async () => {
   document.querySelector('#app').innerHTML = await view.getHtml();
   view.afterRender();
   currentView = view;
+  currHref = location.pathname;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
