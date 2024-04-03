@@ -76,9 +76,9 @@ export default class extends AbstractView {
 
     chatUserInner.innerHTML = `${chattingRooms.data
       .map(room => {
-        return `<div class="chatUserProfile" data-userid="${
+        return `<div class="chatUserProfile" data-userid=${
           room.user1 === this.user.id ? room.user2 : room.user1
-        }" data-chatroomid=${room.id}>
+        } data-chatroomid=${room.id}>
       <div class="chatUserProfileBlur"></div>
         <div class="chatUserInfo">
           <img class="directOnlineUserImage" src="/public/online.png" style="display : ${
@@ -265,7 +265,6 @@ export default class extends AbstractView {
   }
 
   sendWebSocket() {
-    console.log(this.target);
     cws.send({
       type: 'private_chat',
       status: 'enter',
@@ -336,13 +335,18 @@ export default class extends AbstractView {
           e.currentTarget.classList.add('active');
 
           this.target = e.currentTarget.dataset.userid; //타겟 아이디
-          this.sendWebSocket();
+          if (this.target !== 'null') this.sendWebSocket();
+          else {
+            this.$chattingForm.style.display = 'none';
+            const chatroomID = e.currentTarget.dataset.chatroomid;
+            this.$chatRoom.innerHTML = '';
+            await this.renderPrevChat(chatroomID);
+          }
         }
       });
     });
 
     const chatUserImages = document.querySelectorAll('.chatUserImage');
-    // const chatUserNames = document.querySelectorAll('.chatUserName');
     chatUserImages.forEach(chatUserImage => {
       chatUserImage.addEventListener('click', e => {
         const id = e.target.dataset.id;
@@ -350,13 +354,6 @@ export default class extends AbstractView {
         $allHistoryBtn.classList.add('selected');
       });
     });
-    // chatUserNames.forEach(chatUserName => {
-    //   chatUserName.addEventListener('click', e => {
-    //     const id = e.target.dataset.id;
-    //     userProfileData(id, 0, 0);
-    //     $allHistoryBtn.classList.add('selected');
-    //   });
-    // });
   }
 
   async getChattingRoom() {
@@ -401,11 +398,13 @@ export default class extends AbstractView {
       this.target = Number(this.params.user);
       this.sendWebSocket();
     }
+
+    console.log(chattingRooms);
     await this.updateUserList(chattingRooms);
   }
 
   async socketEventHendler(message) {
-    if (!message.type) {
+    if (!message.type && !message.error) {
       if (message.is_new) {
         const chattingRooms = await this.getChattingRoom();
         await this.updateUserList(chattingRooms);
