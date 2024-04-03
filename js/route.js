@@ -93,8 +93,9 @@ const routes = [
 const seletedNavStyle = path => {
   Navs.forEach(e => {
     //startWith : 문자열이 특정 문자열로 시작하는지 검사
-    if (path.startsWith(e.pathname)) e.classList.add('active');
-    else e.classList.remove('active');
+
+    if (path.startsWith(e.pathname)) e.childNodes[0].classList.add('active');
+    else e.childNodes[0].classList.remove('active');
   });
 };
 
