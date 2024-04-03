@@ -291,7 +291,7 @@ export default class extends AbstractView {
     } else {
       opponentName.textContent = message.nickname;
       opponentName.style.color = 'black';
-      opponentName.style.marginBottom = '-10px';
+      opponentName.style.marginBottom = '-5px';
       newMsg.textContent = message.message;
       newMsg.setAttribute('class', 'friendChat');
       opponentMsgBox.appendChild(newMsg);
