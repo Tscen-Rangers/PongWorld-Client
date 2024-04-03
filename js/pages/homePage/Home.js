@@ -183,8 +183,8 @@ export default class extends AbstractView {
                   }></div>
               </div>
               <div class="versus">
-                ${game.player1 ? game.player1.nickname : '알수없음'} VS ${
-                game.player2 ? game.player2.nickname : '알수없음'
+                ${game.player1 ? game.player1.nickname : '(unknown)'} VS ${
+                game.player2 ? game.player2.nickname : '(unknown)'
               }
               </div>
               <div class="resultScore">

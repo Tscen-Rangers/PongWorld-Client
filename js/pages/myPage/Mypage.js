@@ -147,8 +147,8 @@ ${
       } class="player-image" alt="Player 2 Image" />
     </div>
       <div class="players">${
-        game.player1 ? game.player1.nickname : '알수없음'
-      } VS ${game.player2 ? game.player2.nickname : '알수없음'}</div>
+        game.player1 ? game.player1.nickname : '(unknown)'
+      } VS ${game.player2 ? game.player2.nickname : '(unknown)'}</div>
       <div class="score"><text style="color: ${
         game.player1_score === 10 ? 'black' : 'white'
       }">${game.player1_score}</text> &nbsp;: &nbsp;<text style=color: ${
