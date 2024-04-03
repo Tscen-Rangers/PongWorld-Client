@@ -33,19 +33,27 @@ export const updateGameHistory = gameHistory => {
             <div class="userProfile-match-inner">
             <div class="userProfile-player-image-container">
             <img
-              src=${game.player1.player_profile_img}
+              src=${
+                game.player1
+                  ? game.player1.player_profile_img
+                  : '/public/person.svg'
+              }
               class="userProfile-player-image"
               alt="Player 1 Image"
             />
             <img
-              src=${game.player2.player_profile_img}
+              src=${
+                game.player2
+                  ? game.player2.player_profile_img
+                  : '/public/person.svg'
+              }
               class="userProfile-player-image"
               alt="Player 2 Image"
             />
             </div>
-            <div class="userProfile-players">${game.player1.nickname} VS ${
-              game.player2.nickname
-            }</div>
+            <div class="userProfile-players">${
+              game.player1 ? game.player1.nickname : `(unknown)`
+            } VS ${game.player2 ? game.player2.nickname : `(unknown)`}</div>
             <div class="userProfile-score">
               <div style="color: ${
                 game.player1_score === 10 ? 'black' : 'white'
