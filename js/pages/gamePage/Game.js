@@ -181,7 +181,6 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
-    console.log('1');
     if (this.socket === cws)
       this.socket.send({
         type: 'invite_game',
@@ -189,7 +188,6 @@ export default class extends AbstractView {
         y_coordinate: coordinate,
       });
     else if (this.socket === tws) {
-      console.log('2');
       this.socket.send({
         tournament_mode: 'move_paddle',
         y_coordinate: coordinate,
@@ -206,46 +204,35 @@ export default class extends AbstractView {
     this.sendStick(y);
   }
 
-  // animatePaddleMovement() {
-  //   if (isMovingUp || isMovingDown) {
-  //     const style = window.getComputedStyle(this.myPingpongStick);
-  //     let newPosition = parseInt(style.top);
-
-  //     if (isMovingUp)
-  //       newPosition = Math.max(
-  //         newPosition - 5,
-  //         this.myPingpongStick.offsetHeight / 2,
-  //       );
-  //     if (isMovingDown) newPosition = Math.min(newPosition + 5, this.maxY);
-
-  //     this.myPingpongStick.style.top = newPosition + 'px';
-  //     this.update(newPosition);
-  //     this.rAF = requestAnimationFrame(this.animatePaddleMovement.bind(this));
-  //   } else {
-  //     cancelAnimationFrame(this.rAF);
-  //   }
-  // }
-
   animatePaddleMovement() {
+    let lastTime = 0;
+    const fps = 60;
+    const interval = 1000 / fps;
+
     if (!this.rAF) {
-      const animate = () => {
+      const animate = currentTime => {
         if (isMovingUp || isMovingDown) {
           const myStickRect = this.myPingpongStick.getBoundingClientRect();
 
-          if (isMovingUp) {
-            if (myStickRect.top - this.speed <= this.tableRect.top) {
-              this.currentPosY =
-                this.currentPosY - (myStickRect.top - this.tableRect.top);
-            } else this.currentPosY -= this.speed;
-          } else if (isMovingDown) {
-            if (myStickRect.bottom + this.speed >= this.tableRect.bottom) {
-              this.currentPosY =
-                this.currentPosY + (this.tableRect.bottom - myStickRect.bottom);
-            } else this.currentPosY += this.speed;
-          }
+          const elapsed = currentTime - lastTime;
 
-          this.update();
-          this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
+          if (elapsed > interval) {
+            lastTime = currentTime - (elapsed % interval);
+            if (isMovingUp) {
+              if (myStickRect.top - this.speed <= this.tableRect.top) {
+                this.currentPosY =
+                  this.currentPosY - (myStickRect.top - this.tableRect.top);
+              } else this.currentPosY -= this.speed;
+            } else if (isMovingDown) {
+              if (myStickRect.bottom + this.speed >= this.tableRect.bottom) {
+                this.currentPosY =
+                  this.currentPosY +
+                  (this.tableRect.bottom - myStickRect.bottom);
+              } else this.currentPosY += this.speed;
+            }
+            this.update();
+            this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
+          }
           this.rAF = requestAnimationFrame(animate.bind(this));
         } else {
           cancelAnimationFrame(this.rAF);
@@ -268,11 +255,9 @@ export default class extends AbstractView {
     let positionY = Math.max(mouseY, stickHeight / 2);
     // 탁구채가 탁구대 하단 경계를 넘지 않도록 조정
     positionY = Math.min(positionY, tableHeight - stickHeight / 2);
-    console.log(mouseY);
 
     // 탁구채의 새로운 Y 위치를 계산 (탁구대 중심으로부터의 상대적 위치)
     this.currentPosY = positionY - tableHeight / 2;
-    console.log('currPOS = ', this.currentPosY);
 
     // 탁구채의 위치를 업데이트 (transform 사용)
     this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
@@ -302,19 +287,6 @@ export default class extends AbstractView {
   onKeyboardMove() {
     if (this.gameOption.control === 'keyboard') {
       this.addEventListeners();
-
-      // setInterval(() => {
-      //   if (isMovingUp) {
-      //     coor = Math.max(
-      //       parseInt(style.top) - 30,
-      //       this.myPingpongStick.offsetHeight / 2,
-      //     );
-      //     this.update(coor);
-      //   } else if (isMovingDown) {
-      //     coor = Math.min(parseInt(style.top) + 30, this.maxY);
-      //     this.update(coor);
-      //   }
-      // }, 1000 / 60); // 60프레임으로 설정
     }
   }
 
@@ -452,7 +424,6 @@ export default class extends AbstractView {
         console.log('complete!!!!!!!!!!!!!!');
         console.log($gameResultModalContainer);
         $gameResultModalContainer.classList.remove('active');
-        // window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
         router();
       }, 2000); // 2000 밀리초 = 2초
     };
@@ -545,7 +516,6 @@ export default class extends AbstractView {
         } else flag++;
       } else if (message.type === 'START_TOURNAMENT_FINAL') {
         console.log('START_TOURNAMENT_FINAL', message);
-        // sessionStorage.setItem('webSocketType', JSON.stringify(message.type));
         if (message.data.player1.info.nickname === this.user.nickname) {
           sessionStorage.setItem('myPosition', 'player1');
           sessionStorage.setItem(
