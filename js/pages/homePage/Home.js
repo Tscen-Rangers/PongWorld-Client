@@ -179,7 +179,7 @@ export default class extends AbstractView {
                   <div class="recentPlayer2Img"><img class="recentPlayerImg" src=${
                     game.player2
                       ? game.player2.player_profile_img
-                      : '/public/preson.svg'
+                      : '/public/person.svg'
                   }></div>
               </div>
               <div class="versus">
