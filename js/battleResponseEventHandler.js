@@ -7,18 +7,17 @@ const $battleAlertModalContainer = document.querySelector(
   '.battleAlertModalContainer',
 );
 const $battleStartMsg = document.querySelector('#battleStartMsg');
-console.log($battleStartMsg);
 const $noticeModal = document.querySelector('#noticeModal');
 const $noticeContent = document.querySelector('#noticeContent');
 
-export const onMatchComplete = () => {
+export const onMatchComplete = time => {
   // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
     $battleAlertModalContainer.classList.remove('active');
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
-  }, 2000); // 2000 밀리초 = 2초
+  }, 3000); // 2000 밀리초 = 2초
 };
 
 export const responseBattleRequest = message => {
@@ -26,6 +25,7 @@ export const responseBattleRequest = message => {
     $battleChallengerImg.src = message.opponent_profile_img;
     $challengerName.innerText = message.opponent_nickname;
     sessionStorage.setItem('opponentName', message.opponent_nickname);
+    console.log(message.mode);
     $battleLevel.innerText =
       message.mode === 1 ? 'easy' : message.mode === 2 ? 'normal' : 'hard';
     const option = {
