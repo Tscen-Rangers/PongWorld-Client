@@ -17,14 +17,17 @@ function onMatchComplete() {
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
     // 일단 서버에서 소켓 메세지가 일찍 와서 2초로 수정 원래는 3초
-  }, 2000);
+  }, 3000);
 }
 
+//onMatchComplete 시간 다르게 해서 강제로 맞춰?!
 function checkStartRandomGame(msg) {
+  const $matchingText = document.querySelector('.matchingText');
   const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
   const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
-
   if (msg.type === 'START_RANDOM_GAME') {
+    $matchingText.innerHTML =
+      'The match has been completed. The game will start soon!';
     sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));
     if (
       msg.data.player1.info.nickname ===
@@ -109,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 메시지 수신 이벤트 핸들러
     tws.onMessage(msg => {
       // 참가자 수 업데이트
-      console.log(msg);
       if (msg.participants_num) {
         $currentStaff.innerText = `${msg.participants_num}/4`;
       }
@@ -159,20 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
             JSON.stringify(msg.data.player1),
           );
         }
-        onMatchComplete();
+        onMatchComplete(3000);
         $tournamentModalContainer.classList.remove('active');
       }
     });
   };
 
   $tournamentControlKeyboard.addEventListener('click', async () => {
-    console.log('keyboard');
     option.control = 'keyboard';
     tournamentOnMessage();
   });
 
   $tournamentControlMouse.addEventListener('click', async () => {
-    console.log('mouse');
+    // console.log('mouse');
     option.control = 'mouse';
     tournamentOnMessage();
   });
@@ -197,10 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!option.control || !option.level)
       console.log('옵션 선택 해라!!!!!!!!!');
     else {
-      console.log($gameOptionModalContainer.dataset.modaloption);
+      // console.log($gameOptionModalContainer.dataset.modaloption);
       console.log(option);
       sessionStorage.setItem('gameOption', JSON.stringify(option));
-      console.log($gameOptionModalContainer.dataset.modaloption);
+      // console.log($gameOptionModalContainer.dataset.modaloption);
       if ($gameOptionModalContainer.dataset.modaloption === 'quickmatch') {
         const $matchingText = document.querySelector('.matchingText');
         const $quickMatchModal = document.querySelector(
@@ -213,16 +214,16 @@ document.addEventListener('DOMContentLoaded', () => {
         qws.send({command: 'participant', speed: option.level});
 
         qws.onMessage(msg => {
-          if (msg.message) {
-            $matchingText.innerHTML = msg.message;
-          }
+          console.log(new Date().toLocaleString(), msg.type);
+          // if (msg.type === 'SUCCESS_RANDOM_MATCHING') {
+          //   $matchingText.innerHTML = msg.message;
+          // }
           checkStartRandomGame(msg);
-          console.log(msg);
         });
       }
       if ($gameOptionModalContainer.dataset.modaloption === 'battle') {
-        console.log(+$gameOptionModalContainer.dataset.player2id);
-        console.log(JSON.parse(sessionStorage.getItem('gameOption')).level);
+        // console.log(+$gameOptionModalContainer.dataset.player2id);
+        // console.log(JSON.parse(sessionStorage.getItem('gameOption')).level);
         cws.send({
           type: 'invite_game',
           command: 'request',
