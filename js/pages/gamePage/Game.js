@@ -11,12 +11,35 @@ let lastMessageTime = null;
 
 const checkSocket = async () => {
   const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
-  console.log('socket', webSocketType);
-  if (webSocketType === 'START_RANDOM_GAME') return qws;
-  else if (webSocketType === 'START_FRIEND_GAME') return cws;
+  let socket;
+  if (webSocketType === 'START_RANDOM_GAME') socket = qws;
+  else if (webSocketType === 'START_FRIEND_GAME') socket = cws;
   else {
-    return tws;
+    socket = tws;
   }
+
+  if (
+    !socket.getWS() ||
+    (socket && socket.getWS().readyState === WebSocket.CLOSED)
+  ) {
+    if (socket === cws)
+      cws.send({
+        type: 'invite_game',
+        command: 'end_game',
+      });
+    else if (socket === tws)
+      tws.send({
+        tournament_mode: 'end_tournament',
+      });
+    else
+      qws.send({
+        command: 'end_game',
+      });
+    history.pushState(null, null, '/home');
+    return router();
+  }
+
+  return socket;
 };
 
 function convertClientToServerPosition(clientY) {
@@ -370,6 +393,7 @@ export default class extends AbstractView {
 
   async afterRender() {
     this.socket = await checkSocket();
+
     this.sendStick(0);
     const $battleModalContainer = document.querySelector(
       '.battleModalContainer',
