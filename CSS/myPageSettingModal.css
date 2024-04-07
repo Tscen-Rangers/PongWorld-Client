@@ -161,17 +161,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #f44336; /* 빨간색으로 변경 */
+  background-color: rgb(196, 196, 196); /* 빨간색으로 변경 */
   -webkit-transition: 0.4s;
+
   transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #4caf50; /* 파란색 대신 초록색으로 변경 */
+  background-color: rgb(161, 223, 149); /* 파란색 대신 초록색으로 변경 */
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #4caf50; /* 파란색 대신 초록색으로 변경 */
+  box-shadow: 0 0 1px rgb(161, 223, 149); /* 파란색 대신 초록색으로 변경 */
 }
 
 input:checked + .slider:before {
@@ -198,7 +199,7 @@ input:checked + .slider:before {
   transition: 0.4s;
   text-align: center;
   line-height: 26px;
-  color: #f44336; /* X 표시 색상 */
+  color: rgb(196, 196, 196); /* X 표시 색상 */
 }
 
 input:checked + .slider.round:before {

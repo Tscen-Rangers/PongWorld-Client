@@ -71,7 +71,7 @@ export default class extends AbstractView {
 		`;
   }
 
-  async updateUserList(chattingRooms, is_new) {
+  async updateUserList(chattingRooms) {
     const chatUserInner = document.querySelector('.chatUserInner');
 
     chatUserInner.innerHTML = `${chattingRooms.data
@@ -93,16 +93,20 @@ export default class extends AbstractView {
           <img class="chatUserImage" data-id='${
             room.user1 === this.user.id ? room.user2 : room.user1
           }' src=${
-          room.user1 === this.user.id
-            ? room.user2_profile_img
-            : room.user1_profile_img
-        }/>
+          room.user1 && room.user2
+            ? room.user1 === this.user.id
+              ? room.user2_profile_img
+              : room.user1_profile_img
+            : '/public/person.svg'
+        }>
           <p class="chatUserName" data-id='${
             room.user1 === this.user.id ? room.user2 : room.user1
           }' >${
-          room.user1 === this.user.id
-            ? room.user2_nickname
-            : room.user1_nickname
+          room.user1 && room.user2
+            ? room.user1 === this.user.id
+              ? room.user2_nickname
+              : room.user1_nickname
+            : '(unknown)'
         }</p>
         </div>
         <div class="unReadCount">${room.unread_count}</div>

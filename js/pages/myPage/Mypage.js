@@ -353,16 +353,13 @@ ${
       );
       if (confirmed) {
         try {
-          const response = await fetch(
-            'http://localhost:8000/tcen-auth/delete/',
-            {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-              },
+          const response = await fetch(`${API_UR}/tcen-auth/delete/`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
             },
-          );
+          });
           if (response.ok) {
             alert('계정이 성공적으로 삭제되었습니다.');
             history.pushState(null, null, '/');
@@ -397,11 +394,11 @@ ${
       if (response.ok) {
         this.user.two_factor_auth_enabled = isEnabled;
         sessionStorage.setItem('user', JSON.stringify(this.user));
-        alert(
-          `이중인증이 ${
-            isEnabled ? '활성화되었습니다.' : '비활성화되었습니다.'
-          }`,
-        );
+        // alert(
+        //   `이중인증이 ${
+        //     isEnabled ? '활성화되었습니다.' : '비활성화되었습니다.'
+        //   }`,
+        // );
       } else {
         throw new Error(data.message || '이중인증 상태 변경 실패');
       }

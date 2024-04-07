@@ -1,10 +1,11 @@
-import AbstractView from '../../AbstractView.js';// AbstractView의 정확한 경로로 수정해주세요.
+import API_URL from '../../../config.js';
+import AbstractView from '../../AbstractView.js'; // AbstractView의 정확한 경로로 수정해주세요.
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle("PongWorldㅣTwoFactor");
+    this.setTitle('PongWorldㅣTwoFactor');
   }
 
   async getHtml() {
@@ -25,24 +26,28 @@ export default class extends AbstractView {
 
   async afterRender() {
     // 메일 전송 버튼 클릭 이벤트
-    document.getElementById("sendEmailButton").addEventListener("click", async () => {
-      await this.sendEmail();
-    });
+    document
+      .getElementById('sendEmailButton')
+      .addEventListener('click', async () => {
+        await this.sendEmail();
+      });
 
     // 인증 확인 버튼 클릭 이벤트
-    document.getElementById("verifyCodeButton").addEventListener("click", async () => {
-      await this.verifyCode();
-    });
+    document
+      .getElementById('verifyCodeButton')
+      .addEventListener('click', async () => {
+        await this.verifyCode();
+      });
   }
 
   async sendEmail() {
     const accessToken = getToken();
     try {
-      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
+      const response = await fetch(`${API_URL}/tcen-auth/verify/`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
       });
       if (response.ok) {
@@ -59,13 +64,13 @@ export default class extends AbstractView {
     const code = document.getElementById('code').value;
     const accessToken = getToken();
     try {
-      const response = await fetch('http://localhost:8000/tcen-auth/verify/', {
+      const response = await fetch(`${API_URL}/tcen-auth/verify/`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify({code: code}),
       });
       if (response.ok) {
         alert('인증 성공');
