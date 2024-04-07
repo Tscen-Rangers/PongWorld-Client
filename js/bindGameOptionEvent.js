@@ -18,7 +18,7 @@ function onMatchComplete() {
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
     // 일단 서버에서 소켓 메세지가 일찍 와서 2초로 수정 원래는 3초
-  }, 3000);
+  }, 1000);
 }
 
 //onMatchComplete 시간 다르게 해서 강제로 맞춰?!
