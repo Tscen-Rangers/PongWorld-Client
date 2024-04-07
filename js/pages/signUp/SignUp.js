@@ -2,6 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import {router} from '../../route.js';
 import {setSignUpCompleted, isSignUpCompleted} from '../../signUpCompleted.js';
+import API_URL from '../../../config.js';
 
 function locationHrefToHome() {
   window.history.pushState(null, null, '/home');
@@ -40,16 +41,13 @@ export default class extends AbstractView {
 
     const patchUserData = async formData => {
       try {
-        const res = await fetch(
-          `http://localhost:8000/players/setting/${this.user.id}/`,
-          {
-            method: 'PATCH',
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-            body: formData,
+        const res = await fetch(`${API_URL}/players/setting/${this.user.id}/`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
           },
-        );
+          body: formData,
+        });
         const data = await res.json();
         if (res.ok) {
           const user = JSON.parse(sessionStorage.getItem('user'));
