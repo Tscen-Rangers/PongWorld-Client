@@ -17,7 +17,7 @@ export const onMatchComplete = time => {
     $battleAlertModalContainer.classList.remove('active');
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
-  }, 3000); // 2000 밀리초 = 2초
+  }); // 2000 밀리초 = 2초
 };
 
 export const responseBattleRequest = message => {
