@@ -353,16 +353,13 @@ ${
       );
       if (confirmed) {
         try {
-          const response = await fetch(
-            'http://localhost:8000/tcen-auth/delete/',
-            {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-              },
+          const response = await fetch(`${API_UR}/tcen-auth/delete/`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
             },
-          );
+          });
           if (response.ok) {
             alert('계정이 성공적으로 삭제되었습니다.');
             history.pushState(null, null, '/');
