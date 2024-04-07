@@ -332,7 +332,7 @@ battle
       $challengerName.innerText = message.opponent_nickname;
       sessionStorage.setItem('opponentName', message.opponent_nickname);
       $battleLevel.innerText =
-        message.mode === 0 ? 'easy' : message.mode === 1 ? 'normal' : 'hard';
+        message.mode === 1 ? 'easy' : message.mode === 2 ? 'normal' : 'hard';
       //gameOption에 game 난이도 추가
       const option = {
         control: null,
@@ -345,6 +345,7 @@ battle
       sessionStorage.setItem('battleId', message.data.id);
       battleMatchRequestExpired();
     } else if (message.type === 'START_FRIEND_GAME') {
+      console.log(new Date().toLocaleString(), message.type);
       if (
         message.data.player1.info.nickname ===
         JSON.parse(sessionStorage.getItem('user')).nickname
