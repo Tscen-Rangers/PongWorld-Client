@@ -1,3 +1,4 @@
+import WS_URL from '../wsConfig.js';
 import cws from './WebSocket/ConnectionSocket.js';
 import {refreshAccessToken, getToken} from './tokenManager.js';
 
@@ -32,6 +33,6 @@ export const checkConnectionSocket = async handler => {
 
 export const connectionSocketConnect = async handler => {
   if (!getToken()) await refreshAccessToken();
-  await cws.connect('ws://127.0.0.1:8000/ws/connection/');
+  await cws.connect(`${WS_URL}/ws/connection/`);
   cws.setEvent(handler);
 };

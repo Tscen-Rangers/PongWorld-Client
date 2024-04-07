@@ -3,6 +3,7 @@ import {router} from './route.js';
 import {getToken, refreshAccessToken} from './tokenManager.js';
 import tws from './WebSocket/TournamentSocket.js';
 import cws from './WebSocket/ConnectionSocket.js';
+import WS_URL from '../wsConfig.js';
 const option = {
   control: null,
   level: null,
@@ -102,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!getToken().length) await refreshAccessToken();
 
     // WebSocket 연결
-    tws.connect('ws://127.0.0.1:8000/ws/tournament/');
+    tws.connect(`${WS_URL}/ws/tournament/`);
     $tournamentCancelBtn.style.display = 'block';
     $tournamentModalContainer.classList.add('active');
     $tournamentControlModal.classList.remove('show');
@@ -208,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         $quickMatchModal.classList.add('active');
         if (!getToken().length) await refreshAccessToken();
-        await qws.connect(`ws://127.0.0.1:8000/ws/random/`);
+        await qws.connect(`${WS_URL}/ws/random/`);
 
         qws.send({command: 'participant', speed: option.level});
 
