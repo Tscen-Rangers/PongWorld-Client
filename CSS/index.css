@@ -211,7 +211,24 @@ a {
   }
 }
 
-.musicModalContainer {
+#testModal {
+  opacity: 0;
+  transition: 2.5s;
+  z-index: 100;
+}
+
+#testModal.active {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+.music-modal-back {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modalBack,
+.music-modal-back {
   position: absolute;
   display: flex;
   top: 0;
@@ -219,17 +236,18 @@ a {
   background-color: rgba(0, 0, 0, 0.592);
   width: 100dvw;
   height: 100dvh;
-  visibility: hidden;
-  opacity: 0;
+  /* visibility: hidden; */
+  /* opacity: 0; */
   transition: 0.5s;
 }
 
-.musicModalContainer.show,
-#tournamentControlModalBackground.show {
+#tournamentControlModalBackground.show,
+.music-modal-back.show {
   visibility: visible;
   opacity: 1;
 }
 
+.modal,
 .musicModal {
   position: absolute;
   display: flex;
@@ -237,14 +255,25 @@ a {
   color: rgb(61, 61, 61);
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
-  height: 300px;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 25px;
   font-weight: bold;
+}
+.musicModal {
+  width: 300px;
+  font-size: 20px;
+}
+.quick-match-modal {
+  width: 350px;
+  height: 300px;
+}
+
+.tournament-modal {
+  font-weight: normal;
 }
 
 .musicModal div p {
@@ -317,8 +346,17 @@ a {
   opacity: 0;
 }
 
+.tournament-ready-modal {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  width: 400px;
+  height: 200px;
+  background-color: rgb(223, 223, 223);
+}
+
 .battleModal,
-.tournamentModal {
+.tournament-modal {
   display: flex;
   flex-direction: column;
   top: 50%;
@@ -346,6 +384,7 @@ a {
   text-align: center;
   width: 100%;
   height: 70px;
+  padding: 0 20px;
 }
 
 .battlePlayer {
@@ -356,6 +395,7 @@ a {
 
 .battleCancelBtn,
 .tournamentCancelBtn {
+  width: 100%;
   border: solid 1px grey;
   padding: 10px;
   font-weight: 500;

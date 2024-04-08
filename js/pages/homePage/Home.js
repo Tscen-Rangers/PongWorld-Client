@@ -8,6 +8,8 @@ import tws from '../../WebSocket/TournamentSocket.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
+import QuickMatchModal from '../../modal/QuickMatchModal.js';
+import Tournament from '../../modal/TournamentReadyModal.js';
 
 const histories = [
   {
@@ -96,8 +98,7 @@ const $battlePlayer = document.querySelector('.battlePlayer');
 const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleMsg = document.querySelector('.battleMsg');
 const $currentStaff = document.querySelector('.currentStaff');
-const $battleCancelBtn = document.querySelector('.battleCancelBtn');
-const $tournamentModal = document.getElementById(
+const $tournamentControlModal = document.getElementById(
   'tournamentControlModalBackground',
 );
 const $tournamentCancelBtn = document.querySelector('.tournamentCancelBtn');
@@ -292,20 +293,16 @@ export default class extends AbstractView {
     console.log('REFRESH', sessionStorage.getItem('refresh_token'));
 
     $tournamentBtn.addEventListener('click', async () => {
-      $tournamentModal.classList.add('show');
+      new Tournament().renderModal();
     });
 
-    $quickMatchBtn.addEventListener('click', () => {
-      $gameOptionModalContainer.setAttribute('data-modaloption', 'quickmatch');
-      $gameOptionModalContainer.classList.add('show');
+    $quickMatchBtn.addEventListener('click', async () => {
+      new QuickMatchModal().renderModal();
     });
 
     $matchingCancelBtn.addEventListener('click', () => {
       qws.close();
       $quickMatchModal.classList.remove('active');
-    });
-    $battleCancelBtn.addEventListener('click', () => {
-      $battleModalContainer.classList.remove('active');
     });
     // $tournamentCancelBtn.addEventListener('click', () => {
     //   tws.close();

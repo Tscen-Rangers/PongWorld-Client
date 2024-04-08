@@ -1,12 +1,11 @@
+import BattleModal from './modal/BattleModal.js';
+import BattleResponseModal from './modal/BattleResponseModal.js';
+import {closeModal} from './modal/modalManager.js';
 import {router} from './route.js';
 
-const $battleChallengerImg = document.querySelector('.battleChallengerImg');
-const $challengerName = document.querySelector('.challengerName');
-const $battleLevel = document.querySelector('.battleLevel');
-const $battleAlertModalContainer = document.querySelector(
-  '.battleAlertModalContainer',
-);
-const $battleStartMsg = document.querySelector('#battleStartMsg');
+// const $battleAlertModalContainer = document.querySelector(
+//   '.battleAlertModalContainer',
+// );
 const $noticeModal = document.querySelector('#noticeModal');
 const $noticeContent = document.querySelector('#noticeContent');
 
@@ -14,14 +13,19 @@ export const onMatchComplete = time => {
   // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
-    $battleAlertModalContainer.classList.remove('active');
+    closeModal();
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
   }); // 2000 밀리초 = 2초
 };
 
-export const responseBattleRequest = message => {
+export const responseBattleRequest = async message => {
   if (message.type === 'REQUEST_MATCHING') {
+    await new BattleResponseModal().renderModal();
+    const $battleChallengerImg = document.querySelector('.battleChallengerImg');
+    const $challengerName = document.querySelector('.challengerName');
+    const $battleLevel = document.querySelector('.battleLevel');
+
     $battleChallengerImg.src = message.opponent_profile_img;
     $challengerName.innerText = message.opponent_nickname;
     sessionStorage.setItem('opponentName', message.opponent_nickname);
@@ -34,11 +38,8 @@ export const responseBattleRequest = message => {
     };
     sessionStorage.setItem('gameOption', JSON.stringify(option));
     sessionStorage.setItem('battleId', message.game_id);
-    $battleStartMsg.style.display = 'none';
-    $battleAlertModalContainer.classList.add('active');
   } else if (message.type === 'INVITE_GAME') {
     sessionStorage.setItem('battleId', message.data.id);
-    battleMatchRequestExpired();
   } else if (message.type === 'START_FRIEND_GAME') {
     if (
       message.data.player1.info.nickname ===

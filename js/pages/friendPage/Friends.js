@@ -7,6 +7,8 @@ import {getNewRequest} from '../../FriendsRestApi.js';
 import {onMatchComplete} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
+import QuickMatchModal from '../../modal/QuickMatchModal.js';
+import {closeModal} from '../../modal/modalManager.js';
 
 ////////battle alert
 
@@ -19,8 +21,6 @@ const $battleAlertModalContainer = document.querySelector(
 
 const $battleModalContainer = document.querySelector('.battleModalContainer');
 const $battleModal = document.querySelector('battleModal');
-const $battleCancelBtn = document.querySelector('.battleCancelBtn');
-const battleMsg = document.querySelector('.battleMsg');
 const $gameOptionModalContainer = document.getElementById(
   'gameOptionModalContainer',
 );
@@ -41,18 +41,14 @@ function battleMatchRequestExpired() {
       command: 'quit',
       game_id: +sessionStorage.getItem('battleId'),
     });
+    const battleMsg = document.querySelector('.battleMsg');
     battleMsg.innerText =
       'No response from the opponent. Please try again later';
-    $battleCancelBtn.style.display = 'none';
-    closeModal();
+    setTimeout(() => {
+      closeModal();
+    }, 2000);
     timeoutId = 0;
   }, 30000); // 2000 밀리초 = 2초
-}
-
-function closeModal() {
-  setTimeout(function () {
-    $battleModalContainer.classList.remove('active');
-  });
 }
 
 function onResponse() {
@@ -158,7 +154,11 @@ battle
             <img class="leftgloveImg" src="/public/leftglove.png"/>
             <img class="rightgloveImg" src="/public/rightglove.png"/>
           </div>`
-          : ''
+          : `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
+          battle
+                      <img class="leftgloveImg" src="/public/leftglove.png"/>
+                      <img class="rightgloveImg" src="/public/rightglove.png"/>
+                    </div>`
       }
       <a class="chatbutton" href='/chat/direct/${
         user.user.id
@@ -213,14 +213,16 @@ battle
 
     const battleButtons = document.querySelectorAll('.battlebutton');
     battleButtons.forEach(battleButton => {
-      battleButton.addEventListener('click', e => {
+      battleButton.addEventListener('click', async e => {
         const user = e.currentTarget.dataset.user;
         const id = e.currentTarget.dataset.id;
-        battleMsg.innerText = `Waiting for a response from ${user}...`;
-        $battleCancelBtn.style.display = 'block';
-        $gameOptionModalContainer.setAttribute('data-modaloption', 'battle');
-        $gameOptionModalContainer.setAttribute('data-player2id', id);
-        $gameOptionModalContainer.classList.add('show');
+        // battleMsg.innerText = `Waiting for a response from ${user}...`;
+        // $battleCancelBtn.style.display = 'block';
+        // $gameOptionModalContainer.classList.add('show');
+        await new QuickMatchModal().renderModal();
+        const $modalBack = document.querySelector('.modalBack');
+        $modalBack.setAttribute('data-modaloption', 'battle');
+        $modalBack.setAttribute('data-player2id', id);
       });
     });
     const optionBtns = document.querySelectorAll('.optionBtn');
@@ -311,14 +313,14 @@ battle
       }
     });
 
-    $battleCancelBtn.addEventListener('click', () => {
-      cws.send({
-        type: 'invite_game',
-        command: 'quit',
-        game_id: +sessionStorage.getItem('battleId'),
-      });
-      $battleModalContainer.classList.remove('active');
-    });
+    // $battleCancelBtn.addEventListener('click', () => {
+    //   cws.send({
+    //     type: 'invite_game',
+    //     command: 'quit',
+    //     game_id: +sessionStorage.getItem('battleId'),
+    //   });
+    //   $battleModalContainer.classList.remove('active');
+    // });
     this.updateFriendList();
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
@@ -375,10 +377,14 @@ battle
       sessionStorage.setItem('webSocketType', JSON.stringify(message.type));
       onMatchComplete();
     } else if (message.type === 'SUCCESS_FRIEND_GAME') {
+      const battleMsg = document.querySelector('.battleMsg');
+      const $battleCancelBtn = document.querySelector('.battleCancelBtn');
       battleMsg.innerText = message.message;
       $battleCancelBtn.style.display = 'none';
       onResponse();
     } else if (message.type === 'REJECTED_FRIEND_GAME') {
+      const battleMsg = document.querySelector('.battleMsg');
+      const $battleCancelBtn = document.querySelector('.battleCancelBtn');
       battleMsg.innerText = message.message;
       $battleCancelBtn.style.display = 'none';
       onResponse();
