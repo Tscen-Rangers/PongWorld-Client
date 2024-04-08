@@ -395,10 +395,7 @@ export default class extends AbstractView {
     this.socket = await checkSocket();
 
     this.sendStick(0);
-    const $battleModalContainer = document.querySelector(
-      '.battleModalContainer',
-    );
-    $battleModalContainer.classList.remove('active');
+
     const myPingpongStick = document.querySelector(
       `.${sessionStorage.getItem('myPosition')}PingpongStick`,
     );

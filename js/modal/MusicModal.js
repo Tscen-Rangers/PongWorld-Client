@@ -85,12 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('headphoneImg')
     .addEventListener('click', function () {
-      document.querySelector('.musicModalContainer').classList.add('show');
+      document.querySelector('.music-modal-back').classList.add('show');
     });
   document
-    .querySelector('.musicModalContainer')
+    .querySelector('.music-modal-back')
     .addEventListener('click', function (e) {
       if (e.target === this)
-        document.querySelector('.musicModalContainer').classList.remove('show');
+        document.querySelector('.music-modal-back').classList.remove('show');
     });
 });
