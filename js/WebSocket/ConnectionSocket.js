@@ -1,6 +1,6 @@
 import BaseWebSocket from './BaseWebSocket.js';
 import {getToken, refreshAccessToken} from '../tokenManager.js';
-import {checkConnectionSocket} from '../webSocketManager.js';
+import {checkConnectionSocket} from './webSocketManager.js';
 
 class ConnectionSocket extends BaseWebSocket {
   static instance = null;

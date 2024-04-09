@@ -1,11 +1,12 @@
 import WS_URL from '../../wsConfig.js';
 import {getToken, refreshAccessToken} from '../tokenManager.js';
-import {openModal} from './modalManager.js';
 import tws from '../WebSocket/TournamentSocket.js';
+import AbstractModal from './AbstractModal.js';
 import TournamentModal from './TournamentModal.js';
 
-class TournamentReadyModal {
+class TournamentReadyModal extends AbstractModal {
   constructor() {
+    super();
     this.option = {
       control: null,
       level: null,
@@ -69,7 +70,7 @@ class TournamentReadyModal {
   }
 
   async renderModal() {
-    await openModal(await this.getHtml(), true);
+    await this.openModal(await this.getHtml(), true);
     this.onClickKeyboardEventListener();
     this.onClickMouseEventListener();
   }

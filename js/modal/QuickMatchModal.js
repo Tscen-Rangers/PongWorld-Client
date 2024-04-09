@@ -4,15 +4,16 @@ import {
   refreshAccessToken,
   removeRefreshToken,
 } from '../tokenManager.js';
-import {closeModal, openModal} from './modalManager.js';
 import tws from '../WebSocket/TournamentSocket.js';
 import cws from '../WebSocket/ConnectionSocket.js';
 import qws from '../WebSocket/QuickMatchSocket.js';
 import {router} from '../route.js';
 import BattleModal from './BattleModal.js';
+import AbstractModal from './AbstractModal.js';
 
-class QuickMatchModal {
+class QuickMatchModal extends AbstractModal {
   constructor() {
+    super();
     this.option = {
       control: null,
       level: null,
@@ -126,8 +127,8 @@ class QuickMatchModal {
             '.quickMatchModalContainer',
           );
           $quickMatchModal.classList.add('active');
-          closeModal();
-          if (!getToken().length) await removeRefreshToken();
+          this.closeModal();
+          if (!getToken) await removeRefreshToken();
           await qws.connect(`${WS_URL}/ws/random/`);
 
           qws.send({command: 'participant', speed: this.option.level});
@@ -179,7 +180,7 @@ class QuickMatchModal {
   }
 
   async renderModal() {
-    await openModal(await this.getHtml(), true);
+    await this.openModal(await this.getHtml(), true);
     document
       .querySelector('.modalBack')
       .setAttribute('data-modaloption', 'quickmatch');

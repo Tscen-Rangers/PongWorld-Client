@@ -1,9 +1,10 @@
 import tws from '../WebSocket/TournamentSocket.js';
 import {router} from '../route.js';
-import {closeModal, openModal} from './modalManager.js';
+import AbstractModal from './AbstractModal.js';
 
-class TournamentModal {
+class TournamentModal extends AbstractModal {
   constructor() {
+    super();
     this.option = null;
   }
 
@@ -89,13 +90,13 @@ class TournamentModal {
     const $tournamentCancelBtn = document.querySelector('.tournamentCancelBtn');
     $tournamentCancelBtn.addEventListener('click', () => {
       tws.close();
-      closeModal();
+      this.closeModal();
     });
   }
 
   async renderModal(option) {
     this.option = option;
-    await openModal(await this.getHtml(), false);
+    await this.openModal(await this.getHtml(), false);
     this.cancelTournamentEventListener();
 
     const $tournamentCancelBtn = document.querySelector('.tournamentCancelBtn');
@@ -156,7 +157,7 @@ class TournamentModal {
           );
         }
         this.onMatchComplete(3000);
-        closeModal();
+        this.closeModal();
       }
     });
   }

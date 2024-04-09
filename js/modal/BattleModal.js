@@ -1,12 +1,15 @@
-import {closeModal, openModal} from './modalManager.js';
 import cws from '../WebSocket/ConnectionSocket.js';
-class BattleModal {
-  constructor() {}
+import AbstractModal from './AbstractModal.js';
+
+class BattleModal extends AbstractModal {
+  constructor() {
+    super();
+  }
 
   async getHtml() {
     return `
 	<div class="modalBack">
-      <div class="modal">
+      <div class="modal battle-wating-modal">
         <div class="battleMsg">
           Battle request sent<text class="battlePlayer"></text>
         </div>
@@ -72,8 +75,7 @@ class BattleModal {
   }
 
   async renderModal() {
-    console.log('MODAL OPEN!!!!');
-    await openModal(await this.getHtml(), false);
+    await this.openModal(await this.getHtml(), false);
     const $battleCancelBtn = document.querySelector('.battleCancelBtn');
 
     $battleCancelBtn.addEventListener('click', () => {
@@ -82,7 +84,7 @@ class BattleModal {
         command: 'quit',
         game_id: +sessionStorage.getItem('battleId'),
       });
-      closeModal();
+      this.closeModal();
     });
   }
 }

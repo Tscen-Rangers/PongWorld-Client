@@ -2,7 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import {refreshAccessToken, getToken} from '../../tokenManager.js';
 import {deleteFriend, getNewRequest} from '../../FriendsRestApi.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 let checkModalEvent = 0;
@@ -126,7 +126,7 @@ export default class extends AbstractView {
     rejectRecievedIcons.forEach(rejectRecievedIcon => {
       rejectRecievedIcon.addEventListener('click', async e => {
         const index = e.target.dataset.key;
-        console.log(index, this.recieved[index].id);
+
         if (await this.deleteRecievedRequest(this.recieved[index].id)) {
           this.recieved.splice(index, 1);
           getNewRequest();
@@ -139,8 +139,6 @@ export default class extends AbstractView {
       profileImg.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
-        // userProfileModalContainer.classList.add('active');
       });
     });
     const friendNames = document.querySelectorAll('.friendname');
@@ -149,8 +147,6 @@ export default class extends AbstractView {
         console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
-        // userProfileModalContainer.classList.add('active');
       });
     });
   }
@@ -327,8 +323,6 @@ export default class extends AbstractView {
       profileImg.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
-        // userProfileModalContainer.classList.add('active');
       });
     });
     const friendNames = document.querySelectorAll('.friendname');
@@ -336,8 +330,6 @@ export default class extends AbstractView {
       friendName.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
-        // userProfileModalContainer.classList.add('active');
       });
     });
   }

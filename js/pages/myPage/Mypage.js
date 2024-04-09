@@ -5,7 +5,7 @@ import {
   removeRefreshToken,
 } from '../../tokenManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {router} from '../../route.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import API_URL from '../../../config.js';

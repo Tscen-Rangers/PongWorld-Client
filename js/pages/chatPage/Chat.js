@@ -1,6 +1,6 @@
 import AbstractView from '../../AbstractView.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
@@ -217,14 +217,12 @@ export default class extends AbstractView {
       chatUserImage.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
       });
     });
     chatUserNames.forEach(chatUserName => {
       chatUserName.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
       });
     });
   }

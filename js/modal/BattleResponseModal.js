@@ -1,13 +1,19 @@
-import {closeModal, openModal} from './modalManager.js';
 import cws from '../WebSocket/ConnectionSocket.js';
+import AbstractModal from './AbstractModal.js';
 
-class BattleResponseModal {
-  constructor() {}
+class BattleResponseModal extends AbstractModal {
+  constructor() {
+    super();
+    this.$battleAcceptButton = null;
+    this.$chooseKeyboard = null;
+    this.$chooseMouse = null;
+    this.control = null;
+  }
 
   async getHtml() {
     return `
 	<div class="modalBack">
-	<div class="modal">
+	<div class="modal battle-response-modal">
 	  <div class="battleAlertTitle">Battle Invitation</div>
 	  <div class="battleAlertInfo">
 		<img class="battleChallengerImg"  />
@@ -56,27 +62,33 @@ class BattleResponseModal {
   </div>`;
   }
 
-  async renderModal() {
-    await openModal(await this.getHtml());
+  chooseControlEventListener() {
+    this.$chooseMouse.addEventListener('click', () => {
+      this.$chooseMouse.classList.add('active');
+      this.$chooseKeyboard.classList.remove('active');
+      this.$battleAcceptButton.disabled = false;
+      this.control = 'mouse';
+    });
+    this.$chooseKeyboard.addEventListener('click', () => {
+      this.$chooseKeyboard.classList.add('active');
+      this.$chooseMouse.classList.remove('active');
+      this.$battleAcceptButton.disabled = false;
+      this.control = 'keyboard';
+    });
+  }
 
+  initializeDOM() {
+    const $battleAcceptButton = document.querySelector('.battleAcceptButton');
     const $chooseKeyboard = document.querySelector('#chooseKeyboard');
     const $chooseMouse = document.querySelector('#chooseMouse');
-    const $battleAcceptButton = document.querySelector('.battleAcceptButton');
+    this.$chooseKeyboard = $chooseKeyboard;
+    this.$chooseMouse = $chooseMouse;
+    this.$battleAcceptButton = $battleAcceptButton;
+  }
+
+  battleDeclineEventListener() {
     const $battleDeclineButton = document.querySelector('.battleDeclineButton');
-    const $battleStartMsg = document.querySelector('#battleStartMsg');
-    let control = null;
-    $chooseMouse.addEventListener('click', () => {
-      $chooseMouse.classList.add('active');
-      $chooseKeyboard.classList.remove('active');
-      $battleAcceptButton.disabled = false;
-      control = 'mouse';
-    });
-    $chooseKeyboard.addEventListener('click', () => {
-      $chooseKeyboard.classList.add('active');
-      $chooseMouse.classList.remove('active');
-      $battleAcceptButton.disabled = false;
-      control = 'keyboard';
-    });
+
     $battleDeclineButton.addEventListener('click', () => {
       sessionStorage.setItem('battleResponse', 'decline');
       cws.send({
@@ -85,15 +97,20 @@ class BattleResponseModal {
         game_id: +sessionStorage.getItem('battleId'),
         accepted: 0,
       });
-      $chooseMouse.classList.remove('active');
-      $chooseKeyboard.classList.remove('active');
-      $battleAcceptButton.disabled = true;
-      closeModal();
+      this.$chooseMouse.classList.remove('active');
+      this.$chooseKeyboard.classList.remove('active');
+      this.$battleAcceptButton.disabled = true;
+      this.closeModal();
     });
-    $battleAcceptButton.addEventListener('click', () => {
+  }
+
+  battleAcceptEventListener() {
+    const $battleStartMsg = document.querySelector('#battleStartMsg');
+
+    this.$battleAcceptButton.addEventListener('click', () => {
       sessionStorage.setItem('battleResponse', 'accept');
       let option = JSON.parse(sessionStorage.getItem('gameOption'));
-      option.control = control;
+      option.control = this.control;
       sessionStorage.setItem('gameOption', JSON.stringify(option));
       cws.send({
         type: 'invite_game',
@@ -101,11 +118,22 @@ class BattleResponseModal {
         game_id: +sessionStorage.getItem('battleId'),
         accepted: 1,
       });
-      $chooseMouse.classList.remove('active');
-      $chooseKeyboard.classList.remove('active');
-      $battleAcceptButton.disabled = true;
-      $battleStartMsg.style.display = 'flex';
+      this.$chooseMouse.classList.remove('active');
+      this.$chooseKeyboard.classList.remove('active');
+      this.$battleAcceptButton.disabled = true;
+      setTimeout(() => {
+        $battleStartMsg.style.display = 'flex';
+      }, 200);
     });
+  }
+
+  async renderModal() {
+    await this.openModal(await this.getHtml());
+    this.initializeDOM();
+
+    this.chooseControlEventListener();
+    this.battleDeclineEventListener();
+    this.battleAcceptEventListener();
   }
 }
 

@@ -1,6 +1,6 @@
-import WS_URL from '../wsConfig.js';
-import cws from './WebSocket/ConnectionSocket.js';
-import {refreshAccessToken, getToken} from './tokenManager.js';
+import WS_URL from '../../wsConfig.js';
+import cws from './ConnectionSocket.js';
+import {refreshAccessToken, getToken} from '../tokenManager.js';
 
 let tempHandler = null;
 

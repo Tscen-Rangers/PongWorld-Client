@@ -12,7 +12,6 @@ export const userProfileData = async (id, type, all) => {
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      console.log(getToken());
       if (!res.ok) {
         if (res.status === 401) {
           await refreshAccessToken();

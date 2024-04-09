@@ -1,7 +1,7 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
 import {router} from '../../route.js';
 import tws from '../../WebSocket/TournamentSocket.js';
@@ -244,7 +244,6 @@ export default class extends AbstractView {
       usersRank.addEventListener('click', e => {
         const id = e.currentTarget.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
       });
     });
   }

@@ -2,7 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {router} from '../../route.js';
 import T from '../../WebSocket/TournamentSocket.js';
 let isMovingUp = false;

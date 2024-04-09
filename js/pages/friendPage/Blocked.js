@@ -2,7 +2,7 @@ import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {unblock} from '../../FriendsRestApi.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import API_URL from '../../../config.js';
 
 export default class extends AbstractView {

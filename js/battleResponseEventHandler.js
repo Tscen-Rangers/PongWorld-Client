@@ -1,25 +1,23 @@
-import BattleModal from './modal/BattleModal.js';
 import BattleResponseModal from './modal/BattleResponseModal.js';
-import {closeModal} from './modal/modalManager.js';
+import NoticeModal from './modal/NoticeModal.js';
 import {router} from './route.js';
-
-// const $battleAlertModalContainer = document.querySelector(
-//   '.battleAlertModalContainer',
-// );
-const $noticeModal = document.querySelector('#noticeModal');
-const $noticeContent = document.querySelector('#noticeContent');
 
 export const onMatchComplete = time => {
   // 3초 후에 실행될 함수
   setTimeout(function () {
     // 게임 화면으로 이동
-    closeModal();
+    const $testModal = document.getElementById('testModal');
+    $testModal.classList.remove('active');
+    setTimeout(() => {
+      document.querySelector('.modalBack').remove();
+    }, 100);
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
   }); // 2000 밀리초 = 2초
 };
 
 export const responseBattleRequest = async message => {
+  console.log(message);
   if (message.type === 'REQUEST_MATCHING') {
     await new BattleResponseModal().renderModal();
     const $battleChallengerImg = document.querySelector('.battleChallengerImg');
@@ -71,10 +69,11 @@ export const responseBattleRequest = async message => {
     onMatchComplete();
   } else if (message.type === 'INVALID_GAME') {
     if (sessionStorage.getItem('battleResponse') === 'accept') {
-      $noticeContent.innerText = `Battle request from ${sessionStorage.getItem(
-        'opponentName',
-      )} has been cancelled`;
-      $noticeModal.classList.add('active');
+      new NoticeModal().renderModal(
+        `Battle request from ${sessionStorage.getItem(
+          'opponentName',
+        )} has been cancelled`,
+      );
     }
   }
 };

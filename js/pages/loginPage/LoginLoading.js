@@ -8,7 +8,7 @@ import {
 import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
-import {connectionSocketConnect} from '../../webSocketManager.js';
+import {connectionSocketConnect} from '../../WebSocket/webSocketManager.js';
 import API_URL from '../../../config.js';
 
 export default class extends AbstractView {

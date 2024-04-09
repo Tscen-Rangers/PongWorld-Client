@@ -1,5 +1,6 @@
 .chat__nav,
-.chatUserProfile {
+.chatUserProfile,
+.directMsgImageContainer {
   cursor: url(/public/pointerCursor.png) 8 8, auto;
 }
 
@@ -284,6 +285,7 @@
   border-radius: 50%;
   width: 2rem;
   height: 2rem;
+  transition: 0.3s;
 }
 
 .chatUserName {

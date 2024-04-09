@@ -1,14 +1,13 @@
 import AbstractView from '../../AbstractView.js';
 import {block, deleteFriend} from '../../FriendsRestApi.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import {getNewRequest} from '../../FriendsRestApi.js';
 import {onMatchComplete} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 import QuickMatchModal from '../../modal/QuickMatchModal.js';
-import {closeModal} from '../../modal/modalManager.js';
 
 ////////battle alert
 
@@ -45,7 +44,7 @@ function battleMatchRequestExpired() {
     battleMsg.innerText =
       'No response from the opponent. Please try again later';
     setTimeout(() => {
-      closeModal();
+      this.modal.closeModal();
     }, 2000);
     timeoutId = 0;
   }, 30000); // 2000 밀리초 = 2초
@@ -219,7 +218,8 @@ battle
         // battleMsg.innerText = `Waiting for a response from ${user}...`;
         // $battleCancelBtn.style.display = 'block';
         // $gameOptionModalContainer.classList.add('show');
-        await new QuickMatchModal().renderModal();
+        this.modal = new QuickMatchModal();
+        await this.modal.renderModal();
         const $modalBack = document.querySelector('.modalBack');
         $modalBack.setAttribute('data-modaloption', 'battle');
         $modalBack.setAttribute('data-player2id', id);
@@ -250,7 +250,6 @@ battle
       profileImg.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
         // userProfileModalContainer.classList.add('active');
       });
     });
@@ -260,7 +259,6 @@ battle
         console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
         // userProfileModalContainer.classList.add('active');
       });
     });
@@ -388,7 +386,7 @@ battle
       battleMsg.innerText = message.message;
       $battleCancelBtn.style.display = 'none';
       onResponse();
-      closeModal();
+      this.modal.closeModal();
     } else if (message.type === 'QUIT_FRIEND_GAME') {
       console.log(message);
     } else if (message.type === 'INVALID_GAME') {

@@ -6,11 +6,13 @@ import {
   deleteFriend,
   friendRequest,
 } from '../../FriendsRestApi.js';
-import {checkConnectionSocket} from '../../webSocketManager.js';
+import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {router} from '../../route.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
+import ConfirmModal from '../../modal/ConfirmModal.js';
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -89,7 +91,7 @@ export default class extends AbstractView {
                         : ''
                     }
                   </div>`
-            }     
+            }
             <div class="searchOptionBlockBtn" data-key='${index}'> ${
                 user.is_blocking ? 'unblock' : 'block'
               }</div>
@@ -104,15 +106,6 @@ export default class extends AbstractView {
   }
 
   bindBlockedUserListEvents() {
-    // 이벤트 리스너를 여기서 바인딩
-    // const confirmModal = document.querySelector('.confirmModalContainer');
-    // const confirmModalMsg = document.querySelector('.confirmModalMsg');
-    const $userProfileConfirmModalMsg = document.querySelector(
-      '.userProfile-confirmModalMsg',
-    );
-    const $userProfileConfirmModal = document.querySelector(
-      '.userProfile-confirmModalContainer',
-    );
     const blockBtns = document.querySelectorAll('.searchOptionBlockBtn');
     blockBtns.forEach(blockBtn => {
       blockBtn.addEventListener('click', async e => {
@@ -135,17 +128,19 @@ export default class extends AbstractView {
       '.searchOptionRequestBtn',
     );
     searchOptionRequestBtns.forEach(searchOptionRequestBtn => {
-      searchOptionRequestBtn.addEventListener('click', e => {
+      searchOptionRequestBtn.addEventListener('click', async e => {
+        await new ConfirmModal().renderModal();
+
+        const $modalBack = document.querySelector('.modalBack');
+        const $userProfileConfirmModalMsg = document.querySelector(
+          '.userProfile-confirmModalMsg',
+        );
         const user = JSON.parse(e.target.dataset.key);
         if (user.friend_status === 0)
           $userProfileConfirmModalMsg.innerHTML = `Would you like to send a friend request to ${user.nickname}?`;
         else if (user.friend_status === 1)
           $userProfileConfirmModalMsg.innerHTML = `Are you sure you want to delete friend request sent to ${user.nickname}?`;
-        $userProfileConfirmModal.setAttribute(
-          'data-user',
-          JSON.stringify(user),
-        );
-        $userProfileConfirmModal.classList.add('active');
+        $modalBack.setAttribute('data-user', JSON.stringify(user));
       });
     });
     const $allHistoryBtn = document.querySelector('.allHistoryBtn');
@@ -154,7 +149,6 @@ export default class extends AbstractView {
       profileImg.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
       });
     });
     const friendNames = document.querySelectorAll('.friendname');
@@ -162,7 +156,6 @@ export default class extends AbstractView {
       friendName.addEventListener('click', e => {
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
-        $allHistoryBtn.classList.add('selected');
       });
     });
   }

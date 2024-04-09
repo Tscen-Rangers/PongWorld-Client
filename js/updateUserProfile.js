@@ -1,29 +1,10 @@
-const $userProfileModalContainer = document.querySelector(
-  '.userProfileModalContainer',
-);
+import UserProfileModal from './modal/UserProfileModal.js';
 
-const $userProfileName = document.querySelector('.userProfileName');
-const $userProfileImg = document.querySelector('.userProfileImg');
-const $userProfileIntro = document.querySelector('#userProfileIntro');
-const $userProfileScore = document.querySelector('#userProfile-stat-score');
-const $userProfileMatches = document.querySelector('#userProfile-stat-matches');
-const $userProfileWin = document.querySelector('#userProfile-stat-win');
-const $userProfileRanking = document.querySelector('#userProfile-stat-ranking');
-const $userProfileOnlineImg = document.querySelector('.userProfileOnlineImg');
-const $userProfileHistory = document.querySelector(
-  '.userProfile-match-history',
-);
-const $userProfileHistoryInner = document.querySelector(
-  '.userProfile-match-history-inner',
-);
-const $userProfileFriendRequestBtn = document.querySelector(
-  '.userProfile-friendRequestBtn',
-);
-const $chatButton = document.querySelector('.chatbutton');
-const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
-const $divide = document.querySelector('.divide');
 export const updateGameHistory = gameHistory => {
-  console.log('game', gameHistory);
+  const $userProfileHistory = document.querySelector(
+    '.userProfile-match-history',
+  );
+
   $userProfileHistory.innerHTML = `      ${
     gameHistory !== 'No game'
       ? gameHistory
@@ -80,7 +61,10 @@ export const updateGameHistory = gameHistory => {
 };
 
 export const updateFriendRequestBtn = player => {
-  console.log(player.friend_status);
+  const $userProfileFriendRequestBtn = document.querySelector(
+    '.userProfile-friendRequestBtn',
+  );
+
   if (player.friend_status === 0)
     $userProfileFriendRequestBtn.innerText = 'friend request';
   if (player.friend_status === 1)
@@ -99,9 +83,29 @@ export const updateFriendRequestBtn = player => {
   );
 };
 
-export const updateUserModal = (userData, all) => {
+export const updateUserModal = async (userData, all) => {
   if (all === 0) {
-    console.log('hh', userData);
+    await new UserProfileModal().renderModal();
+    const $chatButton = document.querySelector('.chatbutton');
+    const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
+    const $divide = document.querySelector('.divide');
+    const $userProfileFriendRequestBtn = document.querySelector(
+      '.userProfile-friendRequestBtn',
+    );
+    const $userProfileName = document.querySelector('.userProfileName');
+    const $userProfileImg = document.querySelector('.userProfileImg');
+    const $userProfileIntro = document.querySelector('#userProfileIntro');
+    const $userProfileScore = document.querySelector('#userProfile-stat-score');
+    const $userProfileMatches = document.querySelector(
+      '#userProfile-stat-matches',
+    );
+    const $userProfileWin = document.querySelector('#userProfile-stat-win');
+    const $userProfileRanking = document.querySelector(
+      '#userProfile-stat-ranking',
+    );
+    const $userProfileOnlineImg = document.querySelector(
+      '.userProfileOnlineImg',
+    );
     if (userData.player.id === JSON.parse(sessionStorage.getItem('user')).id) {
       $historyWithMeBtn.style.display = 'none';
       $divide.style.display = 'none';
@@ -122,26 +126,8 @@ export const updateUserModal = (userData, all) => {
     $userProfileWin.innerText = userData.player.wins;
     $userProfileRanking.innerText = userData.player.ranking;
     $chatButton.href = `/chat/direct/${userData.player.id}`;
-    console.log(userData.player.id);
     updateFriendRequestBtn(userData.player);
     updateGameHistory(userData.games);
-    // if (userData.player.friend_status === 0)
-    //   $userProfileFriendRequestBtn.innerText = 'friend request';
-    // else if (userData.player.friend_status === 1)
-    //   $userProfileFriendRequestBtn.innerText = 'request cancel';
-    // else if (userData.player.friend_status === 2)
-    //   $userProfileFriendRequestBtn.style.display = 'none';
-    // const userProfileData = {
-    //   nickname: userData.player.nickname,
-    //   id: userData.player.id,
-    //   friend_status: userData.player.friend_status,
-    //   friend_id: userData.player.friend_id,
-    // };
-    // $userProfileFriendRequestBtn.setAttribute(
-    //   'userProfileData',
-    //   JSON.stringify(userProfileData),
-    // );
-    $userProfileModalContainer.classList.add('active');
   }
   //map돌아서 다 렌더링
   else if (all === 1) updateGameHistory(userData.games);
