@@ -18,42 +18,10 @@ const $battleAlertModalContainer = document.querySelector(
   '.battleAlertModalContainer',
 );
 
-const $battleModalContainer = document.querySelector('.battleModalContainer');
-const $battleModal = document.querySelector('battleModal');
-const $gameOptionModalContainer = document.getElementById(
-  'gameOptionModalContainer',
-);
-
-const userProfileModalContainer = document.querySelector(
-  '.userProfileModalContainer',
-);
-const $allHistoryBtn = document.querySelector('.allHistoryBtn');
-
 let timeoutId;
-function battleMatchRequestExpired() {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-  timeoutId = setTimeout(function () {
-    cws.send({
-      type: 'invite_game',
-      command: 'quit',
-      game_id: +sessionStorage.getItem('battleId'),
-    });
-    const battleMsg = document.querySelector('.battleMsg');
-    battleMsg.innerText =
-      'No response from the opponent. Please try again later';
-    setTimeout(() => {
-      this.modal.closeModal();
-    }, 2000);
-    timeoutId = 0;
-  }, 30000); // 2000 밀리초 = 2초
-}
 
 function onResponse() {
-  // 필요한 응답 처리 로직
   console.log('응답 받음');
-  // 타이머 취소
   clearTimeout(timeoutId);
 }
 export default class extends AbstractView {
@@ -213,12 +181,9 @@ battle
     const battleButtons = document.querySelectorAll('.battlebutton');
     battleButtons.forEach(battleButton => {
       battleButton.addEventListener('click', async e => {
-        const user = e.currentTarget.dataset.user;
         const id = e.currentTarget.dataset.id;
-        // battleMsg.innerText = `Waiting for a response from ${user}...`;
-        // $battleCancelBtn.style.display = 'block';
-        // $gameOptionModalContainer.classList.add('show');
         this.modal = new QuickMatchModal();
+        console.log('MOdal 등록');
         await this.modal.renderModal();
         const $modalBack = document.querySelector('.modalBack');
         $modalBack.setAttribute('data-modaloption', 'battle');
@@ -264,6 +229,27 @@ battle
     });
   }
 
+  battleMatchRequestExpired() {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      1;
+      cws.send({
+        type: 'invite_game',
+        command: 'quit',
+        game_id: +sessionStorage.getItem('battleId'),
+      });
+      const battleMsg = document.querySelector('.battleMsg');
+      battleMsg.innerText =
+        'No response from the opponent. Please try again later';
+      setTimeout(() => {
+        this.modal.closeModal();
+      }, 2000);
+      timeoutId = 0;
+    }, 30000); // 2000 밀리초 = 2초
+  }
+
   async renderFriends(name) {
     const url =
       name.length === 0
@@ -285,8 +271,6 @@ battle
         } else {
           const data = await res.json();
           this.users = data.data;
-          console.log(name);
-          console.log(this.users);
         }
       } catch (error) {
         console.log('get friends error', error);
@@ -301,8 +285,6 @@ battle
     await getNewRequest();
 
     const searchFriendsInput = document.querySelector('#searchFriendsInput');
-    const xSvg = document.querySelector('#xSvg');
-    const $noticeModal = document.querySelector('#noticeModal');
     searchFriendsInput.addEventListener('keydown', async e => {
       if (e.keyCode === 13) {
         const query = e.target.value;
@@ -311,14 +293,6 @@ battle
       }
     });
 
-    // $battleCancelBtn.addEventListener('click', () => {
-    //   cws.send({
-    //     type: 'invite_game',
-    //     command: 'quit',
-    //     game_id: +sessionStorage.getItem('battleId'),
-    //   });
-    //   $battleModalContainer.classList.remove('active');
-    // });
     this.updateFriendList();
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
@@ -343,7 +317,7 @@ battle
       $battleAlertModalContainer.classList.add('active');
     } else if (message.type === 'INVITE_GAME') {
       sessionStorage.setItem('battleId', message.data.id);
-      battleMatchRequestExpired();
+      this.battleMatchRequestExpired();
     } else if (message.type === 'START_FRIEND_GAME') {
       console.log(new Date().toLocaleString(), message.type);
       if (
@@ -386,9 +360,10 @@ battle
       battleMsg.innerText = message.message;
       $battleCancelBtn.style.display = 'none';
       onResponse();
-      this.modal.closeModal();
+      setTimeout(() => {
+        this.modal.closeModal();
+      }, 2000);
     } else if (message.type === 'QUIT_FRIEND_GAME') {
-      console.log(message);
     } else if (message.type === 'INVALID_GAME') {
       const $noticeModal = document.querySelector('#noticeModal');
       const $noticeContent = document.querySelector('#noticeContent');
