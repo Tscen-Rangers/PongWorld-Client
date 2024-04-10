@@ -21,7 +21,7 @@ body {
   width: 100dvw;
   height: 100dvh;
   color: white;
-  cursor: url(/public/mouseCursor.png) 8 8, auto;
+  cursor: url(/publicouseCursor.png) 8 8, auto;
   overflow-x: hidden;
 }
 

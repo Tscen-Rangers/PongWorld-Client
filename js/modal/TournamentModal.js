@@ -77,9 +77,9 @@ class TournamentModal extends AbstractModal {
 
   onMatchComplete(time) {
     // 3초 후에 실행될 함수
-    setTimeout(function () {
+    setTimeout(() => {
       // 게임 화면으로 이동
-
+      this.closeModal();
       window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
       router();
       // 일단 서버에서 소켓 메세지가 일찍 와서 2초로 수정 원래는 3초
@@ -157,7 +157,6 @@ class TournamentModal extends AbstractModal {
           );
         }
         this.onMatchComplete(3000);
-        this.closeModal();
       }
     });
   }

@@ -13,7 +13,7 @@ export const onMatchComplete = time => {
     }, 100);
     window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
     router();
-  }); // 2000 밀리초 = 2초
+  }, 2000); // 2000 밀리초 = 2초
 };
 
 export const responseBattleRequest = async message => {

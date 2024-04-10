@@ -72,14 +72,23 @@ class QuickMatchModal extends AbstractModal {
       window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
       router();
       // 일단 서버에서 소켓 메세지가 일찍 와서 2초로 수정 원래는 3초
-    }, 1000);
+    }, 2000);
   }
 
-  checkStartRandomGame(msg) {
+  async sleep() {
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  }
+
+  async checkStartRandomGame(msg) {
     const $matchingText = document.querySelector('.matchingText');
     const $opponentMatchingImg = document.querySelector('.opponentMatchingImg');
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
     if (msg.type === 'START_RANDOM_GAME') {
+      await this.sleep();
       $matchingText.innerHTML =
         'The match has been completed. The game will start soon!';
       sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));

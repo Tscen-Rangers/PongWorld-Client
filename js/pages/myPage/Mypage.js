@@ -366,7 +366,7 @@ ${
             router();
             cws.close();
             removeRefreshToken();
-            window.location.href = 'http://localhost:5500'; // 계정 삭제 후 처리 로직
+            window.location.href = `${API_URL}`; // 계정 삭제 후 처리 로직
           } else {
             console.error('Failed to delete account.');
             alert('이중인증이 활성화된 상태에서만 계정을 삭제할 수 있습니다.');
