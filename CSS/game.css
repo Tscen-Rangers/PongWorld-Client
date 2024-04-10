@@ -230,9 +230,18 @@
   border: 3px solid black;
 }
 
+.bye-message {
+  display: flex;
+  justify-content: center;
+  color: black;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
 .crownSvg {
   position: absolute;
-  top: -33px;
+  top: -30px;
 }
 
 .stateUpdate {

@@ -353,7 +353,7 @@ ${
       );
       if (confirmed) {
         try {
-          const response = await fetch(`${API_UR}/tcen-auth/delete/`, {
+          const response = await fetch(`${API_URL}/tcen-auth/delete/`, {
             method: 'DELETE',
             headers: {
               Authorization: `Bearer ${accessToken}`,

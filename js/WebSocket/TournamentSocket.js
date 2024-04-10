@@ -26,9 +26,7 @@ class TournamentSocket extends BaseWebSocket {
   send(message) {
     if (this.ws.readyState === WebSocket.OPEN) {
       super.send(message);
-      console.log('send');
     }
-    console.log('ghelwelqleqlwelqwel');
   }
 
   static resetInstance() {

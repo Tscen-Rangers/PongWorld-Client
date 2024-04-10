@@ -188,6 +188,7 @@ export default class extends AbstractView {
           </svg>
           <img class="winnerImg" src="/public/huipark.jpg" />
         </div>
+        <div class="bye-message"></div>
         <div class="stateUpdate">
         <text class="stateUpdateTitle">Your updates</text>
         <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"/><text id="score">1024<text></div>
@@ -416,6 +417,7 @@ export default class extends AbstractView {
     );
 
     const $winnerImg = document.querySelector('.winnerImg');
+    const $byeMessage = document.querySelector('.bye-message');
     const $score = document.querySelector('#score');
     const $ranking = document.querySelector('#ranking');
     const $scoreChange = document.querySelector('#scoreChange');
@@ -427,6 +429,8 @@ export default class extends AbstractView {
 
     let flag = 0;
     let win = 0;
+    let byeFlag = 0;
+    let byeMessage = '';
     this.tableWidth = this.pingpongTable.offsetWidth;
     this.tableHeight = this.pingpongTable.offsetHeight;
     this.centerY = this.tableHeight / 2;
@@ -436,14 +440,10 @@ export default class extends AbstractView {
     this.checkControl();
     this.endGameEventHandler();
 
-    console.log(this.myPosition);
-
     const onMatchComplete = () => {
       // 3초 후에 실행될 함수
       setTimeout(function () {
         // 게임 화면으로 이동
-        console.log('complete!!!!!!!!!!!!!!');
-        console.log($gameResultModalContainer);
         $gameResultModalContainer.classList.remove('active');
         router();
       }, 2000); // 2000 밀리초 = 2초
@@ -466,6 +466,7 @@ export default class extends AbstractView {
     };
 
     const socketOnMessage = async message => {
+      // console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);
@@ -473,7 +474,6 @@ export default class extends AbstractView {
         this.myPosition === 'player1' &&
         message.type === 'CHANGE_PLAYER2_PADDLE_POSTITION'
       ) {
-        console.log(message);
         opponentPingpongStick.style.transform = `translateY(${convertServerToClientPoition.bind(
           this,
         )(message.data.position[1])}px)`;
@@ -481,7 +481,6 @@ export default class extends AbstractView {
         this.myPosition === 'player2' &&
         message.type === 'CHANGE_PLAYER1_PADDLE_POSTITION'
       ) {
-        console.log(message);
         opponentPingpongStick.style.transform = `translateY(${convertServerToClientPoition.bind(
           this,
         )(message.data.position[1])}px)`;
@@ -516,9 +515,14 @@ export default class extends AbstractView {
       } else if (message.type === 'END_OF_SEMI_FINAL_A') {
         if (flag === 1) {
           if (win) {
-            console.log('winner');
             $tournamentState.innerHTML =
               'The final game will begin soon. Please stand by!';
+            this.socket.send({
+              tournament_mode: 'final',
+            });
+          }
+        } else if (byeFlag) {
+          if (win) {
             this.socket.send({
               tournament_mode: 'final',
             });
@@ -527,16 +531,27 @@ export default class extends AbstractView {
       } else if (message.type === 'END_OF_SEMI_FINAL_B') {
         if (flag === 1) {
           if (win) {
-            console.log('winner');
             $tournamentState.innerHTML =
               'The final game will begin soon. Please stand by!';
             this.socket.send({
               tournament_mode: 'final',
             });
           }
+        } else if (byeFlag) {
+          if (win) {
+            this.socket.send({
+              tournament_mode: 'final',
+            });
+          }
         } else flag++;
+      } else if (
+        message.type === 'BYE_BECAUSE_OF_ANOTHER_TEAM' ||
+        message.type === 'BYE_BECAUSE_OF_ANOTHER_WINNER_B' ||
+        message.type === 'BYE_BECAUSE_OF_ANOTHER_WINNER_A'
+      ) {
+        byeFlag = 1;
+        byeMessage = message.message;
       } else if (message.type === 'START_TOURNAMENT_FINAL') {
-        console.log('START_TOURNAMENT_FINAL', message);
         if (message.data.player1.info.nickname === this.user.nickname) {
           sessionStorage.setItem('myPosition', 'player1');
           sessionStorage.setItem(
@@ -562,9 +577,9 @@ export default class extends AbstractView {
         }
         onMatchComplete();
       } else if (message.type === 'END_OF_FINAL') {
-        console.log(message);
         $winnerImg.src = message.data.winner.player_profile_img;
         if (message.data.winner.nickname === this.user.nickname) {
+          if (byeFlag) $byeMessage.textContent = byeMessage;
           $score.innerHTML = message.data.new_rating.winner.new;
           $scoreChange.src =
             message.data.new_rating.winner.difference > 0
@@ -593,7 +608,6 @@ export default class extends AbstractView {
     };
 
     if (this.socket === qws || this.socket === tws) {
-      console.log(this.socket);
       this.socket.onMessage(message => socketOnMessage.bind(this)(message));
     } else {
       await checkConnectionSocket(socketOnMessage.bind(this));
