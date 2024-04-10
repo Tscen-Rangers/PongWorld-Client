@@ -61,10 +61,10 @@ export default class extends AbstractView {
             <div class="friendProfileImg" >
             <img class="profileImg"  data-id='${user.id}' src=${
                 user.profile_img
-              }/>
+              }>
             ${
               user.is_online
-                ? '<img class="onlineImg" src="/public/online.png"/>'
+                ? '<img class="onlineImg" src="/public/online.png">'
                 : ''
             }
             </div>

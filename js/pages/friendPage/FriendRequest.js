@@ -84,10 +84,10 @@ export default class extends AbstractView {
           <div class="friendProfileImg">
           <img class="profileImg" data-id='${user.user.id}' src=${
                 user.user.profile_img
-              }/>
+              }>
           ${
             user.user.is_online
-              ? '<img class="onlineImg" src="/public/online.png"/>'
+              ? '<img class="onlineImg" src="/public/online.png">'
               : ''
           }</div>
           <div class="friendname" data-id='${user.user.id}'>${
@@ -279,10 +279,10 @@ export default class extends AbstractView {
          <div class="friendProfileImg">
          <img class="profileImg" data-id='${user.user.id}' src=${
                 user.user.profile_img
-              }/>
+              }>
          ${
            user.user.is_online
-             ? '<img class="onlineImg" src="/public/online.png"/>'
+             ? '<img class="onlineImg" src="/public/online.png">'
              : ''
          }</div>
          <div class="friendname" data-id='${user.user.id}'>${

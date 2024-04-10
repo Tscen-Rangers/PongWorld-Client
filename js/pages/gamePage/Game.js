@@ -100,7 +100,7 @@ export default class extends AbstractView {
             this.myPosition === 'player1'
               ? this.myInfo.info.player_profile_img
               : this.opponentInfo.info.player_profile_img
-          } />
+          } >
         </div>
         <div class="playingUserTotalScore">
           score
@@ -117,7 +117,7 @@ export default class extends AbstractView {
         <text class="player1Score">0</text>:<text class="player2Score">0</text>
       </div>
       <div class="pingpongTable">
-        <img class="pongworldImg" src="/public/pongworld.png" />
+        <img class="pongworldImg" src="/public/pongworld.png" >
         <div class="player1PingpongStick"></div>
         <div id="pingpongBall"></div>
         <div class="player2PingpongStick"></div>
@@ -135,7 +135,7 @@ export default class extends AbstractView {
             this.myPosition === 'player2'
               ? this.myInfo.info.player_profile_img
               : this.opponentInfo.info.player_profile_img
-          }  />
+          }  >
         </div>
         <div class="playingUserTotalScore">
           score
@@ -186,13 +186,13 @@ export default class extends AbstractView {
               />
             </g>
           </svg>
-          <img class="winnerImg" src="/public/huipark.jpg" />
+          <img class="winnerImg" src="/public/huipark.jpg" >
         </div>
         <div class="bye-message"></div>
         <div class="stateUpdate">
         <text class="stateUpdateTitle">Your updates</text>
-        <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"/><text id="score">1024<text></div>
-        <div class="rankingUpdate">ranking<img id="rankingChange" src="/public/down.svg"/><text id="ranking">5<text></div>
+        <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"><text id="score">1024<text></div>
+        <div class="rankingUpdate">ranking<img id="rankingChange" src="/public/down.svg"><text id="ranking">5<text></div>
         </div>
         <div class="tournamentState"></div>
         <a class="goHomeBtn" data-spa href="/home">

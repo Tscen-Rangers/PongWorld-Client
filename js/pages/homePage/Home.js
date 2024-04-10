@@ -136,8 +136,8 @@ export default class extends AbstractView {
   </div>
   <div class="playgameDiv">
     <div class="tournamentButton"><text class="tournamentButtonText">tournament</text><img class="tournamentSvg" src="/public/tournament.svg
-    "/></div>
-    <div class="quickMatchButton"><text class="quickMatchButtonText">quick match</text><img class="quickMatchSvg" src="/public/quickmatch.svg" /></div>
+    "></div>
+    <div class="quickMatchButton"><text class="quickMatchButtonText">quick match</text><img class="quickMatchSvg" src="/public/quickmatch.svg"></div>
   </div>
   <div class="quickMatchModalContainer">
       <div class="quickMatchModal">
@@ -147,11 +147,11 @@ export default class extends AbstractView {
           <img class="myMatchingImg" src=${
             JSON.parse(sessionStorage.getItem('user')) &&
             JSON.parse(sessionStorage.getItem('user')).profile_img
-          }/>
+          }>
           </div>
           vs
           <div class="opponentMatching">
-          <img class="opponentMatchingImg" src="/public/threedotsLoading.svg"/>
+          <img class="opponentMatchingImg" src="/public/threedotsLoading.svg">
           </div>
         </div>
            <button class="matchingCancelBtn">cancel</button>
@@ -226,7 +226,7 @@ export default class extends AbstractView {
     }</text>
 </svg>
     <div class="rankersInfo">
-      <img class="rankersImg" src=${rank.profile_img}/>
+      <img class="rankersImg" src=${rank.profile_img}>
       <div class="rankersName">${rank.nickname}</div>
     </div>
   </div>

@@ -198,7 +198,7 @@ export default class extends AbstractView {
         return `<div class="chatUserProfile">
     <div class="chatUserProfileBlur"></div>
     <div class="chatUserInfo">
-      <img class="chatUserImage" data-id='${user.id}' src=${user.profile_img}/>
+      <img class="chatUserImage" data-id='${user.id}' src=${user.profile_img}>
       <p class="chatUserName" data-id='${user.id}'>${user.nickname}</p>
     </div>
     <a class="directMsgImageContainer" href='/chat/direct/${user.id}' data-spa>

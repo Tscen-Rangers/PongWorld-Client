@@ -8,15 +8,7 @@ import {onMatchComplete} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 import QuickMatchModal from '../../modal/QuickMatchModal.js';
-
-////////battle alert
-
-const $battleChallengerImg = document.querySelector('.battleChallengerImg');
-const $challengerName = document.querySelector('.challengerName');
-const $battleLevel = document.querySelector('.battleLevel');
-const $battleAlertModalContainer = document.querySelector(
-  '.battleAlertModalContainer',
-);
+import BattleResponseModal from '../../modal/BattleResponseModal.js';
 
 let timeoutId;
 
@@ -103,10 +95,10 @@ export default class extends AbstractView {
         <div class="friendProfileImg">
         <img class="profileImg"   data-id=${user.user.id}  src=${
                 user.user.profile_img
-              }/>
+              }>
          ${
            user.user.is_online
-             ? '<img class="onlineImg" src="/public/online.png"/>'
+             ? '<img class="onlineImg" src="/public/online.png">'
              : ''
          }</div>
         <div class="friendname"  data-id=${user.user.id} >${
@@ -118,14 +110,10 @@ export default class extends AbstractView {
         user.is_battle_request_allowed
           ? `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
 battle
-            <img class="leftgloveImg" src="/public/leftglove.png"/>
-            <img class="rightgloveImg" src="/public/rightglove.png"/>
+            <img class="leftgloveImg" src="/public/leftglove.png">
+            <img class="rightgloveImg" src="/public/rightglove.png">
           </div>`
-          : `<div class="battlebutton" data-user="${user.user.nickname}" data-id="${user.user.id}"/>
-          battle
-                      <img class="leftgloveImg" src="/public/leftglove.png"/>
-                      <img class="rightgloveImg" src="/public/rightglove.png"/>
-                    </div>`
+          : ``
       }
       <a class="chatbutton" href='/chat/direct/${
         user.user.id
@@ -133,7 +121,7 @@ battle
       <path class="directMsgPath" d="M18.5304 0.456145C18.3255 0.252659 18.0684 0.109609 17.7875 0.042717C17.5065 -0.0241752 17.2126 -0.0123206 16.9379 0.076978L1.08878 5.36364C0.794839 5.45678 0.535093 5.63494 0.342348 5.87562C0.149603 6.1163 0.0325054 6.40869 0.0058437 6.71588C-0.020818 7.02307 0.0441527 7.33127 0.19255 7.60156C0.340947 7.87184 0.566114 8.09209 0.839612 8.23448L7.41544 11.4845L10.6654 18.082C10.7961 18.3402 10.996 18.557 11.2428 18.7082C11.4896 18.8593 11.7735 18.9388 12.0629 18.9378H12.1713C12.4812 18.915 12.7771 18.7995 13.0205 18.6063C13.264 18.4131 13.4437 18.1511 13.5363 17.8545L18.8988 2.04864C18.9945 1.77557 19.0107 1.48092 18.9455 1.19898C18.8803 0.91705 18.7364 0.65944 18.5304 0.456145ZM1.76045 6.85864L15.5946 2.24364L7.91378 9.92448L1.76045 6.85864ZM12.1388 17.2261L9.06211 11.0728L16.7429 3.39198L12.1388 17.2261Z" fill="#636363"/>
       </svg></a>
     <div class="option">
-      <img class="friendsThreedotsImg" src="/public/threedots.png" />
+      <img class="friendsThreedotsImg" src="/public/threedots.png">
       <div class="optionModal">
         <div class="optionBtn" data-key="${index}">block</div>
         <div class="optionBtn" data-key="${index}">delete</div>
@@ -301,7 +289,14 @@ battle
     else requestBadge.classList.remove('active');
   }
   async socketEventHandler(message) {
+    console.log(message);
     if (message.type === 'REQUEST_MATCHING') {
+      await new BattleResponseModal().renderModal();
+      const $battleChallengerImg = document.querySelector(
+        '.battleChallengerImg',
+      );
+      const $challengerName = document.querySelector('.challengerName');
+      const $battleLevel = document.querySelector('.battleLevel');
       $battleChallengerImg.src = message.opponent_profile_img;
       $challengerName.innerText = message.opponent_nickname;
       sessionStorage.setItem('opponentName', message.opponent_nickname);
@@ -314,7 +309,7 @@ battle
       };
       sessionStorage.setItem('gameOption', JSON.stringify(option));
       sessionStorage.setItem('battleId', message.game_id);
-      $battleAlertModalContainer.classList.add('active');
+      // $battleAlertModalContainer.classList.add('active');
     } else if (message.type === 'INVITE_GAME') {
       sessionStorage.setItem('battleId', message.data.id);
       this.battleMatchRequestExpired();
