@@ -64,11 +64,10 @@ export const updateFriendRequestBtn = player => {
   const $userProfileFriendRequestBtn = document.querySelector(
     '.userProfile-friendRequestBtn',
   );
-  console.log($userProfileFriendRequestBtn);
 
   if (player.friend_status === 0)
     $userProfileFriendRequestBtn.innerText = 'friend request';
-  if (player.friend_status === 1)
+  else if (player.friend_status === 1)
     $userProfileFriendRequestBtn.innerText = 'cancel request';
   else if (player.friend_status === 2)
     $userProfileFriendRequestBtn.style.display = 'none';
@@ -127,14 +126,12 @@ export const updateUserModal = async (userData, all) => {
     $userProfileWin.innerText = userData.player.wins;
     $userProfileRanking.innerText = userData.player.ranking;
     $chatButton.href = `/chat/direct/${userData.player.id}`;
-    console.log(111111);
     updateFriendRequestBtn(userData.player);
     updateGameHistory(userData.games);
   }
   //map돌아서 다 렌더링
   else if (all === 1) updateGameHistory(userData.games);
   else if (all === 2) {
-    console.log(2222222);
     updateFriendRequestBtn(userData.player);
   }
 };

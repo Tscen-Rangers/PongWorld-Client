@@ -24,8 +24,8 @@
   width: 7dvw;
   height: 7dvw;
   /* margin: 25px; */
-  min-height: 80px;
-  min-width: 80px;
+  min-height: 126px;
+  min-width: 126px;
   justify-content: center;
   align-items: center;
   position: relative;
@@ -48,7 +48,6 @@
   flex: 0.4;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 2%;
 }
 
 .quickMatchButton,
@@ -106,8 +105,8 @@
 
 .recentPlayer1Img {
   object-fit: cover;
-  width: 3dvw;
-  height: 3dvw;
+  width: 2.75dvw;
+  height: 2.75dvw;
   min-width: 40px;
   min-height: 40px;
   background-color: rgba(255, 255, 255, 0.38);
@@ -116,8 +115,8 @@
 }
 .recentPlayer2Img {
   object-fit: cover;
-  width: 3dvw;
-  height: 3dvw;
+  width: 2.75dvw;
+  height: 2.75dvw;
   min-width: 40px;
   min-height: 40px;
   background-color: rgba(255, 255, 255, 0.38);
@@ -129,6 +128,7 @@
 .versus {
   display: flex;
   flex: 1;
+  width: 260px;
   font-size: 1.4rem;
   align-self: center;
   justify-content: center;
@@ -184,6 +184,7 @@
 .rankersImg {
   width: 95%;
   height: 95%;
+
   object-fit: cover;
   border-radius: 10px;
 }
@@ -198,7 +199,7 @@
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.8);
   width: 5dvw;
-  height: 2.3dvw;
+  height: 1.5dvw;
   min-width: 80px;
   min-height: 20px;
   /* padding: 8px; */
@@ -294,10 +295,6 @@
 }
 
 @media (max-width: 810px) {
-  .rankersName {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 10px;
-  }
 }
 
 @media (max-width: 768px) {
