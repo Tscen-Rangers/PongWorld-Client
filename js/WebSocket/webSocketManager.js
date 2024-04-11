@@ -11,7 +11,6 @@ export const checkConnectionSocket = async handler => {
     if (!cws.getWS()) {
       try {
         await connectionSocketConnect(handler);
-        console.log('connectionSocket 재연결!');
         resolve();
       } catch (error) {
         console.log('checkConnectionSocket Error : ', error);

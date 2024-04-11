@@ -16,7 +16,6 @@ function musicStart(music) {
     .then(() => {
       document.getElementById('musicPlay').style.display = 'none';
       document.getElementById('musicStop').style.display = 'block';
-      console.log('Audio is playing');
     })
     .catch(error => {
       console.error('Error occurred while trying to play audio:', error);

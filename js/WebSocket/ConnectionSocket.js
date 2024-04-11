@@ -14,18 +14,15 @@ class ConnectionSocket extends BaseWebSocket {
 
   async connect(url) {
     if (this.maxAttempts > this.attemptCount) {
-      console.log('Connection WebSocket 연결 시도중');
       this.attemptCount++;
       super.connect(url);
 
       return new Promise(async (resolve, reject) => {
         this.ws.onopen = () => {
-          console.log('Connection WebSocket 연결 성공!');
           resolve();
         };
 
         this.ws.onclose = async () => {
-          console.log('Connection WebSocket 닫힘');
           await checkConnectionSocket();
         };
       });

@@ -21,7 +21,6 @@ export const userProfileData = async (id, type, all) => {
         }
       } else {
         const data = await res.json();
-        console.log(data.data);
         updateUserModal(data.data, all);
       }
     } catch (error) {

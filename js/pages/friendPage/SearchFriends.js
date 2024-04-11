@@ -50,7 +50,6 @@ export default class extends AbstractView {
 
   updateBlockedUserList() {
     const friendListContainer = document.querySelector('.friendListContainer');
-    // console.log(this.users);
     friendListContainer.innerHTML = ` ${
       this.users
         ? this.users

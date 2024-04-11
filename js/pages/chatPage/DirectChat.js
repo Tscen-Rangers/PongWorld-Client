@@ -257,7 +257,6 @@ export default class extends AbstractView {
         if (res.ok) {
         } else {
           if (data.status === 401) {
-            console.log('HLEOEOQWELQWLEQLWELQWELWQ');
             await refreshAccessToken();
             this.deleteChatRoom(chatRoomId, cnt - 1);
           }

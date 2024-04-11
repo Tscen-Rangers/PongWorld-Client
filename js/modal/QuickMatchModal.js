@@ -125,10 +125,8 @@ class QuickMatchModal extends AbstractModal {
     const $testModal = document.querySelector('#testModal');
 
     $gameOptionNextBtn.addEventListener('click', async () => {
-      if (!this.option.control || !this.option.level)
-        console.log('옵션 선택 해라!!!!!!!!!');
+      if (!this.option.control || !this.option.level) return;
       else {
-        console.log(this.option);
         sessionStorage.setItem('gameOption', JSON.stringify(this.option));
         if ($modalBack.dataset.modaloption === 'quickmatch') {
           // const $matchingText = document.querySelector('.matchingText');
@@ -143,11 +141,9 @@ class QuickMatchModal extends AbstractModal {
           qws.send({command: 'participant', speed: this.option.level});
 
           qws.onMessage(msg => {
-            console.log(new Date().toLocaleString(), msg.type);
             this.checkStartRandomGame(msg);
           });
         } else if ($modalBack.dataset.modaloption === 'battle') {
-          console.log('배틀이다아아앙');
           cws.send({
             type: 'invite_game',
             command: 'request',

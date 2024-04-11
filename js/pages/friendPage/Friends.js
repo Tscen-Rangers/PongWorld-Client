@@ -13,7 +13,6 @@ import BattleResponseModal from '../../modal/BattleResponseModal.js';
 let timeoutId;
 
 function onResponse() {
-  console.log('응답 받음');
   clearTimeout(timeoutId);
 }
 export default class extends AbstractView {
@@ -171,7 +170,6 @@ battle
       battleButton.addEventListener('click', async e => {
         const id = e.currentTarget.dataset.id;
         this.modal = new QuickMatchModal();
-        console.log('MOdal 등록');
         await this.modal.renderModal();
         const $modalBack = document.querySelector('.modalBack');
         $modalBack.setAttribute('data-modaloption', 'battle');
@@ -209,7 +207,6 @@ battle
     const friendNames = document.querySelectorAll('.friendname');
     friendNames.forEach(friendName => {
       friendName.addEventListener('click', e => {
-        console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
         // userProfileModalContainer.classList.add('active');
@@ -289,7 +286,6 @@ battle
     else requestBadge.classList.remove('active');
   }
   async socketEventHandler(message) {
-    console.log(message);
     if (message.type === 'REQUEST_MATCHING') {
       await new BattleResponseModal().renderModal();
       const $battleChallengerImg = document.querySelector(
@@ -314,7 +310,6 @@ battle
       sessionStorage.setItem('battleId', message.data.id);
       this.battleMatchRequestExpired();
     } else if (message.type === 'START_FRIEND_GAME') {
-      console.log(new Date().toLocaleString(), message.type);
       if (
         message.data.player1.info.nickname ===
         JSON.parse(sessionStorage.getItem('user')).nickname

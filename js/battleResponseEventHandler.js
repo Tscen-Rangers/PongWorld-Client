@@ -26,7 +26,6 @@ export const responseBattleRequest = async message => {
     $battleChallengerImg.src = message.opponent_profile_img;
     $challengerName.innerText = message.opponent_nickname;
     sessionStorage.setItem('opponentName', message.opponent_nickname);
-    console.log(message.mode);
     $battleLevel.innerText =
       message.mode === 1 ? 'easy' : message.mode === 2 ? 'normal' : 'hard';
     const option = {

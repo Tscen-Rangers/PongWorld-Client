@@ -58,7 +58,6 @@ export default class extends AbstractView {
           setSignUpCompleted(true);
           locationHrefToHome();
         } else {
-          console.log(data);
           if (data.status === 401) {
             await refreshAccessToken();
             patchUserData(formData);

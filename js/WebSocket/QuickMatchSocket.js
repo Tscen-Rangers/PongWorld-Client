@@ -11,11 +11,9 @@ class QuickMatchSocket extends BaseWebSocket {
 
     return new Promise(async (resolve, reject) => {
       this.ws.onopen = () => {
-        console.log('quickmatck WebSocket OPEN!');
         resolve();
       };
       this.ws.onclose = async () => {
-        console.log('quickmatch WebSocket CLOSE!');
         reject();
       };
     });

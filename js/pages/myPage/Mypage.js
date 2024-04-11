@@ -249,7 +249,6 @@ ${
   }
 
   updateUI(user) {
-    console.log(user);
     const $myPageNickName = document.querySelector('.profile-name');
     const $myPageIntro = document.querySelector('#myPageIntro');
     const $myPageProfileImg = document.querySelector('.myPageProfileImg');
@@ -257,7 +256,6 @@ ${
       'myPageSettingNickName',
     );
     const $myPageSettingIntro = document.getElementById('myPageSettingIntro');
-    console.log(user);
 
     $myPageNickName.textContent = user.nickname;
     $myPageIntro.textContent = user.intro;

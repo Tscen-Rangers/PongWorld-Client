@@ -51,12 +51,9 @@ export const block = async id => {
           await refreshAccessToken();
           return await postBlock();
         } else {
-          //   console.log(await res.json());
           throw new Error(`Server responded with status: ${res.status}`);
         }
       } else {
-        // const data = await res.json();
-        // console.log(data);
         return 1;
       }
       //해당 id의 user block 상태로 바꿔주기
@@ -86,12 +83,9 @@ export const deleteFriend = async id => {
           await refreshAccessToken();
           return await deleteRequest();
         } else {
-          console.log(await res.json());
           throw new Error(`Server responded with status: ${res.status}`);
         }
       } else {
-        // const data = await res.json();
-        // console.log(data);
         return 1;
       }
     } catch (error) {
@@ -117,7 +111,6 @@ export const getNewRequest = async () => {
         } else throw new Error(`Server responded with status: ${res.status}`);
       } else {
         const data = await res.json();
-        // console.log(data);
         sessionStorage.setItem('newRequest', data.data.request_cnt);
       }
     } catch (error) {
@@ -145,7 +138,6 @@ export const friendRequest = async id => {
           await refreshAccessToken();
           return sendRequest();
         } else {
-          // console.log(await res.json());
           throw new Error(`Server responded with status: ${res.status}`);
         }
       } else {

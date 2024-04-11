@@ -454,7 +454,6 @@ export default class extends AbstractView {
     };
 
     const socketOnMessage = async message => {
-      // console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);

@@ -144,7 +144,6 @@ export default class extends AbstractView {
     const friendNames = document.querySelectorAll('.friendname');
     friendNames.forEach(friendName => {
       friendName.addEventListener('click', e => {
-        console.log(e.target);
         const id = e.target.dataset.id;
         userProfileData(id, 0, 0);
       });

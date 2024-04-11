@@ -12,12 +12,10 @@ class TournamentSocket extends BaseWebSocket {
       super.connect(url);
 
       this.ws.onopen = () => {
-        console.log('TournamentSocket OPEN!!!!');
         resolve();
       };
 
       this.ws.onclose = () => {
-        console.log('TournamentSocket CLOSE!!!!');
         reject();
       };
     });
