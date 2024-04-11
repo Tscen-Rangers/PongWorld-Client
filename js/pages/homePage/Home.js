@@ -1,131 +1,21 @@
 import AbstractView from '../../AbstractView.js';
-import {getToken, setToken, refreshAccessToken} from '../../tokenManager.js';
-import cws from '../../WebSocket/ConnectionSocket.js';
+import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
-import {router} from '../../route.js';
-import tws from '../../WebSocket/TournamentSocket.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 import QuickMatchModal from '../../modal/QuickMatchModal.js';
 import Tournament from '../../modal/TournamentReadyModal.js';
 
-const histories = [
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-  {
-    player1: 'jimpark',
-    player2: 'hacho',
-    player1Score: 2,
-    player2Score: 3,
-    date: '2 days ago',
-  },
-];
-
-const users = [
-  {id: 1, profile: '/public/huipark.jpg'},
-  {id: 2, profile: '/public/huipark.jpg'},
-  {id: 3, profile: '/public/huipark.jpg'},
-  {id: 4, profile: '/public/huipark.jpg'},
-];
-
-const $gameOptionModalContainer = document.getElementById(
-  'gameOptionModalContainer',
-);
-const $battlePlayer = document.querySelector('.battlePlayer');
-const $battleModalContainer = document.querySelector('.battleModalContainer');
-const $battleMsg = document.querySelector('.battleMsg');
-const $currentStaff = document.querySelector('.currentStaff');
-const $tournamentControlModal = document.getElementById(
-  'tournamentControlModalBackground',
-);
-const $tournamentCancelBtn = document.querySelector('.tournamentCancelBtn');
-const $tournamentModalContainer = document.querySelector(
-  '.tournamentModalContainer',
-);
-
-const $allHistoryBtn = document.querySelector('.allHistoryBtn');
-
-function onMatchComplete() {
-  // 2초 후에 실행될 함수
-  setTimeout(function () {
-    // 게임 화면으로 이동
-    window.history.pushState(null, null, '/game'); // '/gameScreenURL'은 게임 화면의 URL로 변경해야 합니다.
-    router();
-  }, 3000); // 2000 밀리초 = 2초
-}
-
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle('PongWroldㅣHome');
+    this.setTitle('PongWorldㅣHome');
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.game = null;
   }
 
-  // 비동기를 사용하는 이유는 return 값에 axios나 비동기적으로 데이터를 서버로 부터 받아오고 전달 해 줘야 하기 떄문
   async getHtml() {
     return `
     <div class="contentsContainer">
@@ -161,7 +51,6 @@ export default class extends AbstractView {
 		`;
   }
 
-  ///nickname이랑 img player1 바꿔!
   updateHistory() {
     const usersHistoryBody = document.querySelector('.usersHistoryBody');
     usersHistoryBody.innerHTML = `      ${
@@ -298,10 +187,6 @@ export default class extends AbstractView {
       qws.close();
       $quickMatchModal.classList.remove('active');
     });
-    // $tournamentCancelBtn.addEventListener('click', () => {
-    //   tws.close();
-    //   $tournamentModalContainer.classList.remove('active');
-    // });
   }
   async socketEventHandler(message) {
     responseBattleRequest(message);
