@@ -85,7 +85,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.users = data.data;
-          console.log(this.users);
         }
       } catch (error) {
         console.log('get Blocked error', error);

@@ -401,8 +401,6 @@ export default class extends AbstractView {
       this.target = Number(this.params.user);
       this.sendWebSocket();
     }
-
-    console.log(chattingRooms);
     await this.updateUserList(chattingRooms);
   }
 
@@ -450,6 +448,5 @@ export default class extends AbstractView {
       });
     }
     responseBattleRequest(message);
-    console.log('onMessage : ', message);
   }
 }

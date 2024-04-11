@@ -32,7 +32,9 @@ export const checkConnectionSocket = async handler => {
 };
 
 export const connectionSocketConnect = async handler => {
-  if (!getToken()) await refreshAccessToken();
+  if (!getToken()) {
+    await refreshAccessToken();
+  }
   await cws.connect(`${WS_URL}/ws/connection/`);
   cws.setEvent(handler);
 };

@@ -168,7 +168,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.recieved = data.data;
-          console.log(data.data);
         }
       } catch (error) {
         console.log('get Recieved Request error', error);
@@ -258,7 +257,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.sent = data.data;
-          console.log(data.data);
         }
       } catch (error) {
         console.log('get Sent Request error', error);

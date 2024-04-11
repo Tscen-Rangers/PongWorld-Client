@@ -188,7 +188,6 @@ ${
         } else {
           const data = await res.json();
           this.profileInfo = data.data;
-          console.log(this.profileInfo);
         }
       } catch (error) {
         console.log('get myProfile error', error);
@@ -366,7 +365,7 @@ ${
             router();
             cws.close();
             removeRefreshToken();
-            window.location.href = `${API_URL}`; // 계정 삭제 후 처리 로직
+            window.location.href = `https://10.13.8.3`; // 계정 삭제 후 처리 로직
           } else {
             console.error('Failed to delete account.');
             alert('이중인증이 활성화된 상태에서만 계정을 삭제할 수 있습니다.');

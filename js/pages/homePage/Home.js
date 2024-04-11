@@ -164,7 +164,6 @@ export default class extends AbstractView {
   ///nickname이랑 img player1 바꿔!
   updateHistory() {
     const usersHistoryBody = document.querySelector('.usersHistoryBody');
-    console.log(usersHistoryBody);
     usersHistoryBody.innerHTML = `      ${
       this.game.games !== 'No game'
         ? this.game.games
@@ -266,7 +265,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.game = data.data;
-          console.log(this.game);
         }
       } catch (error) {
         console.log('get Game error', error);
@@ -287,9 +285,6 @@ export default class extends AbstractView {
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
     await checkConnectionSocket();
-    console.log(this.user);
-    console.log('ACCESS = ', getToken());
-    console.log('REFRESH', sessionStorage.getItem('refresh_token'));
 
     $tournamentBtn.addEventListener('click', async () => {
       new Tournament().renderModal();

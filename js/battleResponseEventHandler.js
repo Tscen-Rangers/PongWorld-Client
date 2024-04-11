@@ -17,7 +17,6 @@ export const onMatchComplete = time => {
 };
 
 export const responseBattleRequest = async message => {
-  console.log(message);
   if (message.type === 'REQUEST_MATCHING') {
     await new BattleResponseModal().renderModal();
     const $battleChallengerImg = document.querySelector('.battleChallengerImg');

@@ -1,10 +1,5 @@
 import AbstractView from '../../AbstractView.js';
-import {
-  getToken,
-  setToken,
-  setRefreshToken,
-  refreshAccessToken,
-} from '../../tokenManager.js';
+import {setToken} from '../../tokenManager.js';
 import {router} from '../../route.js';
 import {setSignUpCompleted} from '../../signUpCompleted.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
@@ -61,7 +56,7 @@ export default class extends AbstractView {
       });
       const userData = await res.json();
       setToken(userData.data.access_token);
-      setRefreshToken(userData.data.refresh_token);
+      // setRefreshToken(userData.data.refresh_token);
       return userData.data;
     } catch (error) {
       console.log(error);
@@ -71,7 +66,6 @@ export default class extends AbstractView {
   async afterRender() {
     setSignUpCompleted(false);
     const userData = await this.getUserData();
-    console.log(userData);
     sessionStorage.setItem('user', JSON.stringify(userData.user));
     connectionSocketConnect();
     // 'two_factor_auth_enabled' 값에 따라 분기 처리
