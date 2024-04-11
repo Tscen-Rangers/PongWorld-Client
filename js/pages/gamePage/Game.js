@@ -100,11 +100,11 @@ export default class extends AbstractView {
       </div>
     </div>
     <div class="pingpongBody">
-      <div class="gameScore">
-        <text class="player1Score">0</text>:<text class="player2Score">0</text>
-      </div>
       <div class="pingpongTable">
-        <img class="pongworldImg" src="/public/pongworld.png" >
+        <div class="gameScore">
+          <text class="player1Score">0</text>:<text class="player2Score">0</text>
+        </div>
+        <img class="pongworldImg" src="/public/pongworld.png" />
         <div class="player1PingpongStick"></div>
         <div id="pingpongBall"></div>
         <div class="player2PingpongStick"></div>
