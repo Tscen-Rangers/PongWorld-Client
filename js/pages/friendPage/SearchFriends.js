@@ -3,11 +3,8 @@ import {getToken, refreshAccessToken} from '../../tokenManager.js';
 import {
   block,
   unblock,
-  deleteFriend,
-  friendRequest,
 } from '../../FriendsRestApi.js';
 import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
-import {router} from '../../route.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
@@ -179,7 +176,6 @@ export default class extends AbstractView {
           const data = await res.json();
           this.users = data.data;
         }
-        // this.users = data;
       } catch (error) {
         console.log('get searchPlayers error', error);
       }
@@ -190,9 +186,6 @@ export default class extends AbstractView {
   async afterRender() {
     await checkConnectionSocket(this.socketEventHandler.bind(this));
     await this.searchPlayers('');
-    // const confirmModal = document.querySelector('.confirmModalContainer');
-    // const confirmBtn = document.querySelector('.confirmBtn');
-    // const cancelBtn = document.querySelector('.cancelBtn');
     const searchInput = document.querySelector('#searchInput');
 
     searchInput.addEventListener('keydown', async e => {
@@ -202,27 +195,7 @@ export default class extends AbstractView {
         this.updateBlockedUserList();
       }
     });
-    // cancelBtn.addEventListener('click', () => {
-    //   confirmModal.classList.remove('active');
-    // });
 
-    // confirmBtn.addEventListener('click', async e => {
-    //   const index = confirmModal.getAttribute('data-key');
-
-    //   // 서버에서 friend_id 받아서 하기!
-    //   if (this.currentAction === 'cancel') {
-    //     if (await deleteFriend(this.users[index].friend_id))
-    //       this.users[index].friend_status = 0;
-    //   } else {
-    //     let id = await friendRequest(this.users[index].id);
-    //     if (id) {
-    //       this.users[index].friend_status = 1;
-    //       this.users[index].friend_id = id;
-    //     }
-    //   }
-    //   this.updateBlockedUserList(); // UI 업데이트
-    //   confirmModal.classList.remove('active');
-    // });
     const requestBadge = document.querySelector('.requestBadge');
     requestBadge.firstChild.innerText = sessionStorage.getItem('newRequest');
     if (parseInt(sessionStorage.getItem('newRequest')))

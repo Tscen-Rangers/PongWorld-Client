@@ -64,6 +64,7 @@ export const updateFriendRequestBtn = player => {
   const $userProfileFriendRequestBtn = document.querySelector(
     '.userProfile-friendRequestBtn',
   );
+  console.log($userProfileFriendRequestBtn);
 
   if (player.friend_status === 0)
     $userProfileFriendRequestBtn.innerText = 'friend request';
@@ -126,10 +127,14 @@ export const updateUserModal = async (userData, all) => {
     $userProfileWin.innerText = userData.player.wins;
     $userProfileRanking.innerText = userData.player.ranking;
     $chatButton.href = `/chat/direct/${userData.player.id}`;
+    console.log(111111);
     updateFriendRequestBtn(userData.player);
     updateGameHistory(userData.games);
   }
   //map돌아서 다 렌더링
   else if (all === 1) updateGameHistory(userData.games);
-  else if (all === 2) updateFriendRequestBtn(userData.player);
+  else if (all === 2) {
+    console.log(2222222);
+    updateFriendRequestBtn(userData.player);
+  }
 };
