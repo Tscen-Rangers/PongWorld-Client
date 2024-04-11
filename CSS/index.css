@@ -221,11 +221,6 @@ a {
   opacity: 1;
 }
 
-.music-modal-back {
-  opacity: 0;
-  visibility: hidden;
-}
-
 .modalBack,
 .music-modal-back {
   position: absolute;
@@ -236,6 +231,11 @@ a {
   width: 100dvw;
   height: 100dvh;
   transition: 0.5s;
+}
+
+.music-modal-back {
+  opacity: 0;
+  visibility: hidden;
 }
 
 #tournamentControlModalBackground.show,
