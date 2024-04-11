@@ -17,4 +17,9 @@ psd
 thumb
 sketch
 
+.vscode
+.env
+config.js
+wsConfig.js
+
 # End of https://www.toptal.com/developers/gitignore/api/react
