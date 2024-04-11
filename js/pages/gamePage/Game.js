@@ -11,30 +11,16 @@ let lastMessageTime = null;
 
 const checkSocket = async () => {
   const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
-  let socket;
+  let socket = null;
   if (webSocketType === 'START_RANDOM_GAME') socket = qws;
   else if (webSocketType === 'START_FRIEND_GAME') socket = cws;
-  else {
-    socket = tws;
-  }
+  else if (webSocketType === 'START_TOURNAMENT_SEMI_FINAL') socket = tws;
 
   if (
-    !socket.getWS() ||
+    !socket ||
+    (socket && !socket.getWS()) ||
     (socket && socket.getWS().readyState === WebSocket.CLOSED)
   ) {
-    if (socket === cws)
-      cws.send({
-        type: 'invite_game',
-        command: 'end_game',
-      });
-    else if (socket === tws)
-      tws.send({
-        tournament_mode: 'end_tournament',
-      });
-    else
-      qws.send({
-        command: 'end_game',
-      });
     history.pushState(null, null, '/home');
     return router();
   }
@@ -86,6 +72,7 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
+    if (!this.myInfo || !this.opponentInfo) return;
     return `
     <div class="gameBody">
     <div class="playingUserBody">
@@ -394,6 +381,7 @@ export default class extends AbstractView {
 
   async afterRender() {
     this.socket = await checkSocket();
+    if (!this.socket) return;
 
     this.sendStick(0);
 
