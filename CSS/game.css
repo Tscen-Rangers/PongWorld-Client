@@ -1,11 +1,14 @@
 .gameScore {
   display: flex;
-  font-size: 3rem;
+  position: absolute;
+  font-size: 40px;
   font-weight: bold;
   width: 150px;
   justify-content: space-around;
   align-items: center;
   text-align: center;
+  top: -50px;
+  /* height: ; */
 }
 
 .player1Score,
@@ -20,6 +23,7 @@
 
 .pingpongBody {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -34,8 +38,10 @@
 
 .pingpongTable {
   display: flex;
-  height: 49vw;
-  width: 68vw;
+  /* height: 49vw; */
+  /* width: 68vw; */
+  height: 490px;
+  width: 680px;
   border-radius: 10px;
   background: linear-gradient(
     to top,
@@ -60,10 +66,12 @@
 
 .playingUserInfo {
   display: flex;
-  width: 12vw;
-  height: 22vw;
-  min-width: 100px;
-  min-height: 200px;
+  /* width: 12vw;
+  height: 22vw; */
+  /* min-width: 100px;
+  min-height: 200px; */
+  width: 120px;
+  height: 220px;
   background: linear-gradient(to top, black, white);
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
@@ -74,8 +82,10 @@
 }
 
 .player2PingpongStick {
-  width: 1.1vw;
-  height: 6vw;
+  /* width: 1.1vw; */
+  /* height: 6vw; */
+  width: 11px;
+  height: 60px;
   background-color: black;
   margin-right: 1vw;
   position: absolute;
@@ -87,8 +97,10 @@
 }
 
 .player1PingpongStick {
-  width: 1.1vw;
-  height: 6vw;
+  /* width: 1.1vw;
+  height: 6vw; */
+  width: 11px;
+  height: 60px;
   background-color: black;
   margin-left: 1vw;
   position: absolute;
@@ -103,8 +115,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 1.5vw;
-  height: 1.5vw;
+  /* width: 1.5vw;
+  height: 1.5vw; */
+  width: 15px;
+  height: 15px;
   border-radius: 50px;
   background-color: #1eff00;
   box-shadow: 0 0 6px 2px black;
@@ -124,15 +138,18 @@
 
 .player1Img,
 .player2Img {
-  width: 10vw;
-  min-width: 80px;
-  min-height: 80px;
+  /* width: 10vw;
   height: 10vw;
+  min-width: 80px;
+  min-height: 80px; */
+  width: 100px;
+  height: 100px;
   border-radius: 10px;
 }
 
 .playingUserName {
-  font-size: 2.5vw;
+  /* font-size: 2.5vw; */
+  font-size: 20px;
   width: 100%;
   justify-content: center;
   color: grey;
@@ -148,9 +165,9 @@
 .playingUserTotalScore {
   display: flex;
   width: 100%;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
-  font-size: 1.8rem;
+  font-size: 20px;
   flex-direction: column;
   border-radius: 10px;
 }
@@ -158,7 +175,7 @@
 .player1TotalScore,
 .player2TotalScore {
   display: flex;
-  font-size: 2rem;
+  font-size: 20px;
 }
 
 .pongworldImg {
