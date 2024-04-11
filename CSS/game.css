@@ -29,11 +29,20 @@
   align-items: center;
   margin: 0 5px;
 }
-.playingUserBody {
+
+.playingUserBodyLeft,
+.playingUserBodyRight {
   display: flex;
   flex: 1;
-  justify-content: center;
   align-items: center;
+  margin: 0 20px;
+}
+
+.playingUserBodyLeft {
+  justify-content: flex-end;
+}
+
+.playingUserBodyRight {
 }
 
 .pingpongTable {
@@ -87,7 +96,7 @@
   width: 11px;
   height: 60px;
   background-color: black;
-  margin-right: 1vw;
+  margin-right: 10px;
   position: absolute;
   right: 0;
   /* 상위 요소에 대해 중간으로 이동 후 자신의 크기 절반만큼 이동 */
@@ -102,7 +111,7 @@
   width: 11px;
   height: 60px;
   background-color: black;
-  margin-left: 1vw;
+  margin-left: 10px;
   position: absolute;
   left: 0;
   top: 50%;

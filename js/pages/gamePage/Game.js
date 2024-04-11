@@ -75,7 +75,7 @@ export default class extends AbstractView {
     if (!this.myInfo || !this.opponentInfo) return;
     return `
     <div class="gameBody">
-    <div class="playingUserBody">
+    <div class="playingUserBodyLeft">
       <div class="playingUserInfo">
         <div class="playingUserName">${
           this.myPosition === 'player1'
@@ -110,7 +110,7 @@ export default class extends AbstractView {
         <div class="player2PingpongStick"></div>
       </div>
     </div>
-    <div class="playingUserBody">
+    <div class="playingUserBodyRight">
       <div class="playingUserInfo">
         <div class="playingUserName">${
           this.myPosition === 'player2'
