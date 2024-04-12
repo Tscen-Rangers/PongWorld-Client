@@ -210,7 +210,6 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
-    console.log(coordinate, this.socket);
     if (this.socket === cws)
       this.socket.send({
         type: 'invite_game',
@@ -584,7 +583,6 @@ export default class extends AbstractView {
     };
 
     const socketOnMessage = async message => {
-      console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);
