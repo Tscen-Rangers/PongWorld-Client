@@ -158,7 +158,6 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.game = data.data;
-          console.log(this.game);
         }
       } catch (error) {
         console.log('get Game error', error);
