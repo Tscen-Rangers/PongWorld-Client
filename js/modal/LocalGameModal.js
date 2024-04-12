@@ -50,14 +50,14 @@ class LocalGameModal extends AbstractModal {
         //소켓 연결하고 레쮸고
         if (!getToken) await refreshAccessToken();
         console.log(WS_URL);
-        await lws.connect(`ws://127.0.0.1:8000/ws/local/`);
+        await lws.connect(`${WS_URL}/ws/local/`);
         lws.send({
           command: 'start_local_game',
           speed: this.option.level,
         });
         lws.onMessage(msg => {
           if (msg.type == 'START_LOCAL_GAME') {
-            sessionStorage.setItem('webSocketType', msg.type);
+            sessionStorage.setItem('webSocketType', JSON.stringify(msg.type));
             this.closeModal();
             this.onMatchComplete();
           }

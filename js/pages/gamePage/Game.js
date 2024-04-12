@@ -2,12 +2,13 @@ import AbstractView from '../../AbstractView.js';
 import tws from '../../WebSocket/TournamentSocket.js';
 import cws from '../../WebSocket/ConnectionSocket.js';
 import qws from '../../WebSocket/QuickMatchSocket.js';
+import lws from '../../WebSocket/LocalGameWebSocket.js';
 import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {router} from '../../route.js';
-import T from '../../WebSocket/TournamentSocket.js';
 let isMovingUp = false;
 let isMovingDown = false;
-let lastMessageTime = null;
+let isMovingUp2 = false,
+  isMovingDown2 = false;
 
 const checkSocket = async () => {
   const webSocketType = JSON.parse(sessionStorage.getItem('webSocketType'));
@@ -15,6 +16,7 @@ const checkSocket = async () => {
   if (webSocketType === 'START_RANDOM_GAME') socket = qws;
   else if (webSocketType === 'START_FRIEND_GAME') socket = cws;
   else if (webSocketType === 'START_TOURNAMENT_SEMI_FINAL') socket = tws;
+  else if (webSocketType === 'START_LOCAL_GAME') socket = lws;
 
   if (
     !socket ||
@@ -65,8 +67,11 @@ export default class extends AbstractView {
     //따로 this binding을 해주는 이유는 이벤트 리스너로 등록된 함수는 이벤트가 발생한 DOM 요소를 가르켜서 예상치 못한 동작을 해서 추가해줌
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyDown2 = this.handleKeyDown2.bind(this);
+    this.handleKeyUp2 = this.handleKeyUp2.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.currentPosY = 0;
+    this.currentPosY2 = 0;
     this.speed = 10; // 탁구채의 이동 속도
     this.socket = null;
   }
@@ -176,6 +181,7 @@ export default class extends AbstractView {
           <img class="winnerImg" src="/public/huipark.jpg" >
         </div>
         <div class="bye-message"></div>
+        <div class="winnerName"></div>
         <div class="stateUpdate">
         <text class="stateUpdateTitle">Your updates</text>
         <div class="scoreUpdate">score<img id="scoreChange" src="/public/up.svg"><text id="score">1024<text></div>
@@ -192,6 +198,7 @@ export default class extends AbstractView {
   }
 
   sendStick(coordinate) {
+    console.log(coordinate, this.socket);
     if (this.socket === cws)
       this.socket.send({
         type: 'invite_game',
@@ -210,47 +217,112 @@ export default class extends AbstractView {
       });
   }
 
+  localSendStick(coordinate, id) {
+    this.socket.send({
+      command: 'move_paddle',
+      player_id: id,
+      y_coordinate: coordinate,
+    });
+  }
+
   update() {
     const y = convertClientToServerPosition.bind(this)(this.currentPosY);
-    this.sendStick(y);
+    if (this.socket === lws) this.localSendStick(y, 0);
+    else this.sendStick(y);
+  }
+
+  update2() {
+    const y = convertClientToServerPosition.bind(this)(this.currentPosY2);
+    this.localSendStick(y, -1);
   }
 
   animatePaddleMovement() {
+    const updatePosition = (stickRect, isUp, isDown, posY, updateFunc) => {
+      let updatedPosY = posY;
+      if (isUp) {
+        if (stickRect.top - this.speed <= this.tableRect.top) {
+          updatedPosY -= stickRect.top - this.tableRect.top;
+        } else {
+          updatedPosY -= this.speed;
+        }
+      } else if (isDown) {
+        if (stickRect.bottom + this.speed >= this.tableRect.bottom) {
+          updatedPosY += this.tableRect.bottom - stickRect.bottom;
+        } else {
+          updatedPosY += this.speed;
+        }
+      }
+      updateFunc(updatedPosY);
+    };
+
     let lastTime = 0;
     const fps = 60;
     const interval = 1000 / fps;
 
-    if (!this.rAF) {
-      const animate = currentTime => {
-        if (isMovingUp || isMovingDown) {
-          const myStickRect = this.myPingpongStick.getBoundingClientRect();
+    const animate = currentTime => {
+      const myStickRect = this.myPingpongStick.getBoundingClientRect();
+      const opponentStickRect =
+        this.opponentPingpongStick.getBoundingClientRect();
+      const elapsed = currentTime - lastTime;
 
-          const elapsed = currentTime - lastTime;
+      if (elapsed > interval) {
+        lastTime = currentTime - (elapsed % interval);
 
-          if (elapsed > interval) {
-            lastTime = currentTime - (elapsed % interval);
-            if (isMovingUp) {
-              if (myStickRect.top - this.speed <= this.tableRect.top) {
-                this.currentPosY =
-                  this.currentPosY - (myStickRect.top - this.tableRect.top);
-              } else this.currentPosY -= this.speed;
-            } else if (isMovingDown) {
-              if (myStickRect.bottom + this.speed >= this.tableRect.bottom) {
-                this.currentPosY =
-                  this.currentPosY +
-                  (this.tableRect.bottom - myStickRect.bottom);
-              } else this.currentPosY += this.speed;
-            }
-            this.update();
-            this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
-          }
-          this.rAF = requestAnimationFrame(animate.bind(this));
+        if (this.socket === lws) {
+          updatePosition(
+            myStickRect,
+            isMovingUp,
+            isMovingDown,
+            this.currentPosY,
+            newPos => {
+              this.currentPosY = newPos;
+              this.update();
+            },
+          );
+          updatePosition(
+            opponentStickRect,
+            isMovingUp2,
+            isMovingDown2,
+            this.currentPosY2,
+            newPos => {
+              this.currentPosY2 = newPos;
+              this.update2();
+            },
+          );
         } else {
-          cancelAnimationFrame(this.rAF);
-          this.rAF = null;
+          updatePosition(
+            myStickRect,
+            isMovingUp,
+            isMovingDown,
+            this.currentPosY,
+            newPos => {
+              this.currentPosY = newPos;
+              this.update();
+            },
+          );
         }
-      };
-      this.rAF = requestAnimationFrame(animate.bind(this));
+
+        this.myPingpongStick.style.transform = `translateY(${this.currentPosY}px)`;
+        if (this.socket === lws) {
+          this.opponentPingpongStick.style.transform = `translateY(${this.currentPosY2}px)`;
+        }
+      }
+
+      // 움직임이 있는지 확인 후 애니메이션 프레임을 계속 요청하거나 취소
+      if (
+        isMovingUp ||
+        isMovingDown ||
+        (this.socket === lws && (isMovingUp2 || isMovingDown2))
+      ) {
+        this.rAF = requestAnimationFrame(animate);
+      } else {
+        cancelAnimationFrame(this.rAF);
+        this.rAF = null;
+      }
+    };
+
+    if (!this.rAF) {
+      this.rAF = requestAnimationFrame(animate);
     }
   }
 
@@ -287,6 +359,17 @@ export default class extends AbstractView {
   handleKeyUp(e) {
     if (e.key === 'ArrowUp') isMovingUp = false;
     else if (e.key === 'ArrowDown') isMovingDown = false;
+  }
+
+  handleKeyDown2(e) {
+    if (e.key === 'w') isMovingUp2 = true;
+    else if (e.key === 's') isMovingDown2 = true;
+    this.animatePaddleMovement();
+  }
+
+  handleKeyUp2(e) {
+    if (e.key === 'w') isMovingUp2 = false;
+    else if (e.key === 's') isMovingDown2 = false;
   }
 
   onMouseMove() {
@@ -337,6 +420,7 @@ export default class extends AbstractView {
         tws.send({
           tournament_mode: 'end_tournament',
         });
+      else if (this.socket === lws) this.socket.close();
       else
         qws.send({
           command: 'end_game',
@@ -355,13 +439,19 @@ export default class extends AbstractView {
   }
 
   addEventListeners() {
-    document.addEventListener('keyup', this.handleKeyUp);
+    if (this.socket === lws) {
+      document.addEventListener('keydown', this.handleKeyDown2);
+      document.addEventListener('keyup', this.handleKeyUp2);
+    }
     document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
   }
 
   cleanUpEvent() {
-    document.removeEventListener('keyup', this.handleKeyUp);
     document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
+    document.removeEventListener('keydown', this.handleKeyDown2);
+    document.removeEventListener('keyup', this.handleKeyUp2);
     document.removeEventListener('mousemove', this.handleMouseMove);
   }
 
@@ -376,6 +466,8 @@ export default class extends AbstractView {
       tws.send({
         tournament_mode: 'end_tournament',
       });
+    } else if (this.socket === lws) {
+      this.socket.close();
     } else this.socket.close();
   }
 
@@ -383,18 +475,44 @@ export default class extends AbstractView {
     this.socket = await checkSocket();
     if (!this.socket) return;
 
-    this.sendStick(0);
-
-    const myPingpongStick = document.querySelector(
-      `.${sessionStorage.getItem('myPosition')}PingpongStick`,
-    );
-    const opponentPingpongStick = document.querySelector(
-      `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
-    );
+    if (this.socket !== lws) this.sendStick(0);
+    else {
+      const $playingUserBodyLeft = document.querySelector(
+        '.playingUserBodyLeft',
+      );
+      const $playingUserBodyRight = document.querySelector(
+        '.playingUserBodyRight',
+      );
+      $playingUserBodyLeft.querySelector('.playingUserName').innerHTML =
+        'Player1';
+      $playingUserBodyRight.querySelector('.playingUserName').innerHTML =
+        'Player2';
+      $playingUserBodyLeft.querySelector('.player1Img').src =
+        '/public/person.svg';
+      $playingUserBodyRight.querySelector('.player2Img').src =
+        '/public/person.svg';
+      document.querySelectorAll('.playingUserTotalScore').forEach(e => {
+        e.style.display = 'none';
+      });
+    }
+    let myPingpongStick;
+    let opponentPingpongStick;
+    if (this.socket === lws) {
+      myPingpongStick = document.querySelector('.player2PingpongStick');
+      opponentPingpongStick = document.querySelector('.player1PingpongStick');
+    } else {
+      myPingpongStick = document.querySelector(
+        `.${sessionStorage.getItem('myPosition')}PingpongStick`,
+      );
+      opponentPingpongStick = document.querySelector(
+        `.${sessionStorage.getItem('opponentsPosition')}PingpongStick`,
+      );
+    }
 
     this.pingpongTable = document.querySelector('.pingpongTable');
     this.tableRect = this.pingpongTable.getBoundingClientRect();
     this.myPingpongStickTop = myPingpongStick.offsetTop;
+    this.opponentPingpongStickTop = opponentPingpongStick.offsetTop;
     this.myPingpongStick = myPingpongStick;
     this.opponentPingpongStick = opponentPingpongStick;
 
@@ -410,11 +528,11 @@ export default class extends AbstractView {
     const $ranking = document.querySelector('#ranking');
     const $scoreChange = document.querySelector('#scoreChange');
     const $rankingChange = document.querySelector('#rankingChange');
-
     const $tournamentState = document.querySelector('.tournamentState');
     const $stateUpdate = document.querySelector('.stateUpdate');
     const $goHomeBtn = document.querySelector('.goHomeBtn');
 
+    const $winnerName = document.querySelector('.winnerName');
     let flag = 0;
     let win = 0;
     let byeFlag = 0;
@@ -454,10 +572,12 @@ export default class extends AbstractView {
     };
 
     const socketOnMessage = async message => {
+      console.log(message);
       if (message.type === 'BALL_POSITION') {
         const ballPosition = message.data.position;
         this.updateBallPosition(ballPosition);
       } else if (
+        this.socket !== lws &&
         this.myPosition === 'player1' &&
         message.type === 'CHANGE_PLAYER2_PADDLE_POSTITION'
       ) {
@@ -465,6 +585,7 @@ export default class extends AbstractView {
           this,
         )(message.data.position[1])}px)`;
       } else if (
+        this.socket !== lws &&
         this.myPosition === 'player2' &&
         message.type === 'CHANGE_PLAYER1_PADDLE_POSTITION'
       ) {
@@ -494,6 +615,12 @@ export default class extends AbstractView {
         $tournamentState.style.display = 'none';
         $stateUpdate.style.display = 'flex';
         $goHomeBtn.style.display = 'block';
+        $gameResultModalContainer.classList.add('active');
+      } else if (message.type === 'LOCAL_GAME_OVER') {
+        $winnerImg.src = '/public/person.svg';
+        $winnerName.innerHTML = message.data.winner;
+        $stateUpdate.style.display = 'none';
+        $winnerName.style.display = 'flex';
         $gameResultModalContainer.classList.add('active');
       } else if (message.type === 'GAME_RESULT_A') {
         showTournamentResult(message);
@@ -594,7 +721,7 @@ export default class extends AbstractView {
       }
     };
 
-    if (this.socket === qws || this.socket === tws) {
+    if (this.socket === qws || this.socket === tws || this.socket === lws) {
       this.socket.onMessage(message => socketOnMessage.bind(this)(message));
     } else {
       await checkConnectionSocket(socketOnMessage.bind(this));

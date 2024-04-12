@@ -14,7 +14,6 @@ class LocalGameWebSocket extends BaseWebSocket {
 
     return new Promise(async (resolve, reject) => {
       this.ws.onopen = () => {
-        console.log('HELLO');
         resolve();
       };
       this.ws.onclose = () => {

@@ -70,7 +70,8 @@
 }
 
 .quickMatchButton:hover,
-.tournamentButton:hover .localButton:hover {
+.tournamentButton:hover,
+.localButton:hover {
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
 }

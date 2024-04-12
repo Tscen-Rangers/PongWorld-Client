@@ -16,6 +16,13 @@
   display: flex;
 }
 
+.winnerName {
+  display: none;
+  align-items: center;
+  font-size: 1.4rem;
+  color: black;
+}
+
 .gameBody {
   display: flex;
   flex: 1;
@@ -50,7 +57,7 @@
   /* height: 49vw; */
   /* width: 68vw; */
   height: 490px;
-  width: 680px;
+  width: 660px;
   border-radius: 10px;
   background: linear-gradient(
     to top,
