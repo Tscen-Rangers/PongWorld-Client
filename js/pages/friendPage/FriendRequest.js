@@ -113,10 +113,12 @@ export default class extends AbstractView {
       acceptIcon.addEventListener('click', async e => {
         //친구에 추가
         const index = e.target.dataset.key;
-        if (await this.acceptRequest(this.recieved[index].id)) {
-          this.recieved.splice(index, 1);
-          getNewRequest();
-          this.updateReceivedUserList();
+        if (this.recieved[index].id) {
+          if (await this.acceptRequest(this.recieved[index].id)) {
+            this.recieved.splice(index, 1);
+            getNewRequest();
+            this.updateReceivedUserList();
+          }
         }
       });
     });
