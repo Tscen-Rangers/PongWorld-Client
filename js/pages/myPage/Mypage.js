@@ -16,7 +16,7 @@ export const logout = async () => {
   // 서버에 로그아웃 요청 (선택사항)
   // 이 부분은 서버의 인증 방식에 따라 다를 수 있습니다.
   try {
-    const response = await fetch(`${API_URL}/tcen-auth/logout`, {
+    const response = await fetch(`${API_URL}/tcen-auth/logout/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
