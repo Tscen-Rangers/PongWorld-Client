@@ -37,11 +37,15 @@ class ConfirmModal extends AbstractModal {
       const data = JSON.parse($modalBack.getAttribute('data-user'));
       if (data.friend_status === 0) {
         if (await friendRequest(data.id)) {
-          userProfileData(data.id, 0, 2);
+          if (!sessionStorage.getItem('friendRequest'))
+            userProfileData(data.id, 0, 2);
+          else sessionStorage.removeItem('friendRequest');
         }
       } else {
         if (await deleteFriend(data.friend_id)) {
-          userProfileData(data.id, 0, 2);
+          if (!sessionStorage.getItem('friendRequest'))
+            userProfileData(data.id, 0, 2);
+          else sessionStorage.removeItem('friendRequest');
         }
       }
       router();

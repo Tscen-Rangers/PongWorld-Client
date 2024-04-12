@@ -1,5 +1,8 @@
 import UserProfileModal from './modal/UserProfileModal.js';
 
+console.error = function () {};
+console.warn = function () {};
+
 export const updateGameHistory = gameHistory => {
   const $userProfileHistory = document.querySelector(
     '.userProfile-match-history',

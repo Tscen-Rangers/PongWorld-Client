@@ -1,9 +1,6 @@
 import AbstractView from '../../AbstractView.js';
 import {getToken, refreshAccessToken} from '../../tokenManager.js';
-import {
-  block,
-  unblock,
-} from '../../FriendsRestApi.js';
+import {block, unblock} from '../../FriendsRestApi.js';
 import {checkConnectionSocket} from '../../WebSocket/webSocketManager.js';
 import {responseBattleRequest} from '../../battleResponseEventHandler.js';
 import {userProfileData} from '../../PlayersRestApi.js';
@@ -125,6 +122,7 @@ export default class extends AbstractView {
     );
     searchOptionRequestBtns.forEach(searchOptionRequestBtn => {
       searchOptionRequestBtn.addEventListener('click', async e => {
+        await sessionStorage.setItem('friendRequest', '1');
         await new ConfirmModal().renderModal();
 
         const $modalBack = document.querySelector('.modalBack');
