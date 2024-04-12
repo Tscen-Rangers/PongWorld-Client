@@ -52,16 +52,18 @@ export default class extends AbstractView {
         <div class="friendList" key=${index}>
           <div class="friendProfile">
             <div class="friendProfileImg" >
-            <img class="profileImg"  data-id='${user.id}' src=${
-                user.profile_img
-              }>
+            <img class="profileImg"  data-id='${
+              user.is_blocking ? 0 : user.id
+            }' src=${user.profile_img}>
             ${
               user.is_online
                 ? '<img class="onlineImg" src="/public/online.png">'
                 : ''
             }
             </div>
-            <div class="friendname"  data-id='${user.id}'>${user.nickname}</div>
+            <div class="friendname"  data-id='${
+              user.is_blocking ? 0 : user.id
+            }'>${user.nickname}</div>
           </div>
             <div class="searchOptionBtns">
             ${
@@ -140,17 +142,21 @@ export default class extends AbstractView {
     const $allHistoryBtn = document.querySelector('.allHistoryBtn');
     const profileImgs = document.querySelectorAll('.profileImg');
     profileImgs.forEach(profileImg => {
-      profileImg.addEventListener('click', e => {
-        const id = e.target.dataset.id;
-        userProfileData(id, 0, 0);
-      });
+      if (profileImg.dataset.id !== '0') {
+        profileImg.addEventListener('click', e => {
+          const id = e.target.dataset.id;
+          userProfileData(id, 0, 0);
+        });
+      }
     });
     const friendNames = document.querySelectorAll('.friendname');
     friendNames.forEach(friendName => {
-      friendName.addEventListener('click', e => {
-        const id = e.target.dataset.id;
-        userProfileData(id, 0, 0);
-      });
+      if (friendName.dataset.id !== '0') {
+        friendName.addEventListener('click', e => {
+          const id = e.target.dataset.id;
+          userProfileData(id, 0, 0);
+        });
+      }
     });
   }
   //모든 유저 렌더링 or 검색된 유저 렌더링

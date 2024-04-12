@@ -108,7 +108,7 @@ export default class extends AbstractView {
         ? this.game.ranking
             .map(
               (rank, index) => `
-    <div class="usersRank" data-id='${rank.id}'>
+    <div class="usersRank" data-id='${rank.is_blocking ? 0 : rank.id}'>
     <svg class="starImg" xmlns="http://www.w3.org/2000/svg" width="3.5em" height="3.5em" viewBox="0 0 24 24">
     <path fill="black" d="m12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72l3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41l-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18l-1.1 4.72c-.2.86.73 1.54 1.49 1.08z"/>
     <text x="49%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="8">${
@@ -131,10 +131,12 @@ export default class extends AbstractView {
   bindUpadteRanking() {
     const usersRanks = document.querySelectorAll('.usersRank');
     usersRanks.forEach(usersRank => {
-      usersRank.addEventListener('click', e => {
-        const id = e.currentTarget.dataset.id;
-        userProfileData(id, 0, 0);
-      });
+      if (usersRank.dataset.id !== '0') {
+        usersRank.addEventListener('click', e => {
+          const id = e.currentTarget.dataset.id;
+          userProfileData(id, 0, 0);
+        });
+      }
     });
   }
 
@@ -156,6 +158,7 @@ export default class extends AbstractView {
         } else {
           const data = await res.json();
           this.game = data.data;
+          console.log(this.game);
         }
       } catch (error) {
         console.log('get Game error', error);
