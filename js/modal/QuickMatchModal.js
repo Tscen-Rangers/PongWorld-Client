@@ -135,7 +135,7 @@ class QuickMatchModal extends AbstractModal {
           );
           $quickMatchModal.classList.add('active');
           this.closeModal();
-          if (!getToken) await removeRefreshToken();
+          if (!getToken) await refreshAccessToken();
           await qws.connect(`${WS_URL}/ws/random/`);
 
           qws.send({command: 'participant', speed: this.option.level});

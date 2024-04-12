@@ -7,6 +7,7 @@ import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 import QuickMatchModal from '../../modal/QuickMatchModal.js';
 import Tournament from '../../modal/TournamentReadyModal.js';
+import LocalGameModal from '../../modal/LocalGameModal.js';
 
 export default class extends AbstractView {
   constructor(params) {
@@ -25,6 +26,7 @@ export default class extends AbstractView {
   <div class="usersHistoryBody">
   </div>
   <div class="playgameDiv">
+  <div class="localButton"><text class="localButtonText">local</text><img class="localSvg" src="/public/local.svg" ></div>
     <div class="tournamentButton"><text class="tournamentButtonText">tournament</text><img class="tournamentSvg" src="/public/tournament.svg
     "></div>
     <div class="quickMatchButton"><text class="quickMatchButtonText">quick match</text><img class="quickMatchSvg" src="/public/quickmatch.svg"></div>
@@ -173,6 +175,7 @@ export default class extends AbstractView {
       '.quickMatchModalContainer',
     );
     const $matchingCancelBtn = document.querySelector('.matchingCancelBtn');
+    const $localButton = document.querySelector('.localButton');
     await checkConnectionSocket();
 
     $tournamentBtn.addEventListener('click', async () => {
@@ -186,6 +189,9 @@ export default class extends AbstractView {
     $matchingCancelBtn.addEventListener('click', () => {
       qws.close();
       $quickMatchModal.classList.remove('active');
+    });
+    $localButton.addEventListener('click', async () => {
+      new LocalGameModal().renderModal();
     });
   }
   async socketEventHandler(message) {

@@ -9,7 +9,7 @@
 .usersRankBody {
   display: flex;
   flex: 1;
-  width: 75%;
+  width: 85%;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
@@ -23,7 +23,6 @@
   border-radius: 10px;
   width: 7dvw;
   height: 7dvw;
-  /* margin: 25px; */
   min-height: 126px;
   min-width: 126px;
   justify-content: center;
@@ -51,7 +50,8 @@
 }
 
 .quickMatchButton,
-.tournamentButton {
+.tournamentButton,
+.localButton {
   display: flex;
   height: 40px;
   font-size: 1.8rem;
@@ -64,12 +64,13 @@
 }
 
 .tournamentSvg,
-.quickMatchSvg {
+.quickMatchSvg,
+.localSvg {
   margin-left: 5px;
 }
 
 .quickMatchButton:hover,
-.tournamentButton:hover {
+.tournamentButton:hover .localButton:hover {
   box-shadow: inset 5px 0 10px -5px white, inset -5px 0 10px -5px white,
     inset 0 5px 10px -5px white, inset 0 -5px 10px -5px white;
 }
@@ -294,7 +295,43 @@
   margin-bottom: 10px;
 }
 
+@media (max-width: 1150px) {
+  .usersRankBody {
+    width: 100%;
+  }
+  .usersRank {
+    min-height: 0px;
+    min-width: 100px;
+    height: 9dvw;
+  }
+  .rankersImg {
+    display: none;
+  }
+  .rankersName {
+    position: relative;
+    background-color: transparent;
+    font-size: 1.5rem;
+  }
+  .starImg {
+    width: 2.5em;
+    height: 2.5em;
+  }
+}
+
 @media (max-width: 810px) {
+  .usersRank {
+    min-height: 0px;
+    min-width: 80px;
+    height: 9dvw;
+  }
+  .rankersImg {
+    display: none;
+  }
+  .rankersName {
+    position: relative;
+    background-color: transparent;
+    font-size: 1.3rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -306,43 +343,22 @@
   }
 }
 
-@media (max-width: 600px) {
-  .tournamentButtonText {
+@media (max-width: 660px) {
+  .tournamentButtonText,
+  .localButtonText {
     display: none;
   }
   .quickMatchButtonText {
     display: none;
   }
   .tournamentSvg,
-  .quickMatchSvg {
+  .quickMatchSvg,
+  .localSvg {
     margin-left: 0px;
-  }
-  .usersRankBody {
-    /* flex-direction: column; */
-    /* background-color: pink; */
-    padding: 10px 0px;
-  }
-  .usersRank {
-    min-height: 0px;
-    min-width: 60px;
-    height: 9dvw;
-    /* background-color: blue; */
-  }
-  .rankersImg {
-    display: none;
-  }
-  .rankersName {
-    position: relative;
-    background-color: transparent;
-    font-size: 1.1rem;
-  }
-  .starImg {
-    width: 2.5em;
-    height: 2.5em;
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 560px) {
   .usersRankBody {
     flex-direction: column;
   }

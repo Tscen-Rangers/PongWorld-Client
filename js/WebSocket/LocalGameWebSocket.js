@@ -1,4 +1,4 @@
-import BaseWebSocket from './BaseWebSocket';
+import BaseWebSocket from './BaseWebSocket.js';
 
 class LocalGameWebSocket extends BaseWebSocket {
   static instance = null;
@@ -7,11 +7,14 @@ class LocalGameWebSocket extends BaseWebSocket {
     super();
   }
 
-  async connet(url) {
+  async connect(url) {
     super.connect(url);
 
-    return new Promise((resolve, reject) => {
+    console.log(this.ws);
+
+    return new Promise(async (resolve, reject) => {
       this.ws.onopen = () => {
+        console.log('HELLO');
         resolve();
       };
       this.ws.onclose = () => {
