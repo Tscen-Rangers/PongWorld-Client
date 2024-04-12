@@ -77,29 +77,35 @@ export default class extends AbstractView {
   }
 
   async getHtml() {
-    if (!this.myInfo || !this.opponentInfo) return;
+    // if (!this.myInfo || !this.opponentInfo) return;
     return `
     <div class="gameBody">
     <div class="playingUserBodyLeft">
       <div class="playingUserInfo">
         <div class="playingUserName">${
-          this.myPosition === 'player1'
-            ? this.myInfo.info.nickname
-            : this.opponentInfo.info.nickname
+          this.myPosition
+            ? this.myPosition === 'player1'
+              ? this.myInfo.info.nickname
+              : this.opponentInfo.info.nickname
+            : ''
         }</div>
         <div class="playingUserImage">
           <img class="player1Img" src=${
-            this.myPosition === 'player1'
-              ? this.myInfo.info.player_profile_img
-              : this.opponentInfo.info.player_profile_img
+            this.myPosition
+              ? this.myPosition === 'player1'
+                ? this.myInfo.info.player_profile_img
+                : this.opponentInfo.info.player_profile_img
+              : ''
           } >
         </div>
         <div class="playingUserTotalScore">
           score
           <div class="player1TotalScore">${
-            this.myPosition === 'player1'
-              ? this.myInfo.info.total_score
-              : this.opponentInfo.info.total_score
+            this.myPosition
+              ? this.myPosition === 'player1'
+                ? this.myInfo.info.total_score
+                : this.opponentInfo.info.total_score
+              : ''
           } </div>
         </div>
       </div>
@@ -118,23 +124,29 @@ export default class extends AbstractView {
     <div class="playingUserBodyRight">
       <div class="playingUserInfo">
         <div class="playingUserName">${
-          this.myPosition === 'player2'
-            ? this.myInfo.info.nickname
-            : this.opponentInfo.info.nickname
+          this.myPosition
+            ? this.myPosition === 'player2'
+              ? this.myInfo.info.nickname
+              : this.opponentInfo.info.nickname
+            : ''
         }</div>
         <div class="playingUserImage">
           <img class="player2Img" src=${
-            this.myPosition === 'player2'
-              ? this.myInfo.info.player_profile_img
-              : this.opponentInfo.info.player_profile_img
+            this.myPosition
+              ? this.myPosition === 'player2'
+                ? this.myInfo.info.player_profile_img
+                : this.opponentInfo.info.player_profile_img
+              : ''
           }  >
         </div>
         <div class="playingUserTotalScore">
           score
           <div class="player2TotalScore">${
-            this.myPosition === 'player2'
-              ? this.myInfo.info.total_score
-              : this.opponentInfo.info.total_score
+            this.myPosition
+              ? this.myPosition === 'player2'
+                ? this.myInfo.info.total_score
+                : this.opponentInfo.info.total_score
+              : ''
           }</div>
         </div>
       </div>
