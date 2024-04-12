@@ -49,7 +49,6 @@ class LocalGameModal extends AbstractModal {
         sessionStorage.setItem('gameOption', JSON.stringify(this.option));
         //소켓 연결하고 레쮸고
         if (!getToken) await refreshAccessToken();
-        console.log(WS_URL);
         await lws.connect(`${WS_URL}/ws/local/`);
         lws.send({
           command: 'start_local_game',

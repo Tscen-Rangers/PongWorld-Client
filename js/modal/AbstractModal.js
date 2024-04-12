@@ -18,7 +18,8 @@ class AbstractModal {
     const $testModal = document.getElementById('testModal');
     $testModal.classList.remove('active');
     // setTimeout(() => {
-    document.querySelector('.modalBack').remove();
+    if (document.querySelector('.modalBack'))
+      document.querySelector('.modalBack').remove();
     // }, 100);
   }
 

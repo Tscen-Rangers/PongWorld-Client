@@ -68,7 +68,7 @@ class UserProfileModal extends AbstractModal {
         </div>
         <div class="userProfile-match-history"></div>
         <div class="userProfileBtns">
-          <a class="chatbutton" href="" data-spa
+          <a class="chatbutton userProfileChatBtn" href="" data-spa
             >chat<svg
               class="chatMsgImage"
               style="margin-left: 5px"
@@ -140,7 +140,7 @@ class UserProfileModal extends AbstractModal {
   }
 
   onClickChat() {
-    const $chatButton = document.querySelector('.chatbutton');
+    const $chatButton = document.querySelector('.userProfileChatBtn');
 
     $chatButton.addEventListener('click', () => {
       this.closeModal();

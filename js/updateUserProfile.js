@@ -1,8 +1,5 @@
 import UserProfileModal from './modal/UserProfileModal.js';
 
-console.error = function () {};
-console.warn = function () {};
-
 export const updateGameHistory = gameHistory => {
   const $userProfileHistory = document.querySelector(
     '.userProfile-match-history',
@@ -89,7 +86,7 @@ export const updateFriendRequestBtn = player => {
 export const updateUserModal = async (userData, all) => {
   if (all === 0) {
     await new UserProfileModal().renderModal();
-    const $chatButton = document.querySelector('.chatbutton');
+    const $chatButton = document.querySelector('.userProfileChatBtn');
     const $historyWithMeBtn = document.querySelector('.historyWithMeBtn');
     const $divide = document.querySelector('.divide');
     const $userProfileFriendRequestBtn = document.querySelector(

@@ -431,8 +431,9 @@ export default class extends AbstractView {
         tws.send({
           tournament_mode: 'end_tournament',
         });
-      else if (this.socket === lws) this.socket.close();
-      else
+      else if (this.socket === lws) {
+        this.socket.close();
+      } else
         qws.send({
           command: 'end_game',
         });
@@ -478,7 +479,9 @@ export default class extends AbstractView {
         tournament_mode: 'end_tournament',
       });
     } else if (this.socket === lws) {
-      this.socket.close();
+      {
+        this.socket.close();
+      }
     } else this.socket.close();
   }
 

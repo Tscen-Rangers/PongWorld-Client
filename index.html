@@ -37,7 +37,13 @@
     <meta
       http-equiv="Content-Security-Policy"
       content="upgrade-insecure-requests" />
-    <script type="module" src="/js/consoleHandler.js"></script>
+    <script>
+      console.warn = console.error = () => {};
+      // or IIFE
+      (() => {
+        console.warn = console.error = () => {};
+      })();
+    </script>
   </head>
   <body>
     <div class="main_body">

@@ -421,16 +421,18 @@ export default class extends AbstractView {
     } else if (message.type === 'private_chat') {
       this.renderChat(message);
     } else if (message.type === 'unread_count') {
-      this.$unReadCount.forEach(e => {
-        if (
-          message.chatroom_id ===
-            Number(e.parentNode.getAttribute('data-chatroomid')) &&
-          e.parentNode.classList.length === 1
-        ) {
-          e.style.opacity = 1;
-          e.innerHTML = message.unread_count;
-        }
-      });
+      if (this.$unReadCount) {
+        this.$unReadCount.forEach(e => {
+          if (
+            message.chatroom_id ===
+              Number(e.parentNode.getAttribute('data-chatroomid')) &&
+            e.parentNode.classList.length === 1
+          ) {
+            e.style.opacity = 1;
+            e.innerHTML = message.unread_count;
+          }
+        });
+      }
     } else if (
       message.type === 'user_online' &&
       message.user_id !== this.user.id

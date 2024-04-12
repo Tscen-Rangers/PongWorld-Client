@@ -9,6 +9,7 @@ import {userProfileData} from '../../PlayersRestApi.js';
 import API_URL from '../../../config.js';
 import QuickMatchModal from '../../modal/QuickMatchModal.js';
 import BattleResponseModal from '../../modal/BattleResponseModal.js';
+import NoticeModal from '../../modal/NoticeModal.js';
 
 let timeoutId;
 
@@ -341,26 +342,30 @@ battle
     } else if (message.type === 'SUCCESS_FRIEND_GAME') {
       const battleMsg = document.querySelector('.battleMsg');
       const $battleCancelBtn = document.querySelector('.battleCancelBtn');
-      battleMsg.innerText = message.message;
-      $battleCancelBtn.style.display = 'none';
-      onResponse();
+      if (battleMsg) {
+        battleMsg.innerText = message.message;
+        $battleCancelBtn.style.display = 'none';
+        onResponse();
+      }
     } else if (message.type === 'REJECTED_FRIEND_GAME') {
       const battleMsg = document.querySelector('.battleMsg');
       const $battleCancelBtn = document.querySelector('.battleCancelBtn');
+
       battleMsg.innerText = message.message;
       $battleCancelBtn.style.display = 'none';
+
       onResponse();
       setTimeout(() => {
         this.modal.closeModal();
       }, 2000);
     } else if (message.type === 'QUIT_FRIEND_GAME') {
     } else if (message.type === 'INVALID_GAME') {
+      await new NoticeModal().renderModal();
       const $noticeModal = document.querySelector('#noticeModal');
       const $noticeContent = document.querySelector('#noticeContent');
       $noticeContent.innerText = `Battle request from ${sessionStorage.getItem(
         'opponentName',
       )} has been cancelled`;
-      $noticeModal.classList.add('active');
     }
   }
 }

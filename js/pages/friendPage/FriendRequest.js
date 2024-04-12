@@ -166,7 +166,7 @@ export default class extends AbstractView {
           throw new Error(`Server responded with status: ${res.status}`);
         } else {
           const data = await res.json();
-          this.recieved = data.data;
+          this.recieved = await data.data;
         }
       } catch (error) {
         console.log('get Recieved Request error', error);
